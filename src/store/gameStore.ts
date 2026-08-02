@@ -9,8 +9,50 @@ import { type PvPOpponent } from '../data/pvpData'
 import { audioEngine } from '../utils/audioEngine'
 import { cloudService } from '../utils/supabaseClient'
 
+const SAVE_KEY = 'yundev_game_state'
+
+export function loadLocalGameState() {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(SAVE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+export function saveLocalGameState(state: any) {
+  if (typeof window === 'undefined') return
+  try {
+    const dataToSave = {
+      gold: state.gold,
+      heroes: state.heroes,
+      inventory: state.inventory,
+      shards: state.shards,
+      currentStageIndex: state.currentStageIndex,
+      maxUnlockedStage: state.maxUnlockedStage,
+      towerFloor: state.towerFloor,
+      maxTowerFloor: state.maxTowerFloor,
+      worldBossTotalDamage: state.worldBossTotalDamage,
+      pvpRank: state.pvpRank,
+      pvpScore: state.pvpScore,
+      rankLevel: state.rankLevel,
+      activeBeastId: state.activeBeastId,
+      lastIdleClaimTime: state.lastIdleClaimTime
+    }
+    localStorage.setItem(SAVE_KEY, JSON.stringify(dataToSave))
+  } catch (err) {
+    console.warn('Failed to save to localStorage:', err)
+  }
+}
+
+const savedLocal = loadLocalGameState()
+
 const triggerAutoCloudSave = () => {
   if (typeof window !== 'undefined') {
+    const state = useGameStore.getState()
+    saveLocalGameState(state)
     setTimeout(() => {
       cloudService.saveCloudProfile(useGameStore.getState())
     }, 300)
@@ -102,23 +144,23 @@ interface GameState {
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
-  heroes: MOCK_HEROES,
-  enemies: CAMPAIGN_STAGES[0].enemies,
-  inventory: MOCK_ITEMS,
-  shards: { 'Lê Lợi': 20, 'Nguyễn Trãi': 10 },
-  gold: 5000,
+  heroes: savedLocal?.heroes || MOCK_HEROES,
+  enemies: CAMPAIGN_STAGES[savedLocal?.currentStageIndex || 0]?.enemies || CAMPAIGN_STAGES[0].enemies,
+  inventory: savedLocal?.inventory || MOCK_ITEMS,
+  shards: savedLocal?.shards || { 'Lê Lợi': 20, 'Nguyễn Trãi': 10 },
+  gold: savedLocal?.gold !== undefined ? savedLocal.gold : 5000,
   turn: 1,
   currentScreen: 'LOBBY',
   gameMode: 'CAMPAIGN',
-  currentStageIndex: 0,
-  maxUnlockedStage: 0,
-  towerFloor: 1,
-  maxTowerFloor: 1,
-  worldBossTotalDamage: 0,
-  pvpRank: 8,
-  pvpScore: 1250,
-  rankLevel: 1,
-  activeBeastId: 'beast_kim_quy',
+  currentStageIndex: savedLocal?.currentStageIndex || 0,
+  maxUnlockedStage: savedLocal?.maxUnlockedStage || 0,
+  towerFloor: savedLocal?.towerFloor || 1,
+  maxTowerFloor: savedLocal?.maxTowerFloor || 1,
+  worldBossTotalDamage: savedLocal?.worldBossTotalDamage || 0,
+  pvpRank: savedLocal?.pvpRank || 8,
+  pvpScore: savedLocal?.pvpScore || 1250,
+  rankLevel: savedLocal?.rankLevel || 1,
+  activeBeastId: savedLocal?.activeBeastId || 'beast_kim_quy',
   isMuted: false,
   isAnimating: false,
   battleSpeed: 1,
@@ -140,7 +182,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   activeAttackerId: null,
   actionText: null,
   showDefeatModal: false,
-  lastIdleClaimTime: Date.now() - 3600 * 1000 * 2.5,
+  lastIdleClaimTime: savedLocal?.lastIdleClaimTime || Date.now(),
   showIdleModal: false,
   showCloudModal: false,
 
@@ -263,6 +305,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       lastIdleClaimTime: Date.now(),
       showIdleModal: false
     })
+    triggerAutoCloudSave()
 
     return { gold: pendingGold, shards: pendingShards }
   },
