@@ -182,7 +182,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   activeAttackerId: null,
   actionText: null,
   showDefeatModal: false,
-  lastIdleClaimTime: savedLocal?.lastIdleClaimTime || Date.now(),
+  lastIdleClaimTime: savedLocal?.lastIdleClaimTime || (Date.now() - 3600 * 1000 * 2.5),
   showIdleModal: false,
   showCloudModal: false,
 
@@ -1060,3 +1060,14 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   }
 }))
+
+if (typeof window !== 'undefined') {
+  let cloudSaveDebounce: any = null
+  useGameStore.subscribe((state) => {
+    saveLocalGameState(state)
+    if (cloudSaveDebounce) clearTimeout(cloudSaveDebounce)
+    cloudSaveDebounce = setTimeout(() => {
+      cloudService.saveCloudProfile(state)
+    }, 1000)
+  })
+}
