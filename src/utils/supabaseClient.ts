@@ -24,6 +24,28 @@ export function removeSharedCookie(name: string) {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttr}`
 }
 
+// Hybrid Shared Cookie Storage Adapter for Wildcard SSO (*.yundev.space)
+const cookieStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof document === 'undefined') return null
+    const cookieVal = getSharedCookie(key)
+    if (cookieVal) return cookieVal
+    return typeof window !== 'undefined' ? localStorage.getItem(key) : null
+  },
+  setItem: (key: string, value: string): void => {
+    setSharedCookie(key, value)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(key, value)
+    }
+  },
+  removeItem: (key: string): void => {
+    removeSharedCookie(key)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(key)
+    }
+  }
+}
+
 // Read Supabase environment variables from Vite env (VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY)
 const envUrl = (import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL || '').trim()
 const envAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '').trim()
@@ -45,7 +67,7 @@ export const isSupabaseConfigured = Boolean(
   !envUrl.includes('localhost')
 )
 
-// Initialize Supabase Client with SSO token key across *.yundev.space
+// Initialize Supabase Client with Wildcard SSO token storage across *.yundev.space
 export const supabase = createClient(
   SUPABASE_CONFIG.url,
   SUPABASE_CONFIG.anonKey,
@@ -54,7 +76,8 @@ export const supabase = createClient(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storageKey: 'yundev_supabase_auth_token'
+      storageKey: 'yundev_supabase_auth_token',
+      storage: cookieStorage
     }
   }
 )
@@ -68,12 +91,14 @@ export async function signInWithEmail(email: string, password: string) {
   const res = await supabase.auth.signInWithPassword({ email, password })
   if (res.data?.session) {
     setSharedCookie('yundev_session', res.data.session.access_token)
+    setSharedCookie('yundev_supabase_auth_token', JSON.stringify(res.data.session))
   }
   return res
 }
 
 export async function signOutUser() {
   removeSharedCookie('yundev_session')
+  removeSharedCookie('yundev_supabase_auth_token')
   return await supabase.auth.signOut()
 }
 
