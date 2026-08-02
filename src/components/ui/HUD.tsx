@@ -14,6 +14,7 @@ import WorldBossModal from './WorldBossModal'
 import CodexModal from './CodexModal'
 import PvPModal from './PvPModal'
 import ImperialRankModal from './ImperialRankModal'
+import IdleModal from './IdleModal'
 import MainLobby from './MainLobby'
 import { CAMPAIGN_STAGES } from '../../data/stages'
 
@@ -26,16 +27,13 @@ export default function HUD() {
   const towerFloor = useGameStore(state => state.towerFloor)
   const currentStageIndex = useGameStore(state => state.currentStageIndex)
   const isAnimating = useGameStore(state => state.isAnimating)
-  const comboBanner = useGameStore(state => state.comboBanner)
-  const actionText = useGameStore(state => state.actionText)
+  const worldBossTotalDamage = useGameStore(state => state.worldBossTotalDamage)
   const isMuted = useGameStore(state => state.isMuted)
   const battleSpeed = useGameStore(state => state.battleSpeed)
-  const isAutoBattle = useGameStore(state => state.isAutoBattle)
 
   const setCurrentScreen = useGameStore(state => state.setCurrentScreen)
   const toggleMute = useGameStore(state => state.toggleMute)
   const toggleBattleSpeed = useGameStore(state => state.toggleBattleSpeed)
-  const toggleAutoBattle = useGameStore(state => state.toggleAutoBattle)
   const executeTurn = useGameStore(state => state.executeTurn)
   const setSelectedHeroId = useGameStore(state => state.setSelectedHeroId)
   const setShowStageSelectModal = useGameStore(state => state.setShowStageSelectModal)
@@ -115,7 +113,7 @@ export default function HUD() {
               padding: '10px 18px', 
               borderRadius: '12px', 
               border: '1.5px solid rgba(212, 175, 55, 0.8)',
-              backdropFilter: 'blur(8px)',
+              
               boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
               cursor: 'pointer',
               display: 'flex',
@@ -151,70 +149,7 @@ export default function HUD() {
         </div>
       </div>
 
-      {/* Banner Hợp Kích Hoành Tráng */}
-      {comboBanner && (
-        <div style={{
-          position: 'absolute',
-          top: '35%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            background: 'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.9), transparent)',
-            width: '100vw',
-            padding: '16px 0',
-            textAlign: 'center',
-            boxShadow: '0 0 40px rgba(241, 196, 15, 0.8)',
-            borderTop: '2px solid #fff',
-            borderBottom: '2px solid #fff'
-          }}>
-            <h1 style={{
-              margin: 0,
-              fontSize: '2.5rem',
-              fontWeight: 900,
-              color: '#ffffff',
-              textShadow: '0 0 20px #f1c40f, 0 0 40px #e67e22',
-              letterSpacing: '4px',
-              fontStyle: 'italic',
-              textTransform: 'uppercase'
-            }}>
-              {comboBanner}
-            </h1>
-            <p style={{ margin: '4px 0 0 0', fontSize: '1.1rem', color: '#fef08a', fontWeight: 'bold' }}>
-              Lê Lợi & Nguyễn Trãi Đồng Bào Xuất Kích!
-            </p>
-          </div>
-        </div>
-      )}
 
-      {/* Action Text Nhỏ Hơn (Khi đánh thường) */}
-      {!comboBanner && actionText && (
-        <div style={{
-          position: 'absolute',
-          top: '25%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'rgba(15, 23, 42, 0.85)',
-          padding: '8px 24px',
-          borderRadius: '20px',
-          border: '1px solid #f1c40f',
-          boxShadow: '0 4px 15px rgba(241, 196, 15, 0.4)',
-          pointerEvents: 'none'
-        }}>
-          <h2 style={{
-            margin: 0,
-            fontSize: '1.2rem',
-            color: '#fef08a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            {actionText}
-          </h2>
-        </div>
-      )}
 
       {/* Bottom Bar - Bể Tướng Hiển Thị Tất Cả Tướng & Cụm Nút Độc Lập Bên Phải */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', pointerEvents: 'auto', gap: '20px' }}>
@@ -334,55 +269,56 @@ export default function HUD() {
               <span>{battleSpeed}X</span>
             </button>
 
-            <button
-              onClick={toggleAutoBattle}
+            <div
               style={{
-                background: isAutoBattle 
-                  ? 'linear-gradient(45deg, #059669, #10b981)' 
-                  : 'rgba(15, 23, 42, 0.9)',
-                border: isAutoBattle ? '1.5px solid #a7f3d0' : '1px solid rgba(255,255,255,0.2)',
-                color: isAutoBattle ? 'white' : '#94a3b8',
+                background: 'linear-gradient(45deg, #059669, #10b981)',
+                border: '1.5px solid #a7f3d0',
+                color: 'white',
                 padding: '8px 16px',
                 borderRadius: '16px',
                 fontWeight: 900,
                 fontSize: '0.85rem',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
-                boxShadow: isAutoBattle ? '0 0 20px rgba(16, 185, 129, 0.6)' : 'none'
+                boxShadow: '0 0 20px rgba(16, 185, 129, 0.6)'
               }}
             >
-              <Bot size={16} color={isAutoBattle ? "#a7f3d0" : "#94a3b8"} />
-              <span>AUTO: {isAutoBattle ? 'BẬT' : 'TẮT'}</span>
-            </button>
+              <Bot size={16} color="#a7f3d0" />
+              <span>TỰ ĐỘNG</span>
+            </div>
           </div>
 
-          <button 
-            onClick={executeTurn}
-            disabled={isAnimating}
-            style={{
-              background: isAnimating 
-                ? 'linear-gradient(45deg, #475569, #64748b)'
-                : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-              color: '#ffffff',
-              border: '2px solid #fef08a',
-              padding: '14px 36px',
-              fontSize: '1.15rem',
-              fontWeight: 800,
-              borderRadius: '30px',
-              cursor: isAnimating ? 'not-allowed' : 'pointer',
-              boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              letterSpacing: '1px'
-            }}
-          >
-            <Swords size={22} />
-            {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'KẾT THÚC LƯỢT'}
-          </button>
+            <button 
+              onClick={() => {
+                if (!useGameStore.getState().isAutoBattle) {
+                  useGameStore.setState({ isAutoBattle: true })
+                }
+                executeTurn()
+              }}
+              disabled={isAnimating}
+              style={{
+                background: isAnimating 
+                  ? 'linear-gradient(45deg, #475569, #64748b)'
+                  : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
+                color: '#ffffff',
+                border: '2px solid #fef08a',
+                padding: '14px 36px',
+                fontSize: '1.15rem',
+                fontWeight: 800,
+                borderRadius: '30px',
+                cursor: isAnimating ? 'not-allowed' : 'pointer',
+                boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                letterSpacing: '1px'
+              }}
+            >
+              <Swords size={22} />
+              {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'BẮT ĐẦU CHIẾN ĐẤU'}
+            </button>
         </div>
       </div>
 
@@ -402,6 +338,7 @@ export default function HUD() {
       <CodexModal />
       <PvPModal />
       <ImperialRankModal />
+      <IdleModal />
       <CloudSaveModal isOpen={showCloudModal} onClose={() => setShowCloudModal(false)} />
     </div>
   )

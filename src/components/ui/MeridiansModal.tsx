@@ -25,8 +25,8 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.85)',
-      backdropFilter: 'blur(12px)',
+      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      
       zIndex: 110,
       pointerEvents: 'auto',
       display: 'flex',

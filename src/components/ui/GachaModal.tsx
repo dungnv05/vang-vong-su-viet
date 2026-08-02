@@ -1,5 +1,6 @@
 import { useGameStore } from '../../store/gameStore'
 import { X, Sparkles, Coins } from 'lucide-react'
+import { getRoleVietnameseInfo } from '../../data/heroes'
 
 export default function GachaModal() {
   const showGachaModal = useGameStore(state => state.showGachaModal)
@@ -18,8 +19,8 @@ export default function GachaModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.85)',
-      backdropFilter: 'blur(12px)',
+      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',
@@ -163,7 +164,9 @@ export default function GachaModal() {
                       +30 MẢNH
                     </div>
                   ) : (
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '4px' }}>{result.role}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '4px', fontWeight: '500' }}>
+                      {getRoleVietnameseInfo(result.role).icon} {getRoleVietnameseInfo(result.role).short}
+                    </div>
                   )}
                 </div>
               ))}

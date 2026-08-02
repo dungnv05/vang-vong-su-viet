@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
@@ -17,13 +18,24 @@ export default function MainLobby() {
   const setShowCodexModal = useGameStore(state => state.setShowCodexModal)
   const setShowPvPModal = useGameStore(state => state.setShowPvPModal)
   const setShowRankModal = useGameStore(state => (state as any).setShowRankModal)
+  const setShowIdleModal = useGameStore(state => state.setShowIdleModal)
+  const getIdleRewards = useGameStore(state => state.getIdleRewards)
   const setSelectedHeroId = useGameStore(state => state.setSelectedHeroId)
+
+  const [, setTick] = useState(0)
+
+  useEffect(() => {
+    if (currentScreen !== 'LOBBY') return
+    const timer = setInterval(() => setTick(t => t + 1), 1000)
+    return () => clearInterval(timer)
+  }, [currentScreen])
 
   if (currentScreen !== 'LOBBY') return null
 
   const activeHeroes = heroes.filter(h => h.slotIndex >= 0)
   const totalPower = activeHeroes.reduce((sum, h) => sum + getPowerScore(h), 0)
   const activeBeast = MOUNT_BEASTS.find((b: BeastData) => b.id === activeBeastId) || MOUNT_BEASTS[0]
+  const idleRewards = getIdleRewards ? getIdleRewards() : { gold: 0, shards: 0, elapsedSec: 0, goldRatePerSec: 5 }
 
   return (
     <div style={{
@@ -75,8 +87,34 @@ export default function MainLobby() {
           </div>
         </div>
 
-        {/* Tổng Lực Chiến & Linh Vật */}
+        {/* Tổng Lực Chiến, Linh Vật & Rương Treo Máy AFK */}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          {/* Rương Treo Máy AFK Button */}
+          <button
+            onClick={() => setShowIdleModal(true)}
+            style={{
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%)',
+              border: '2px solid #f59e0b',
+              borderRadius: '16px',
+              padding: '10px 18px',
+              boxShadow: '0 0 20px rgba(245, 158, 11, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              cursor: 'pointer',
+              color: 'white',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <span style={{ fontSize: '1.6rem' }}>🎁</span>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: '0.72rem', color: '#fef08a', fontWeight: 'bold' }}>RƯƠNG TREO MÁY</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>
+                +{idleRewards.gold.toLocaleString()} 🪙
+              </div>
+            </div>
+          </button>
+
           <div style={{
             background: 'rgba(15, 23, 42, 0.85)',
             border: '2px solid #f1c40f',

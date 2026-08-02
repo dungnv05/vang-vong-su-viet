@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { Coins, ArrowRight } from 'lucide-react'
+import { Coins, ArrowRight, Home } from 'lucide-react'
 import { MOCK_ITEMS, type ItemData } from '../../data/items'
 
 export default function VictoryModal() {
   const showVictoryModal = useGameStore(state => state.showVictoryModal)
+  const setShowVictoryModal = useGameStore(state => state.setShowVictoryModal)
+  const setCurrentScreen = useGameStore(state => state.setCurrentScreen)
   const nextStage = useGameStore(state => state.nextStage)
   const gameMode = useGameStore(state => state.gameMode)
   const towerFloor = useGameStore(state => state.towerFloor)
@@ -22,6 +24,11 @@ export default function VictoryModal() {
 
   if (!showVictoryModal) return null
 
+  const handleReturnLobby = () => {
+    setShowVictoryModal(false)
+    setCurrentScreen('LOBBY')
+  }
+
   return (
     <div style={{
       position: 'fixed',
@@ -29,8 +36,8 @@ export default function VictoryModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.85)',
-      backdropFilter: 'blur(12px)',
+      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',
@@ -78,7 +85,7 @@ export default function VictoryModal() {
           border: '1.5px solid rgba(241, 196, 15, 0.5)',
           borderRadius: '20px',
           padding: '20px',
-          marginBottom: '28px',
+          marginBottom: '24px',
           display: 'flex',
           flexDirection: 'column',
           gap: '14px'
@@ -113,29 +120,53 @@ export default function VictoryModal() {
           </div>
         </div>
 
-        {/* Button Tiếp Tục */}
-        <button
-          onClick={nextStage}
-          style={{
-            width: '100%',
-            background: 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-            border: '2px solid #fef08a',
-            color: 'white',
-            padding: '16px',
-            borderRadius: '30px',
-            fontSize: '1.15rem',
-            fontWeight: 900,
-            cursor: 'pointer',
-            boxShadow: '0 6px 25px rgba(245, 158, 11, 0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px'
-          }}
-        >
-          <span>TIẾP TỤC ẢI TIẾP THEO</span>
-          <ArrowRight size={20} />
-        </button>
+        {/* Cụm Nút Hành Động */}
+        <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+          <button
+            onClick={nextStage}
+            style={{
+              width: '100%',
+              background: 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
+              border: '2px solid #fef08a',
+              color: 'white',
+              padding: '14px',
+              borderRadius: '30px',
+              fontSize: '1.1rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+              boxShadow: '0 6px 25px rgba(245, 158, 11, 0.6)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px'
+            }}
+          >
+            <span>TIẾP TỤC ẢI TIẾP THEO</span>
+            <ArrowRight size={20} />
+          </button>
+
+          <button
+            onClick={handleReturnLobby}
+            style={{
+              width: '100%',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              color: '#cbd5e1',
+              padding: '14px',
+              borderRadius: '30px',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            <Home size={18} />
+            <span>QUAY VỀ SẢNH CHÍNH</span>
+          </button>
+        </div>
 
       </div>
     </div>

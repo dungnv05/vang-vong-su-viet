@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { X, Zap, Heart, Star, ArrowUpCircle, Flame } from 'lucide-react'
+import { X, Zap, Heart, Star, ArrowUpCircle, Flame, Sparkles } from 'lucide-react'
 import MeridiansModal from './MeridiansModal'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Environment } from '@react-three/drei'
-import Hero3D from '../3d/Hero3D'
+import heroPlaceholder from '../../assets/hero.png'
+import { getRoleVietnameseInfo } from '../../data/heroes'
 
 export default function HeroModal() {
   const [showMeridians, setShowMeridians] = useState<boolean>(false)
@@ -24,6 +23,8 @@ export default function HeroModal() {
   const hero = heroes.find(h => h.id === selectedHeroId)
   if (!hero) return null
 
+  const roleInfo = getRoleVietnameseInfo(hero.role)
+  const partnerHero = hero.synergy ? heroes.find(h => h.id === hero.synergy?.partnerId) : null
   const currentShards = shards[hero.name] || 0
   const requiredShards = hero.stars * 20
   const canStarUp = hero.stars < 5 && currentShards >= requiredShards && gold >= 1000
@@ -35,8 +36,8 @@ export default function HeroModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.75)',
-      backdropFilter: 'blur(10px)',
+      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',
@@ -50,7 +51,9 @@ export default function HeroModal() {
         borderRadius: '24px',
         width: '100%',
         maxWidth: '520px',
-        padding: '28px',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        padding: '24px',
         boxShadow: `0 10px 40px ${hero.color}44`,
         color: 'white',
         position: 'relative'
@@ -63,7 +66,7 @@ export default function HeroModal() {
             top: '16px',
             right: '16px',
             background: 'rgba(0,0,0,0.5)',
-            backdropFilter: 'blur(4px)',
+            
             borderRadius: '50%',
             padding: '6px',
             border: '1px solid rgba(255,255,255,0.2)',
@@ -79,26 +82,23 @@ export default function HeroModal() {
           <X size={20} />
         </button>
 
-        {/* Hero 3D Showcase Banner */}
+        {/* Hero Compact Showcase Banner */}
         <div style={{
           width: '100%',
-          height: '280px',
+          height: '160px',
           borderRadius: '16px',
           background: 'radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)',
           border: `2px solid ${hero.color}`,
           boxShadow: `0 8px 32px ${hero.color}44`,
           overflow: 'hidden',
           position: 'relative',
-          marginBottom: '20px'
+          marginBottom: '16px'
         }}>
-          <Canvas camera={{ position: [0, 1.2, 3], fov: 45 }}>
-            <ambientLight intensity={0.8} />
-            <directionalLight position={[5, 5, 5]} intensity={1.5} />
-            <pointLight position={[-5, -5, -5]} intensity={0.5} />
-            <Environment preset="city" />
-            <OrbitControls autoRotate autoRotateSpeed={2} enableZoom={true} maxZoom={2} minZoom={0.5} enablePan={false} maxPolarAngle={Math.PI/2} minPolarAngle={Math.PI/4} />
-            <Hero3D data={{...hero, slotIndex: -1}} isPreview={true} />
-          </Canvas>
+          <img 
+            src={hero.backgroundUrl || hero.avatarUrl || heroPlaceholder} 
+            alt={hero.name} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+          />
 
           {/* Overlay Info (Name, Level, Stars) */}
           <div style={{
@@ -106,19 +106,19 @@ export default function HeroModal() {
             bottom: 0,
             left: 0,
             width: '100%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, transparent 100%)',
-            padding: '40px 20px 15px 20px',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+            padding: '20px 16px 12px 16px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-end'
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ margin: 0, fontSize: '1.8rem', color: hero.color, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{hero.name}</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', color: hero.color, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{hero.name}</h2>
                 <span style={{
                   background: hero.color,
                   color: 'white',
-                  fontSize: '0.75rem',
+                  fontSize: '0.7rem',
                   fontWeight: 'bold',
                   padding: '2px 8px',
                   borderRadius: '10px',
@@ -127,22 +127,58 @@ export default function HeroModal() {
                   {hero.rarity || 'SR'}
                 </span>
               </div>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: '#cbd5e1', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
-                Cấp {hero.level} • {hero.role === 'DPS' ? 'Tấn Công' : hero.role === 'Tank' ? 'Phòng Thủ' : 'Hỗ Trợ'}
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#cbd5e1', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                Cấp {hero.level} • {roleInfo.icon} {roleInfo.name}
               </p>
             </div>
             
             {/* Stars */}
-            <div style={{ display: 'flex', gap: '4px' }}>
+            <div style={{ display: 'flex', gap: '3px' }}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star 
                   key={i} 
-                  size={18} 
+                  size={16} 
                   color={i < hero.stars ? "#f1c40f" : "#475569"} 
                   fill={i < hero.stars ? "#f1c40f" : "none"} 
                   style={{ filter: i < hero.stars ? 'drop-shadow(0 0 4px rgba(241,196,15,0.6))' : 'none' }}
                 />
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Class Info Block */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.7)',
+          border: `1.5px solid ${roleInfo.color}66`,
+          borderRadius: '16px',
+          padding: '12px 14px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{
+            fontSize: '1.8rem',
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            background: `${roleInfo.color}22`,
+            border: `1px solid ${roleInfo.color}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            {roleInfo.icon}
+          </div>
+          <div style={{ flex: 1, textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 'bold' }}>LỚP VÕ TƯỚNG (CLASS):</span>
+              <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: roleInfo.color }}>{roleInfo.name}</span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px', lineHeight: '1.3' }}>
+              {roleInfo.desc}
             </div>
           </div>
         </div>
@@ -153,25 +189,76 @@ export default function HeroModal() {
           gridTemplateColumns: '1fr 1fr',
           gap: '12px',
           background: 'rgba(15, 23, 42, 0.6)',
-          padding: '16px',
-          borderRadius: '16px',
-          marginBottom: '20px'
+          padding: '12px 16px',
+          borderRadius: '14px',
+          marginBottom: '16px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Zap size={18} color="#e74c3c" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>TẤN CÔNG</div>
-              <div style={{ fontWeight: 'bold', fontSize: '1rem', color: '#e74c3c' }}>{hero.atk}</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>TẤN CÔNG (ATK)</div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: '#e74c3c' }}>{hero.atk.toLocaleString()}</div>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Heart size={18} color="#2ecc71" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SINH LỰC</div>
-              <div style={{ fontWeight: 'bold', fontSize: '1rem', color: '#2ecc71' }}>{hero.hp}/{hero.maxHp}</div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SINH LỰC (HP)</div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: '#2ecc71' }}>{hero.hp.toLocaleString()}/{hero.maxHp.toLocaleString()}</div>
             </div>
           </div>
+        </div>
+
+        {/* Skill & Synergy Section */}
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.7)',
+          border: '1px solid rgba(241, 196, 15, 0.3)',
+          borderRadius: '16px',
+          padding: '14px',
+          marginBottom: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px'
+        }}>
+          <div style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Sparkles size={16} color="#f1c40f" />
+            <span>KỸ NĂNG & HỢP KỸ DÂN TỘC</span>
+          </div>
+
+          {/* Tuyệt Kỹ */}
+          <div style={{ background: 'rgba(30, 41, 59, 0.6)', padding: '10px 12px', borderRadius: '12px', borderLeft: `3px solid ${hero.color}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#ffffff' }}>
+                👑 [TUYỆT KỸ] {hero.skill?.name || 'Vung Vũ Khí'}
+              </div>
+              <span style={{ fontSize: '0.75rem', background: '#3b82f6', color: 'white', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
+                {Math.round((hero.skill?.damageMultiplier || 2.0) * 100)}% ATK
+              </span>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '4px', lineHeight: '1.4' }}>
+              Gây {Math.round((hero.skill?.damageMultiplier || 2.0) * 100)}% sát thương lên mục tiêu.
+              {hero.skill?.rageRecovery ? ` Hồi ${hero.skill.rageRecovery} Nộ sau khi xuất chiêu.` : ''}
+              {hero.skill?.rageSteal ? ` Hút ${hero.skill.rageSteal} Nộ của kẻ địch.` : ''}
+            </div>
+          </div>
+
+          {/* Hợp Kỹ (nếu có) */}
+          {hero.synergy && (
+            <div style={{ background: 'rgba(234, 179, 8, 0.12)', padding: '10px 12px', borderRadius: '12px', borderLeft: '3px solid #f1c40f' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#fef08a' }}>
+                  💥 [HỢP KỸ] {hero.synergy.skillName}
+                </div>
+                <span style={{ fontSize: '0.75rem', background: '#d97706', color: 'white', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
+                  Phối Hợp: {partnerHero ? partnerHero.name : 'Đồng Đội'}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#e2e8f0', marginTop: '4px', lineHeight: '1.4' }}>
+                Khi cùng {partnerHero ? partnerHero.name : 'Đồng Đội'} ra trận, bồi đòn Hợp Kích gây 150% Sát Thương Hợp Kỹ lên kẻ địch!
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Actions Bar - Level Up, Star Up & Meridians */}

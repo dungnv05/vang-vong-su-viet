@@ -91,5 +91,29 @@ export const CODEX_HEROES: CodexHeroData[] = [
     biography: 'Ngô Quyền là người vùng Đường Lâm (Hà Nội). Năm 938, ông nghĩ ra diệu kế cắm hàng ngàn cọc gỗ vát nhọn bọc sắt dưới lòng sông Bạch Đằng, lợi dụng thủy triều lên xuống để dụ hạm đội quân Nam Hán vào bẫy.',
     legacy: 'Chấm dứt hơn 1,000 năm Bắc thuộc đen tối, mở ra kỷ nguyên độc lập tự chủ lâu dài cho dân tộc Việt Nam.',
     color: '#2ecc71'
+  },
+  {
+    id: 'codex_thanh_giong',
+    name: 'Thánh Gióng',
+    title: 'Phù Đổng Thiên Vương • Tứ Bất Tử',
+    era: 'Thời Hùng Vương VI',
+    periodYear: 'Thời Cổ Đại',
+    quote: 'Mẹ nhắn nhà vua đúc cho con ngựa sắt, gươm sắt, giáp sắt, con sẽ đánh tan giặc Ân!',
+    famousBattles: ['Đánh Tan Giặc Ân Ở Chân Núi Trâu'],
+    biography: 'Thánh Gióng sinh ra tại làng Phù Đổng. Đến 3 tuổi chưa biết nói biết cười, nhưng khi giặc Ân xâm lược, ông vươn vai thành tráng sĩ cao lớn, cưỡi ngựa sắt phun lửa, vung gươm sắt và gãy gươm quật tre ngà quét sạch quân giặc.',
+    legacy: 'Thượng đẳng thần của dân tộc Việt Nam, đại diện cho sức mạnh quật cường và tinh thần bảo vệ non sông.',
+    color: '#f59e0b'
+  },
+  {
+    id: 'codex_ba_trieu',
+    name: 'Bà Triệu',
+    title: 'Triệu Thị Trinh • Nhị Bà Nữ Vương',
+    era: 'Thời Bắc Thuộc',
+    periodYear: 'Năm 226 - 248 AD',
+    quote: 'Tôi muốn cưỡi cơn gió mạnh, đạp luồng sóng dữ, chém cá kình ở biển Đông, chứ không chịu khom lưng làm tì thiếp người ta!',
+    famousBattles: ['Khởi Nghĩa Căn Cứ Nưa - Yên Định (248 AD)'],
+    biography: 'Bà Triệu tên thật là Triệu Thị Trinh, khởi nghĩa chống quân Ngô tàn bạo năm 248. Mỗi khi ra trận, bà mặc áo giáp vàng, đi guốc ngà, cài trâm vàng, cưỡi voi chiến uy phong làm quân giặc khiếp vía.',
+    legacy: 'Biểu tượng anh hùng bất khuất của nữ giới Đại Việt, nối tiếp truyền thống kiên cường của Hai Bà Trưng.',
+    color: '#ec4899'
   }
 ]

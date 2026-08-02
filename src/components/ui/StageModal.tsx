@@ -18,8 +18,8 @@ export default function StageModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      backdropFilter: 'blur(10px)',
+      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',

@@ -35,6 +35,55 @@ export interface HeroData {
     rageRecovery?: number
     rageSteal?: number
   }
+  synergy?: {
+    partnerId: string
+    skillName: string
+  }
+}
+
+export const getRoleVietnameseInfo = (role: 'Tank' | 'DPS' | 'Support' | 'Assassin' | string) => {
+  switch (role) {
+    case 'Tank':
+      return { 
+        name: 'Vệ Binh (Phòng Thủ)', 
+        short: 'Vệ Binh', 
+        icon: '🛡️', 
+        color: '#3b82f6', 
+        desc: 'Đứng hàng trước chống chịu, có tỷ lệ Phản Kích khi bị tấn công.' 
+      }
+    case 'DPS':
+      return { 
+        name: 'Chủ Lực (Tấn Công)', 
+        short: 'Chủ Lực', 
+        icon: '⚔️', 
+        color: '#ef4444', 
+        desc: 'Gây sát thương lớn, tăng 35% tỷ lệ nổ Chí Mạng.' 
+      }
+    case 'Assassin':
+      return { 
+        name: 'Thích Khách (Bạo Kích)', 
+        short: 'Thích Khách', 
+        icon: '🗡️', 
+        color: '#a855f7', 
+        desc: '+60 Nộ khởi đầu, kích sát dứt điểm mục tiêu +50 Nộ.' 
+      }
+    case 'Support':
+      return { 
+        name: 'Hỗ Trợ (Trị Thương)', 
+        short: 'Hỗ Trợ', 
+        icon: '🌿', 
+        color: '#10b981', 
+        desc: 'Tăng nộ toàn đội đầu trận, đánh thường trị thương cho đồng đội.' 
+      }
+    default:
+      return { 
+        name: 'Võ Tướng', 
+        short: 'Võ Tướng', 
+        icon: '⚔️', 
+        color: '#f1c40f', 
+        desc: 'Võ tướng Đại Việt.' 
+      }
+  }
 }
 
 export const TEAM_GRID_SLOTS: [number, number, number][] = [
@@ -48,26 +97,47 @@ export const TEAM_GRID_SLOTS: [number, number, number][] = [
   [1.8, 0.5, 3.5],
 ];
 
+export const get2DSlotPosition = (isEnemy: boolean, slotIndex: number): { left: string, top: string, zIndex: number } => {
+  // Y coordinates (top): 25%, 50%, 75% for columns
+  const tops = ['30%', '50%', '70%'];
+  const colIndex = slotIndex % 3;
+  const isBackline = slotIndex >= 3;
+  
+  if (isEnemy) {
+    return {
+      left: isBackline ? '85%' : '70%',
+      top: tops[colIndex],
+      zIndex: 10 + colIndex
+    };
+  } else {
+    return {
+      left: isBackline ? '15%' : '30%',
+      top: tops[colIndex],
+      zIndex: 10 + colIndex
+    };
+  }
+}
+
 export const MOCK_HEROES: HeroData[] = [
   {
     id: 'h7',
     name: 'Thánh Gióng',
-    role: 'DPS',
+    role: 'Assassin',
     rarity: 'UR',
     title: 'Phù Đổng Thiên Vương',
     hp: 4200,
     maxHp: 4200,
-    atk: 520,
+    atk: 580,
     color: '#e67e22',
     slotIndex: 0, // Xuất trận vị trí Ô 1 (Hàng trước)
     level: 30,
     stars: 5,
     equippedItemIds: ['item_1', 'item_2'],
-    rage: 0,
+    rage: 60,
     maxRage: 100,
     skill: {
-      name: 'Tre Ngà Phá Địch',
-      damageMultiplier: 3.0,
+      name: 'Phù Đổng Đoạt Mệnh',
+      damageMultiplier: 3.2,
       rageRecovery: 30
     }
   },
@@ -93,6 +163,10 @@ export const MOCK_HEROES: HeroData[] = [
       name: 'Vạn Kiếp Tông Bí Truyền',
       damageMultiplier: 2.5,
       rageRecovery: 20
+    },
+    synergy: {
+      partnerId: 'h4', // Quang Trung
+      skillName: 'Hào Khí Đại Việt'
     }
   },
   {
@@ -117,6 +191,10 @@ export const MOCK_HEROES: HeroData[] = [
       name: 'Đạp Luồng Sóng Dữ',
       damageMultiplier: 2.0,
       rageSteal: 20
+    },
+    synergy: {
+      partnerId: 'h5', // Hai Bà Trưng
+      skillName: 'Nữ Tướng Uy Phong'
     }
   },
   {
@@ -140,6 +218,10 @@ export const MOCK_HEROES: HeroData[] = [
     skill: {
       name: 'Hỏa Tốc Tiến Công',
       damageMultiplier: 2.8
+    },
+    synergy: {
+      partnerId: 'h3', // Trần Hưng Đạo
+      skillName: 'Hào Khí Đại Việt'
     }
   },
   {
@@ -164,6 +246,10 @@ export const MOCK_HEROES: HeroData[] = [
       name: 'Mê Linh Khởi Nghĩa',
       damageMultiplier: 2.2,
       rageRecovery: 30
+    },
+    synergy: {
+      partnerId: 'h6', // Bà Triệu
+      skillName: 'Nữ Tướng Uy Phong'
     }
   },
   {
@@ -186,6 +272,10 @@ export const MOCK_HEROES: HeroData[] = [
       name: 'Bình Ngô Sách',
       damageMultiplier: 1.8,
       rageSteal: 25
+    },
+    synergy: {
+      partnerId: 'h1', // Lê Lợi
+      skillName: 'Bình Ngô Đại Cáo'
     }
   },
   {
@@ -208,6 +298,10 @@ export const MOCK_HEROES: HeroData[] = [
       name: 'Lam Sơn Kiếm Pháp',
       damageMultiplier: 2.2,
       rageRecovery: 20
+    },
+    synergy: {
+      partnerId: 'h2', // Nguyễn Trãi
+      skillName: 'Bình Ngô Đại Cáo'
     }
   }
 ]

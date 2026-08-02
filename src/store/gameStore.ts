@@ -47,6 +47,8 @@ interface GameState {
   activeAttackerId: string | null
   actionText: string | null
   showDefeatModal: boolean
+  lastIdleClaimTime: number
+  showIdleModal: boolean
   
   // Actions
   setCurrentScreen: (screen: 'LOBBY' | 'BATTLE') => void
@@ -66,6 +68,9 @@ interface GameState {
   setShowPvPModal: (show: boolean) => void
   setShowRankModal: (show: boolean) => void
   setShowDefeatModal: (show: boolean) => void
+  setShowIdleModal: (show: boolean) => void
+  getIdleRewards: () => { gold: number; shards: number; elapsedSec: number; goldRatePerSec: number }
+  claimIdleRewards: () => { gold: number; shards: number }
   setRankLevel: (level: number) => void
   selectBeast: (beastId: string) => void
   deployHeroToSlot: (heroId: string, slotIndex: number) => void
@@ -105,7 +110,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   isMuted: false,
   isAnimating: false,
   battleSpeed: 1,
-  isAutoBattle: false,
+  isAutoBattle: true,
   draggingHeroId: null,
   comboBanner: null,
   selectedHeroId: null,
@@ -123,10 +128,27 @@ export const useGameStore = create<GameState>((set, get) => ({
   activeAttackerId: null,
   actionText: null,
   showDefeatModal: false,
+  lastIdleClaimTime: Date.now() - 3600 * 1000 * 2.5,
+  showIdleModal: false,
 
   setCurrentScreen: (screen) => {
     audioEngine.playClick()
-    set({ currentScreen: screen })
+    set((state) => {
+      if (screen === 'LOBBY') {
+        const stage = CAMPAIGN_STAGES[state.currentStageIndex]
+        return {
+          currentScreen: screen,
+          isAnimating: false,
+          activeAttackerId: null,
+          comboBanner: null,
+          actionText: null,
+          turn: 1,
+          heroes: state.heroes.map(h => ({ ...h, hp: h.maxHp, rage: 0 })),
+          enemies: stage ? stage.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })) : state.enemies
+        }
+      }
+      return { currentScreen: screen }
+    })
   },
 
   toggleMute: () => set((state) => {
@@ -194,6 +216,38 @@ export const useGameStore = create<GameState>((set, get) => ({
   setShowRankModal: (show) => {
     audioEngine.playClick()
     set({ showRankModal: show })
+  },
+  setShowIdleModal: (show) => {
+    audioEngine.playClick()
+    set({ showIdleModal: show })
+  },
+
+  getIdleRewards: () => {
+    const st = get()
+    const stage = (st.currentStageIndex || 0) + 1
+    const lastClaim = st.lastIdleClaimTime || (Date.now() - 3600 * 1000 * 2.5)
+    const goldRatePerSec = 5 + Math.floor(stage * 2.5)
+    const maxSec = 12 * 3600
+    const diff = Math.floor((Date.now() - lastClaim) / 1000)
+    const elapsedSec = Math.min(maxSec, Math.max(0, isNaN(diff) ? 0 : diff))
+    const gold = elapsedSec * goldRatePerSec
+    const shards = Math.floor(elapsedSec / 1800)
+    return { gold: gold || 0, shards: shards || 0, elapsedSec: elapsedSec || 0, goldRatePerSec }
+  },
+
+  claimIdleRewards: () => {
+    const st = get()
+    const { gold: pendingGold, shards: pendingShards } = st.getIdleRewards()
+    if (pendingGold <= 0) return { gold: 0, shards: 0 }
+
+    audioEngine.playEquipSFX()
+    set({
+      gold: st.gold + pendingGold,
+      lastIdleClaimTime: Date.now(),
+      showIdleModal: false
+    })
+
+    return { gold: pendingGold, shards: pendingShards }
   },
 
   setRankLevel: (level) => {
@@ -354,52 +408,64 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
   }),
 
-  nextStage: () => set((state) => {
+  nextStage: () => {
     audioEngine.playClick()
-    if (state.gameMode === 'TOWER') {
-      const nextFloor = Math.min(100, state.towerFloor + 1)
-      const towerData = getTowerFloorData(nextFloor)
-      return {
-        towerFloor: nextFloor,
-        maxTowerFloor: Math.max(state.maxTowerFloor, nextFloor),
-        enemies: towerData.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
-        heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
-        turn: 1,
-        showVictoryModal: false,
-        comboBanner: 'TẦNG THÁP MỚI'
-      }
-    } else if (state.gameMode === 'WORLD_BOSS') {
-      return {
-        enemies: [{ ...WORLD_BOSS_DATA.bossEnemy, hp: WORLD_BOSS_DATA.bossEnemy.maxHp, rage: 0 }],
-        heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
-        turn: 1,
-        worldBossTotalDamage: 0,
-        showVictoryModal: false,
-        comboBanner: 'THẢO PHẠT BOSS'
-      }
-    } else {
-      const nextIdx = Math.min(CAMPAIGN_STAGES.length - 1, state.currentStageIndex + 1)
-      const stage = CAMPAIGN_STAGES[nextIdx]
-      const newMaxUnlocked = Math.max(state.maxUnlockedStage, nextIdx)
+    set((state) => {
+      if (state.gameMode === 'TOWER') {
+        const nextFloor = Math.min(100, state.towerFloor + 1)
+        const towerData = getTowerFloorData(nextFloor)
+        return {
+          towerFloor: nextFloor,
+          maxTowerFloor: Math.max(state.maxTowerFloor, nextFloor),
+          enemies: towerData.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
+          heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
+          turn: 1,
+          showVictoryModal: false,
+          comboBanner: 'TẦNG THÁP MỚI',
+          isAutoBattle: true
+        }
+      } else if (state.gameMode === 'WORLD_BOSS') {
+        return {
+          enemies: [{ ...WORLD_BOSS_DATA.bossEnemy, hp: WORLD_BOSS_DATA.bossEnemy.maxHp, rage: 0 }],
+          heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
+          turn: 1,
+          worldBossTotalDamage: 0,
+          showVictoryModal: false,
+          comboBanner: 'THẢO PHẠT BOSS',
+          isAutoBattle: true
+        }
+      } else {
+        const nextIdx = Math.min(CAMPAIGN_STAGES.length - 1, state.currentStageIndex + 1)
+        const stage = CAMPAIGN_STAGES[nextIdx]
+        const newMaxUnlocked = Math.max(state.maxUnlockedStage, nextIdx)
 
-      return {
-        currentStageIndex: nextIdx,
-        maxUnlockedStage: newMaxUnlocked,
-        enemies: stage.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
-        heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
-        turn: 1,
-        showVictoryModal: false,
-        comboBanner: 'ẢI TIẾP THEO'
+        return {
+          currentStageIndex: nextIdx,
+          maxUnlockedStage: newMaxUnlocked,
+          enemies: stage.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
+          heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
+          turn: 1,
+          showVictoryModal: false,
+          comboBanner: 'ẢI TIẾP THEO',
+          isAutoBattle: true
+        }
       }
-    }
-  }),
+    })
 
-  startTowerFloor: (floor) => set((state) => {
-    if (floor > state.maxTowerFloor) return state
+    setTimeout(() => {
+      const state = get()
+      if (state.isAutoBattle && !state.isAnimating && state.enemies.some(e => e.hp > 0)) {
+        get().executeTurn()
+      }
+    }, 400)
+  },
+
+  startTowerFloor: (floor) => {
+    if (floor > get().maxTowerFloor) return
     audioEngine.playClick()
     const towerData = getTowerFloorData(floor)
 
-    return {
+    set((state) => ({
       gameMode: 'TOWER',
       towerFloor: floor,
       enemies: towerData.enemies.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
@@ -408,13 +474,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentScreen: 'BATTLE',
       showTowerModal: false,
       showVictoryModal: false,
-      showDefeatModal: false
-    }
-  }),
+      showDefeatModal: false,
+      isAutoBattle: true
+    }))
+  },
 
-  startWorldBossRaid: () => set((state) => {
+  startWorldBossRaid: () => {
     audioEngine.playClick()
-    return {
+    set((state) => ({
       gameMode: 'WORLD_BOSS',
       enemies: [{ ...WORLD_BOSS_DATA.bossEnemy, hp: WORLD_BOSS_DATA.bossEnemy.maxHp, rage: 0 }],
       heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
@@ -423,13 +490,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentScreen: 'BATTLE',
       showWorldBossModal: false,
       showVictoryModal: false,
-      showDefeatModal: false
-    }
-  }),
+      showDefeatModal: false,
+      isAutoBattle: true
+    }))
+  },
 
-  startPvPChallenge: (opponent) => set((state) => {
+  startPvPChallenge: (opponent) => {
     audioEngine.playClick()
-    return {
+    set((state) => ({
       gameMode: 'PVP',
       enemies: opponent.defenseTeam.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
       heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
@@ -437,9 +505,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentScreen: 'BATTLE',
       showPvPModal: false,
       showVictoryModal: false,
-      showDefeatModal: false
-    }
-  }),
+      showDefeatModal: false,
+      isAutoBattle: true
+    }))
+  },
 
   pullGacha: (count) => set((state) => {
     const cost = count === 1 ? 300 : 2700
@@ -508,11 +577,11 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   executeTurn: async () => {
     const state = get()
-    if (state.isAnimating) return
+    if (state.currentScreen !== 'BATTLE' || state.isAnimating) return
 
-    set({ isAnimating: true, actionText: 'Lượt đánh bắt đầu!' })
+    set({ isAnimating: true, actionText: null })
 
-    const { battleSpeed, isAutoBattle, gameMode } = state
+    const { battleSpeed, gameMode } = state
     const delay = Math.floor(1200 / battleSpeed)
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -560,6 +629,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     // Hàm thực thi 1 đòn đánh
     const executeAttack = async (isPlayerAttacking: boolean, inputAttacker: any, forceUltimate: boolean = false) => {
       let st = get()
+      if (st.currentScreen !== 'BATTLE') return true
+
       let attackerList = isPlayerAttacking ? st.heroes.filter(h => h.slotIndex !== -1) : st.enemies
       let attacker = attackerList.find(a => a.id === inputAttacker.id && a.hp > 0)
       if (!attacker) return false // No attacker or dead
@@ -596,12 +667,45 @@ export const useGameStore = create<GameState>((set, get) => ({
       let newAttackerRage = attacker.rage || 0
       let targetRageDelta = 0
       
-      if (isUltimate) {
+      // Chí Mạng (Critical Hit)
+      const critRate = (attacker.role === 'DPS' || attacker.role === 'Assassin') ? 0.35 : 0.20
+      const isCrit = Math.random() < critRate
+      if (isCrit) {
+        dmg = Math.floor(dmg * 1.75)
+      }
+      const critText = isCrit ? ' 💥 CHÍ MẠNG!' : ''
+
+      let updatedAttackerList = attackerList
+
+      // If attacker is Support on normal attack -> Heal lowest HP ally!
+      const isSupportHeal = !isUltimate && attacker.role === 'Support'
+      let healDmg = 0
+
+      if (isSupportHeal) {
+        audioEngine.playEquipSFX()
+        healDmg = Math.floor(attacker.atk * 1.4 * (isCrit ? 1.6 : 1.0))
+        actionMsg = `${isCrit ? '💥 CHÍ MẠNG! ' : ''}+${healDmg.toLocaleString()} HP`
+        newAttackerRage = newAttackerRage + 40
+
+        let lowestAlly = attackerList.filter(a => a.hp > 0 && a.slotIndex !== -1).sort((a, b) => (a.hp / a.maxHp) - (b.hp / b.maxHp))[0]
+        if (lowestAlly) {
+          updatedAttackerList = attackerList.map(a => {
+            if (a.id === lowestAlly.id) {
+              return { ...a, hp: Math.min(a.maxHp, a.hp + healDmg) }
+            }
+            if (a.id === attacker!.id) {
+              return { ...a, rage: Math.min(a.maxRage || 100, newAttackerRage) }
+            }
+            return a
+          })
+        }
+      } else if (isUltimate) {
         audioEngine.playComboSFX()
         const mult = attacker.skill?.damageMultiplier || 2.0
         const rageBonus = 1 + (excessRage * 0.01) // +1% sát thương mỗi điểm nộ dư
         dmg = Math.floor(dmg * mult * rageBonus)
-        actionMsg = `[TUYỆT KỸ] ${attacker.skill?.name || 'Vung Vũ Khí'}!`
+        
+        actionMsg = `[TUYỆT KỸ] ${attacker.skill?.name || 'Vung Vũ Khí'}!${critText} -${dmg.toLocaleString()} HP`
         
         newAttackerRage = 0 // Reset nộ
         if (attacker.skill?.rageRecovery) {
@@ -613,15 +717,17 @@ export const useGameStore = create<GameState>((set, get) => ({
         }
       } else {
         audioEngine.playEquipSFX()
-        actionMsg = `${attacker.name} chém ${target.name}`
+        actionMsg = `${isCrit ? '💥 CHÍ MẠNG! ' : ''}-${dmg.toLocaleString()} HP`
         newAttackerRage = newAttackerRage + (attacker.role === 'DPS' ? 60 : 40)
       }
 
       // Check Counter-attack (Phản công)
       let isCounter = false
-      if (!isUltimate && target.role === 'Tank' && Math.random() < 0.3) {
+      let counterDmg = 0
+      if (!isUltimate && !isSupportHeal && target.role === 'Tank' && Math.random() < 0.35) {
          isCounter = true
-         actionMsg += ` ⚔️ Bị Phản đòn!`
+         counterDmg = Math.floor(target.atk * 0.6)
+         actionMsg += ` (Phản Kích -${counterDmg.toLocaleString()} HP)`
       }
 
       let targetHpBefore = target.hp
@@ -634,33 +740,40 @@ export const useGameStore = create<GameState>((set, get) => ({
         actionMsg += ` (Đoạt Mệnh +50 Nộ)`
       }
 
-      // Hợp Kích (Synergy Assist)
-      let assistAttacker = attackerList.find(a => a.role === 'Support' && a.id !== attacker!.id && a.hp > 0)
+      // Hợp Kích (Specific Synergy)
       let assistDmg = 0
-      if (isUltimate && assistAttacker && !isKill && Math.random() < 0.5) {
-         assistDmg = Math.floor(assistAttacker.atk * 0.8)
-         actionMsg += ` + Hợp Kích!`
-         finalTargetHp = Math.max(0, finalTargetHp - assistDmg)
-         isKill = finalTargetHp === 0
+      let synergyBanner: string | null = null
+      let assistAttackerId: string | null = null
+      let assistPartnerName: string = ''
+      let isAssistCrit = false
+
+      if (isUltimate && attacker.synergy) {
+        let assistAttacker = attackerList.find(a => a.id === attacker!.synergy!.partnerId && a.hp > 0 && a.slotIndex !== -1)
+        if (assistAttacker) {
+           assistAttackerId = assistAttacker.id
+           assistPartnerName = assistAttacker.name
+           isAssistCrit = Math.random() < 0.35
+           assistDmg = Math.floor(assistAttacker.atk * (isAssistCrit ? 2.2 : 1.5))
+           synergyBanner = `[HỢP KỸ] ${attacker.synergy.skillName}`
+        }
       }
 
       // Cập nhật máu và nộ cho attacker
-      let updatedAttackerList = attackerList.map(a => {
+      updatedAttackerList = updatedAttackerList.map(a => {
         if (a.id === attacker!.id) {
            return { ...a, rage: Math.min(a.maxRage || 100, newAttackerRage) }
         }
         if (isKill && a.role === 'Support') { 
-           // Support hồi nộ khi đồng đội kết thúc lượt/giết địch
            return { ...a, rage: Math.min(a.maxRage || 100, (a.rage || 0) + 5) }
         }
         return a
       })
 
-      // Cập nhật máu và nộ cho target
+      // Cập nhật máu và nộ cho target(s) trong đòn tuyệt kỹ chính
       let updatedTargetList = targetList.map(t => {
         if (t.id === target!.id) {
            let r = (t.rage || 0) + 15 + targetRageDelta
-           if (t.role === 'Tank') r += 15 // Tank bị đánh + thêm nộ
+           if (t.role === 'Tank') r += 15
            return { ...t, hp: finalTargetHp, rage: Math.max(0, Math.min(t.maxRage || 100, r)) }
         }
         return t
@@ -668,7 +781,6 @@ export const useGameStore = create<GameState>((set, get) => ({
 
       // Phản đòn trừ máu attacker
       if (isCounter) {
-        let counterDmg = Math.floor(target.atk * 0.5)
         updatedAttackerList = updatedAttackerList.map(a => {
            if (a.id === attacker!.id) {
              return { ...a, hp: Math.max(0, a.hp - counterDmg) }
@@ -677,27 +789,71 @@ export const useGameStore = create<GameState>((set, get) => ({
         })
       }
 
-      // Lưu State
+      // Bước 1: Thi triển đòn đánh (Chỉ hiện Banner & Text khi dùng Tuyệt Kỹ)
       if (isPlayerAttacking) {
         set({ 
           heroes: st.heroes.map(h => updatedAttackerList.find(a => a.id === h.id) || h), 
           enemies: updatedTargetList, 
-          actionText: actionMsg, 
+          actionText: isUltimate ? actionMsg : null, 
           comboBanner: isUltimate ? actionMsg : null 
         })
       } else {
         set({ 
           enemies: updatedAttackerList, 
           heroes: st.heroes.map(h => updatedTargetList.find(t => t.id === h.id) || h), 
-          actionText: actionMsg, 
+          actionText: isUltimate ? actionMsg : null, 
           comboBanner: isUltimate ? actionMsg : null 
         })
       }
 
       await sleep(delay * 0.8)
-      set({ activeAttackerId: null }) // Lùi về
-      await sleep(delay * 0.4)
-      
+      set({ activeAttackerId: null, comboBanner: null }) // Tướng chính lùi về & ẩn banner Tuyệt Kỹ
+
+      // Bước 2: Thi triển Hợp Kỹ của Tướng Phối hợp (Có khoảng nghỉ rõ ràng sau Tuyệt Kỹ)
+      if (synergyBanner && assistAttackerId) {
+        // Khoảng nghỉ giữa đòn Tuyệt Kỹ và đòn Hợp Kỹ
+        await sleep(delay * 0.6)
+        
+        // Hiện banner Hợp Kỹ riêng biệt & Tướng Hợp Kích lao lên
+        set({ 
+          activeAttackerId: assistAttackerId,
+          comboBanner: synergyBanner,
+          actionText: `${assistPartnerName} Hợp Kích:${isAssistCrit ? ' 💥 CHÍ MẠNG!' : ''} -${assistDmg.toLocaleString()} HP!`
+        })
+
+        // Tính sát thương hợp kích (nếu quái ban đầu đã gục, bồi vào quái tiếp theo)
+        let currentEnemies = get().enemies
+        let currentHeroes = get().heroes
+        let targetListForAssist = isPlayerAttacking ? currentEnemies : currentHeroes
+        let primaryTargetStillAlive = targetListForAssist.find(t => t.id === target!.id && t.hp > 0)
+
+        let updatedAssistTargets = targetListForAssist.map(t => {
+          if (primaryTargetStillAlive && t.id === target!.id) {
+            return { ...t, hp: Math.max(0, t.hp - assistDmg) }
+          } else if (!primaryTargetStillAlive) {
+            let nextAliveTarget = targetListForAssist.filter(x => x.hp > 0).sort((a, b) => a.slotIndex - b.slotIndex)[0]
+            if (nextAliveTarget && t.id === nextAliveTarget.id) {
+              return { ...t, hp: Math.max(0, t.hp - assistDmg) }
+            }
+          }
+          return t
+        })
+
+        if (isPlayerAttacking) {
+          set({ enemies: updatedAssistTargets })
+        } else {
+          set({ heroes: updatedAssistTargets })
+        }
+
+        await sleep(delay * 0.8)
+        set({ activeAttackerId: null, comboBanner: null })
+      } else {
+        await sleep(delay * 0.4)
+      }
+
+      // Khoảng nghỉ rõ ràng giữa các hành động của từng tướng/quái
+      await sleep(delay * 0.5)
+
       // Kiểm tra kết thúc trận
       st = get()
       const stillAliveEnemies = st.enemies.some(e => e.hp > 0)
@@ -710,6 +866,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     const checkAndExecuteUltimates = async (): Promise<boolean> => {
       let st = get();
       while (true) {
+        if (st.currentScreen !== 'BATTLE') return true;
+
         let candidates = [
           ...st.heroes.filter(h => h.slotIndex !== -1 && h.hp > 0 && (h.rage || 0) >= (h.maxRage || 100)).map(h => ({ ...h, isPlayer: true })),
           ...st.enemies.filter(e => e.hp > 0 && (e.rage || 0) >= (e.maxRage || 100)).map(e => ({ ...e, isPlayer: false }))
@@ -728,6 +886,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         let over = await executeAttack(nextUlt.isPlayer, nextUlt, true);
         if (over) return true;
         
+        await sleep(delay * 0.4); // Khoảng nghỉ giữa các đòn tuyệt kỹ liên tiếp
         st = get(); 
       }
       return false;
@@ -814,7 +973,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         actionText: null,
         comboBanner: null
       })
-      if (finalState.isAutoBattle) {
+      if (finalState.isAutoBattle && get().currentScreen === 'BATTLE') {
         setTimeout(() => get().executeTurn(), delay)
       }
     }

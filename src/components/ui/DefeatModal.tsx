@@ -33,7 +33,7 @@ export default function DefeatModal() {
       width: '100vw',
       height: '100vh',
       backgroundColor: 'rgba(0, 0, 0, 0.9)',
-      backdropFilter: 'blur(12px)',
+      
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',
