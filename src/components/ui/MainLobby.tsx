@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown } from 'lucide-react'
+import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
 import { cloudService, supabase } from '../../utils/supabaseClient'
@@ -10,6 +10,7 @@ export default function MainLobby() {
   const currentScreen = useGameStore(state => state.currentScreen)
   const setCurrentScreen = useGameStore(state => state.setCurrentScreen)
   const heroes = useGameStore(state => state.heroes)
+  const gold = useGameStore(state => state.gold)
   const activeBeastId = useGameStore(state => state.activeBeastId)
 
   const setShowSquadModal = useGameStore(state => state.setShowSquadModal)
@@ -146,6 +147,26 @@ export default function MainLobby() {
               </div>
             </div>
           </button>
+
+          {/* Số Vàng Hiện Có */}
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(161, 98, 7, 0.1) 100%)',
+            border: '2px solid #f1c40f',
+            borderRadius: '16px',
+            padding: '10px 18px',
+            boxShadow: '0 0 20px rgba(241, 196, 15, 0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <Coins size={26} color="#fef08a" />
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: '0.72rem', color: '#fef08a', textTransform: 'uppercase', fontWeight: 'bold' }}>VÀNG SỞ HỮU</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>
+                {gold.toLocaleString()} 🪙
+              </div>
+            </div>
+          </div>
 
           {/* Rương Treo Máy AFK Button */}
           <button
