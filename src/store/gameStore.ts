@@ -7,6 +7,15 @@ import { getTowerFloorData } from '../data/towerData'
 import { WORLD_BOSS_DATA } from '../data/worldBossData'
 import { type PvPOpponent } from '../data/pvpData'
 import { audioEngine } from '../utils/audioEngine'
+import { cloudService } from '../utils/supabaseClient'
+
+const triggerAutoCloudSave = () => {
+  if (typeof window !== 'undefined') {
+    setTimeout(() => {
+      cloudService.saveCloudProfile(useGameStore.getState())
+    }, 300)
+  }
+}
 
 interface GameState {
   heroes: HeroData[]
@@ -496,11 +505,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     }))
   },
 
-  startPvPChallenge: (opponent) => {
+  startPvPChallenge: (opponent: PvPOpponent) => {
     audioEngine.playClick()
     set((state) => ({
       gameMode: 'PVP',
-      enemies: opponent.defenseTeam.map(e => ({ ...e, hp: e.maxHp, rage: 0 })),
+      enemies: opponent.defenseTeam.map((e: HeroData) => ({ ...e, hp: e.maxHp, rage: 0 })),
       heroes: state.heroes.map(h => ({ ...h, rage: 0 })),
       turn: 1,
       currentScreen: 'BATTLE',
@@ -567,6 +576,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         })
       }
     }
+
+    triggerAutoCloudSave()
 
     return {
       gold: state.gold - cost,
@@ -978,6 +989,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         actionText: null,
         comboBanner: null
       })
+      triggerAutoCloudSave()
     } else if (aliveHeroes.length === 0) {
       set({
         showDefeatModal: true,
