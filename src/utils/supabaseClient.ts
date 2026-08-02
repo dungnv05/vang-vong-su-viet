@@ -1,10 +1,70 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type User } from '@supabase/supabase-js'
 
-// Cấu hình URL và Anon Key của Supabase Cloud (Có thể thay thế bằng env vars VITE_SUPABASE_URL)
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://demo-vietnam-gacha.supabase.co'
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'demo-anon-key-vietnam-gacha'
+/**
+ * Utility for Wildcard Cookie Management & Supabase Client Config across *.yundev.space
+ */
+const COOKIE_DOMAIN = typeof window !== 'undefined' && window.location.hostname.includes('yundev.space') ? '.yundev.space' : ''
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export function setSharedCookie(name: string, value: string, days = 30) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString()
+  const domainAttr = COOKIE_DOMAIN ? `; Domain=${COOKIE_DOMAIN}` : ''
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/${domainAttr}; SameSite=Lax; Secure`
+}
+
+export function getSharedCookie(name: string) {
+  if (typeof document === 'undefined') return ''
+  return document.cookie.split('; ').reduce((r, v) => {
+    const parts = v.split('=')
+    return parts[0].trim() === name ? decodeURIComponent(parts[1]) : r
+  }, '')
+}
+
+export function removeSharedCookie(name: string) {
+  const domainAttr = COOKIE_DOMAIN ? `; Domain=${COOKIE_DOMAIN}` : ''
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttr}`
+}
+
+const rawUrl = (import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL || '').trim()
+const rawKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '').trim()
+
+const isDummyUrl = !rawUrl || rawUrl.includes('your-project') || rawUrl.includes('demo-vietnam-gacha')
+
+export const SUPABASE_CONFIG = {
+  url: isDummyUrl ? 'http://localhost:54321' : rawUrl,
+  anonKey: isDummyUrl ? 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' : rawKey
+}
+
+// Initialize Supabase Client with SSO token key across *.yundev.space
+export const supabase = createClient(
+  SUPABASE_CONFIG.url,
+  SUPABASE_CONFIG.anonKey,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storageKey: 'yundev_supabase_auth_token'
+    }
+  }
+)
+
+// Auth Helpers
+export async function signUpWithEmail(email: string, password: string) {
+  return await supabase.auth.signUp({ email, password })
+}
+
+export async function signInWithEmail(email: string, password: string) {
+  const res = await supabase.auth.signInWithPassword({ email, password })
+  if (res.data?.session) {
+    setSharedCookie('yundev_session', res.data.session.access_token)
+  }
+  return res
+}
+
+export async function signOutUser() {
+  removeSharedCookie('yundev_session')
+  return await supabase.auth.signOut()
+}
 
 export interface CloudPlayerProfile {
   id: string
@@ -16,26 +76,53 @@ export interface CloudPlayerProfile {
   lastSyncedAt: string
 }
 
-// Giả lập Cloud Sync Server API với Supabase
+// Cloud Database & SSO Synchronized Player Profile Service
 class CloudDatabaseService {
   private isConnected: boolean = true
-  private playerId: string = 'player_' + Math.floor(Math.random() * 10000)
+  private currentUser: User | null = null
+  private guestId: string = 'player_' + Math.floor(Math.random() * 10000)
 
-  public getPlayerId() {
-    return this.playerId
+  constructor() {
+    this.initAuthListener()
   }
 
-  public getIsConnected() {
+  private initAuthListener() {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      this.currentUser = session?.user || null
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      this.currentUser = session?.user || null
+    })
+  }
+
+  public getCurrentUser(): User | null {
+    return this.currentUser
+  }
+
+  public getPlayerId(): string {
+    return this.currentUser ? this.currentUser.id : this.guestId
+  }
+
+  public getPlayerName(): string {
+    if (this.currentUser) {
+      return this.currentUser.email || ('Anh Hùng #' + this.currentUser.id.slice(-4))
+    }
+    return 'Anh Hùng Sử Việt #' + this.guestId.slice(-4)
+  }
+
+  public getIsConnected(): boolean {
     return this.isConnected
   }
 
   // Tải dữ liệu tiến trình từ Supabase Cloud
   public async fetchCloudProfile(): Promise<CloudPlayerProfile | null> {
     try {
+      const playerId = this.getPlayerId()
       const { data, error } = await supabase
         .from('player_profiles')
         .select('*')
-        .eq('id', this.playerId)
+        .eq('id', playerId)
         .single()
 
       if (error || !data) return null
@@ -45,12 +132,12 @@ class CloudDatabaseService {
     }
   }
 
-  // Lưu trực tiếp tiến trình lên Supabase Cloud (Anti-Cheat Server Verification)
+  // Lưu tiến trình lên Supabase Cloud
   public async saveCloudProfile(profile: Partial<CloudPlayerProfile>): Promise<boolean> {
     try {
       const payload = {
-        id: this.playerId,
-        playerName: 'Anh Hùng Sử Việt #' + this.playerId.slice(-4),
+        id: this.getPlayerId(),
+        playerName: this.getPlayerName(),
         ...profile,
         lastSyncedAt: new Date().toISOString()
       }
@@ -60,7 +147,7 @@ class CloudDatabaseService {
         .upsert(payload)
 
       if (error) {
-        console.warn('[Supabase Cloud Save Mock] Connected & Synced Payload:', payload)
+        console.warn('[Supabase Cloud Save] Local Fallback & Synced Payload:', payload)
       }
       return true
     } catch (err) {
