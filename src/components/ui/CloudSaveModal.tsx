@@ -5,19 +5,19 @@ import {
   signInWithEmail,
   signUpWithEmail,
   signOutUser,
-  supabase
+  supabase,
+  isSupabaseConfigured
 } from '../../utils/supabaseClient'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
-import { X, CloudCheck, Database, Trophy, RefreshCw, LogIn, LogOut, UserCheck, Lock, UserPlus } from 'lucide-react'
+import { X, CloudCheck, Database, Trophy, LogIn, LogOut, UserCheck, Lock, UserPlus, UploadCloud, DownloadCloud, AlertCircle } from 'lucide-react'
 
 export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const gold = useGameStore(state => state.gold)
-  const currentStageIndex = useGameStore(state => state.currentStageIndex)
-  const maxUnlockedStage = useGameStore(state => state.maxUnlockedStage)
-  const activeBeastId = useGameStore(state => state.activeBeastId)
+  const importGameState = useGameStore(state => state.importGameState)
 
   const [lastSyncTime, setLastSyncTime] = useState<string>(new Date().toLocaleTimeString())
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
+  const [leaderboard, setLeaderboard] = useState<any[]>([])
+  const [syncStatusMsg, setSyncStatusMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null)
 
   // Auth State
   const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null)
@@ -40,21 +40,60 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
     return () => subscription.unsubscribe()
   }, [])
 
-  const handleManualSync = async () => {
+  const loadLeaderboard = async () => {
+    const data = await cloudService.fetchLeaderboard()
+    if (data && data.length > 0) {
+      setLeaderboard(data)
+    }
+  }
+
+  const handleSaveToCloud = async () => {
     setIsSyncing(true)
-    await cloudService.saveCloudProfile({
-      gold,
-      currentStage: currentStageIndex,
-      maxUnlockedStage,
-      activeBeastId
-    })
-    setLastSyncTime(new Date().toLocaleTimeString())
+    setSyncStatusMsg({ type: 'info', text: 'Đang tải toàn bộ dữ liệu lên Supabase Cloud...' })
+    
+    const fullState = useGameStore.getState()
+    const success = await cloudService.saveCloudProfile(fullState)
+
+    if (success) {
+      setLastSyncTime(new Date().toLocaleTimeString())
+      setSyncStatusMsg({ type: 'success', text: 'Đã lưu toàn bộ tiến trình game lên Supabase Cloud thành công!' })
+      loadLeaderboard()
+    } else {
+      setSyncStatusMsg({ type: 'error', text: 'Không thể lưu lên Supabase Cloud. Vui lòng kiểm tra lại kết nối mạng.' })
+    }
+    setIsSyncing(false)
+  }
+
+  const handleLoadFromCloud = async () => {
+    setIsSyncing(true)
+    setSyncStatusMsg({ type: 'info', text: 'Đang kết nối Supabase Cloud để tải bản lưu...' })
+
+    const cloudData = await cloudService.fetchCloudProfile()
+    if (cloudData) {
+      if (cloudData.fullStateJson) {
+        importGameState(cloudData.fullStateJson)
+      } else {
+        importGameState({
+          gold: cloudData.gold,
+          currentStageIndex: cloudData.currentStageIndex,
+          maxUnlockedStage: cloudData.maxUnlockedStage,
+          towerFloor: cloudData.towerFloor,
+          maxTowerFloor: cloudData.maxTowerFloor,
+          pvpScore: cloudData.pvpScore,
+          worldBossTotalDamage: cloudData.worldBossTotalDamage,
+          activeBeastId: cloudData.activeBeastId
+        })
+      }
+      setSyncStatusMsg({ type: 'success', text: `Khôi phục thành công dữ liệu của ${cloudData.playerName} từ Supabase!` })
+    } else {
+      setSyncStatusMsg({ type: 'error', text: 'Không tìm thấy dữ liệu lưu đám mây cho tài khoản này.' })
+    }
     setIsSyncing(false)
   }
 
   useEffect(() => {
     if (isOpen) {
-      handleManualSync()
+      loadLeaderboard()
     }
   }, [isOpen])
 
@@ -74,7 +113,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         setCurrentUser(data.user)
         setShowAuthForm(false)
         setAuthMessage({ type: 'success', text: 'Đăng nhập thành công!' })
-        handleManualSync()
+        handleSaveToCloud()
       }
     } catch (err: any) {
       setAuthMessage({ type: 'error', text: err.message || 'Thao tác thất bại. Vui lòng thử lại.' })
@@ -308,117 +347,139 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           </div>
         )}
 
-        {/* Trạng Thái Kết Nối Cloud */}
+        {/* Trạng Thái & Nút Thao Tác Đồng Bộ Cloud */}
+        {syncStatusMsg && (
+          <div style={{
+            background: syncStatusMsg.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : syncStatusMsg.type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(56, 189, 248, 0.2)',
+            border: syncStatusMsg.type === 'error' ? '1px solid #ef4444' : syncStatusMsg.type === 'success' ? '1px solid #22c55e' : '1px solid #38bdf8',
+            color: syncStatusMsg.type === 'error' ? '#fca5a5' : syncStatusMsg.type === 'success' ? '#86efac' : '#7dd3fc',
+            padding: '12px 16px',
+            borderRadius: '12px',
+            fontSize: '0.88rem',
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <AlertCircle size={18} />
+            <span>{syncStatusMsg.text}</span>
+          </div>
+        )}
+
         <div style={{
           background: 'rgba(56, 189, 248, 0.1)',
           border: '1px solid #38bdf8',
-          borderRadius: '14px',
-          padding: '16px 20px',
-          marginBottom: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
+          borderRadius: '16px',
+          padding: '20px',
+          marginBottom: '24px'
         }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#7dd3fc' }}>
-              <Database size={18} /> Tên / Mã Người Chơi Cloud: <span style={{ color: '#fef08a' }}>{cloudService.getPlayerName()}</span>
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-              Lần đồng bộ Cloud gần nhất: <strong style={{ color: '#2ecc71' }}>{lastSyncTime}</strong> (Tự động đồng bộ khi quay Gacha & Thắng ải)
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#7dd3fc', fontSize: '1.05rem' }}>
+                <Database size={20} /> Tài Khoản Cloud: <span style={{ color: '#fef08a' }}>{cloudService.getPlayerName()}</span>
+              </div>
+              <div style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '4px' }}>
+                Đồng bộ lần cuối: <strong style={{ color: '#2ecc71' }}>{lastSyncTime}</strong> {isSupabaseConfigured ? '🟢 Supabase Cloud Active' : '🟡 Local Storage Active'}
+              </div>
             </div>
           </div>
 
-          <button
-            onClick={handleManualSync}
-            disabled={isSyncing}
-            style={{
-              background: 'linear-gradient(45deg, #0284c7, #38bdf8)',
-              border: 'none',
-              color: 'white',
-              borderRadius: '12px',
-              padding: '10px 18px',
-              fontWeight: 'bold',
-              fontSize: '0.85rem',
-              cursor: isSyncing ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <RefreshCw size={16} className={isSyncing ? 'spin' : ''} />
-            {isSyncing ? 'Đang Đồng Bộ...' : 'Đồng Bộ Ngay'}
-          </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleSaveToCloud}
+              disabled={isSyncing}
+              style={{
+                flex: 1,
+                minWidth: '200px',
+                background: 'linear-gradient(45deg, #0284c7, #38bdf8)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '12px',
+                padding: '12px 18px',
+                fontWeight: 'bold',
+                fontSize: '0.9rem',
+                cursor: isSyncing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 15px rgba(56, 189, 248, 0.3)'
+              }}
+            >
+              <UploadCloud size={20} className={isSyncing ? 'spin' : ''} />
+              {isSyncing ? 'Đang Lưu...' : '⬆️ Tải Tiến Trình Lên Cloud'}
+            </button>
+
+            <button
+              onClick={handleLoadFromCloud}
+              disabled={isSyncing}
+              style={{
+                flex: 1,
+                minWidth: '200px',
+                background: 'linear-gradient(45deg, #059669, #10b981)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '12px',
+                padding: '12px 18px',
+                fontWeight: 'bold',
+                fontSize: '0.9rem',
+                cursor: isSyncing ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+              }}
+            >
+              <DownloadCloud size={20} className={isSyncing ? 'spin' : ''} />
+              {isSyncing ? 'Đang Tải...' : '⬇️ Khôi Phục Dữ Liệu Từ Cloud'}
+            </button>
+          </div>
         </div>
 
         {/* Bảng Xếp Hạng Top Cao Thủ Cloud */}
         <div>
           <h3 style={{ margin: '0 0 14px 0', fontSize: '1.1rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Trophy color="#f1c40f" size={20} /> Bảng Xếp Hạng Top Cao Thủ Toàn Máy Chủ (Supabase Cloud)
+            <Trophy color="#f1c40f" size={20} /> Bảng Xếp Hạng Cao Thủ Toàn Máy Chủ (Supabase Cloud)
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{
-              background: 'rgba(212, 175, 55, 0.15)',
-              border: '1.5px solid #f1c40f',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.4rem' }}>🥇</span>
-                <div>
-                  <div style={{ fontWeight: 'bold', color: '#fef08a' }}>Minh Hoàng (Quân Vương Sử Việt)</div>
-                  <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải 5 (Ngọc Hồi - Đống Đa)</div>
+            {leaderboard.length > 0 ? (
+              leaderboard.map((player, idx) => (
+                <div key={player.id || idx} style={{
+                  background: idx === 0 ? 'rgba(212, 175, 55, 0.15)' : 'rgba(30, 41, 59, 0.6)',
+                  border: idx === 0 ? '1.5px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
+                    <div>
+                      <div style={{ fontWeight: 'bold', color: idx === 0 ? '#fef08a' : '#e2e8f0' }}>{player.player_name || 'Cao Thủ Sử Việt'}</div>
+                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải {player.max_unlocked_stage + 1} | Vàng: {Number(player.gold || 0).toLocaleString()}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontWeight: 'bold', color: idx === 0 ? '#f1c40f' : '#38bdf8', fontSize: '1.05rem' }}>
+                    ⚔️ {player.pvp_score || 1250} Điểm PvP
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div style={{
+                background: 'rgba(30, 41, 59, 0.6)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '16px',
+                textAlign: 'center',
+                color: '#94a3b8',
+                fontSize: '0.9rem'
+              }}>
+                Chưa có dữ liệu bảng xếp hạng từ Supabase Cloud. Bấm "⬆️ Tải Tiến Trình Lên Cloud" để ghi danh đầu tiên!
               </div>
-              <div style={{ fontWeight: 'bold', color: '#f1c40f', fontSize: '1.05rem' }}>
-                ⚔️ 38,500 Lực Chiến
-              </div>
-            </div>
-
-            <div style={{
-              background: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.4rem' }}>🥈</span>
-                <div>
-                  <div style={{ fontWeight: 'bold', color: '#e2e8f0' }}>Bảo Quốc (Đại Tướng Lam Sơn)</div>
-                  <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải 4 (Chi Lăng)</div>
-                </div>
-              </div>
-              <div style={{ fontWeight: 'bold', color: '#38bdf8', fontSize: '1.05rem' }}>
-                ⚔️ 24,100 Lực Chiến
-              </div>
-            </div>
-
-            <div style={{
-              background: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '1.4rem' }}>🥉</span>
-                <div>
-                  <div style={{ fontWeight: 'bold', color: '#e2e8f0' }}>{cloudService.getPlayerName()} (Bạn)</div>
-                  <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải {currentStageIndex + 1}</div>
-                </div>
-              </div>
-              <div style={{ fontWeight: 'bold', color: '#2ecc71', fontSize: '1.05rem' }}>
-                ⚔️ Đang Xếp Hạng...
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

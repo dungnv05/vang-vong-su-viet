@@ -81,19 +81,27 @@ export interface CloudPlayerProfile {
   id: string
   playerName: string
   gold: number
-  currentStage: number
+  currentStageIndex: number
   maxUnlockedStage: number
+  towerFloor: number
+  maxTowerFloor: number
+  pvpScore: number
+  worldBossTotalDamage: number
   activeBeastId: string
-  lastSyncedAt: string
+  fullStateJson?: any
+  lastSyncedAt?: string
 }
 
 // Cloud Database & SSO Synchronized Player Profile Service
 class CloudDatabaseService {
   private isConnected: boolean = true
   private currentUser: User | null = null
-  private guestId: string = 'player_' + Math.floor(Math.random() * 10000)
+  private guestId: string = localStorage.getItem('yundev_guest_id') || ('player_' + Math.floor(Math.random() * 100000))
 
   constructor() {
+    if (typeof window !== 'undefined' && !localStorage.getItem('yundev_guest_id')) {
+      localStorage.setItem('yundev_guest_id', this.guestId)
+    }
     this.initAuthListener()
   }
 
@@ -137,33 +145,103 @@ class CloudDatabaseService {
         .single()
 
       if (error || !data) return null
-      return data as CloudPlayerProfile
+      return {
+        id: data.id,
+        playerName: data.player_name || this.getPlayerName(),
+        gold: Number(data.gold || 5000),
+        currentStageIndex: Number(data.current_stage || 0),
+        maxUnlockedStage: Number(data.max_unlocked_stage || 0),
+        towerFloor: Number(data.tower_floor || 1),
+        maxTowerFloor: Number(data.max_tower_floor || 1),
+        pvpScore: Number(data.pvp_score || 1250),
+        worldBossTotalDamage: Number(data.world_boss_total_damage || 0),
+        activeBeastId: data.active_beast_id || 'beast_kim_quy',
+        fullStateJson: data.full_state_json || null,
+        lastSyncedAt: data.last_synced_at || new Date().toISOString()
+      }
     } catch {
       return null
     }
   }
 
-  // Lưu tiến trình lên Supabase Cloud
-  public async saveCloudProfile(profile: Partial<CloudPlayerProfile>): Promise<boolean> {
+  // Lưu tiến trình đầy đủ lên Supabase Cloud
+  public async saveCloudProfile(fullGameState: any): Promise<boolean> {
     try {
+      const playerId = this.getPlayerId()
+      const playerName = this.getPlayerName()
+
       const payload = {
-        id: this.getPlayerId(),
-        playerName: this.getPlayerName(),
-        ...profile,
-        lastSyncedAt: new Date().toISOString()
+        id: playerId,
+        player_name: playerName,
+        gold: fullGameState.gold || 5000,
+        current_stage: fullGameState.currentStageIndex || 0,
+        max_unlocked_stage: fullGameState.maxUnlockedStage || 0,
+        tower_floor: fullGameState.towerFloor || 1,
+        max_tower_floor: fullGameState.maxTowerFloor || 1,
+        pvp_score: fullGameState.pvpScore || 1250,
+        world_boss_total_damage: fullGameState.worldBossTotalDamage || 0,
+        active_beast_id: fullGameState.activeBeastId || 'beast_kim_quy',
+        full_state_json: fullGameState,
+        last_synced_at: new Date().toISOString()
       }
 
-      const { error } = await supabase
+      // 1. Upsert Profile
+      const { error: profileErr } = await supabase
         .from('player_profiles')
         .upsert(payload)
 
-      if (error) {
-        console.warn('[Supabase Cloud Save] Local Fallback & Synced Payload:', payload)
+      if (profileErr) {
+        console.warn('[Supabase Cloud Save Warning]:', profileErr)
       }
+
+      // 2. Upsert Heroes
+      if (Array.isArray(fullGameState.heroes)) {
+        const heroRecords = fullGameState.heroes.map((h: any) => ({
+          id: `${playerId}_${h.id}`,
+          player_id: playerId,
+          hero_name: h.name,
+          rarity: h.rarity || 'SR',
+          level: h.level || 1,
+          stars: h.stars || 1,
+          slot_index: h.slotIndex ?? -1,
+          equipped_item_ids: h.equippedItemIds || []
+        }))
+        await supabase.from('player_heroes').upsert(heroRecords)
+      }
+
+      // 3. Upsert Shards
+      if (fullGameState.shards && typeof fullGameState.shards === 'object') {
+        const shardRecords = Object.entries(fullGameState.shards).map(([heroName, count]) => ({
+          player_id: playerId,
+          hero_name: heroName,
+          count: count
+        }))
+        if (shardRecords.length > 0) {
+          await supabase.from('player_shards').upsert(shardRecords, { onConflict: 'player_id,hero_name' })
+        }
+      }
+
       return true
     } catch (err) {
-      console.warn('[Supabase Cloud Save Fallback]:', err)
+      console.warn('[Supabase Cloud Save Exception]:', err)
       return false
+    }
+  }
+
+  // Tải Bảng Xếp Hạng Top Cao Thủ từ Supabase Cloud
+  public async fetchLeaderboard(): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('player_profiles')
+        .select('*')
+        .order('max_unlocked_stage', { ascending: false })
+        .order('pvp_score', { ascending: false })
+        .limit(10)
+
+      if (error || !data) return []
+      return data
+    } catch {
+      return []
     }
   }
 }

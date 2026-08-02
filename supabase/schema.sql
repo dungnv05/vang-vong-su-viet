@@ -1,4 +1,4 @@
--- Schema Supabase PostgreSQL cho Game Sử Việt (Anti-Cheat Server Pure Cloud Save)
+-- Schema Supabase PostgreSQL cho Game Sử Việt (Pure Cloud Save)
 
 -- 1. Bảng Hồ Sơ Người Chơi (Player Profiles)
 CREATE TABLE IF NOT EXISTS public.player_profiles (
@@ -7,7 +7,12 @@ CREATE TABLE IF NOT EXISTS public.player_profiles (
     gold BIGINT NOT NULL DEFAULT 5000,
     current_stage INT NOT NULL DEFAULT 0,
     max_unlocked_stage INT NOT NULL DEFAULT 0,
+    tower_floor INT NOT NULL DEFAULT 1,
+    max_tower_floor INT NOT NULL DEFAULT 1,
+    pvp_score INT NOT NULL DEFAULT 1250,
+    world_boss_total_damage BIGINT NOT NULL DEFAULT 0,
     active_beast_id TEXT NOT NULL DEFAULT 'beast_kim_quy',
+    full_state_json JSONB DEFAULT '{}'::jsonb,
     last_synced_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -37,6 +42,10 @@ CREATE TABLE IF NOT EXISTS public.player_shards (
 ALTER TABLE public.player_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.player_heroes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.player_shards ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles;
+DROP POLICY IF EXISTS "Cho phép đọc ghi danh sách tướng" ON public.player_heroes;
+DROP POLICY IF EXISTS "Cho phép đọc ghi mảnh tướng" ON public.player_shards;
 
 CREATE POLICY "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles FOR ALL USING (true);
 CREATE POLICY "Cho phép đọc ghi danh sách tướng" ON public.player_heroes FOR ALL USING (true);

@@ -86,6 +86,7 @@ interface GameState {
   startWorldBossRaid: () => void
   startPvPChallenge: (opponent: PvPOpponent) => void
   pullGacha: (count: 1 | 10) => void
+  importGameState: (cloudState: Partial<GameState>) => void
   executeTurn: () => void
 }
 
@@ -574,6 +575,24 @@ export const useGameStore = create<GameState>((set, get) => ({
       gachaResults: results
     }
   }),
+
+  importGameState: (cloudState: Partial<GameState>) => {
+    set(state => ({
+      ...state,
+      ...cloudState,
+      heroes: cloudState.heroes || state.heroes,
+      inventory: cloudState.inventory || state.inventory,
+      shards: cloudState.shards || state.shards,
+      gold: cloudState.gold !== undefined ? cloudState.gold : state.gold,
+      currentStageIndex: cloudState.currentStageIndex !== undefined ? cloudState.currentStageIndex : state.currentStageIndex,
+      maxUnlockedStage: cloudState.maxUnlockedStage !== undefined ? cloudState.maxUnlockedStage : state.maxUnlockedStage,
+      towerFloor: cloudState.towerFloor !== undefined ? cloudState.towerFloor : state.towerFloor,
+      maxTowerFloor: cloudState.maxTowerFloor !== undefined ? cloudState.maxTowerFloor : state.maxTowerFloor,
+      pvpScore: cloudState.pvpScore !== undefined ? cloudState.pvpScore : state.pvpScore,
+      worldBossTotalDamage: cloudState.worldBossTotalDamage !== undefined ? cloudState.worldBossTotalDamage : state.worldBossTotalDamage,
+      activeBeastId: cloudState.activeBeastId || state.activeBeastId
+    }))
+  },
 
   executeTurn: async () => {
     const state = get()
