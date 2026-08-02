@@ -19,7 +19,7 @@ export const CAMPAIGN_STAGES: StageData[] = [
     name: 'Ải 1: Khởi Nghĩa Hát Môn',
     subtitle: 'Hai Bà Trưng Phất Cờ Khởi Nghĩa - Năm 40 AD',
     description: 'Trưng Trắc & Trưng Nhị nổi dậy trả thù nhà nợ nước, đánh đuổi Thái thú Tô Định.',
-    rewardGold: 800,
+    rewardGold: 1000,
     bossName: 'Tô Định',
     enemies: [
       { id: 'e1_0', name: 'Lính Tiên Phong Hán', role: 'Tank', hp: 800, maxHp: 800, atk: 50, color: '#34495e', slotIndex: 0, level: 2, stars: 1, equippedItemIds: [], isEnemy: true, rage: 0, maxRage: 100 },

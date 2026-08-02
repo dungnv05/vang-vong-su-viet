@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Coins, ArrowRight, Home } from 'lucide-react'
 import { MOCK_ITEMS, type ItemData } from '../../data/items'
+import { CAMPAIGN_STAGES } from '../../data/stages'
 
 export default function VictoryModal() {
   const showVictoryModal = useGameStore(state => state.showVictoryModal)
@@ -10,6 +11,7 @@ export default function VictoryModal() {
   const nextStage = useGameStore(state => state.nextStage)
   const gameMode = useGameStore(state => state.gameMode)
   const towerFloor = useGameStore(state => state.towerFloor)
+  const currentStageIndex = useGameStore(state => state.currentStageIndex)
   const worldBossTotalDamage = useGameStore(state => state.worldBossTotalDamage)
 
   const [droppedItem, setDroppedItem] = useState<ItemData | null>(null)
@@ -23,6 +25,13 @@ export default function VictoryModal() {
   }, [showVictoryModal])
 
   if (!showVictoryModal) return null
+
+  const currentStage = CAMPAIGN_STAGES[currentStageIndex]
+  let victoryRewardGold = 1000
+  if (gameMode === 'WORLD_BOSS') victoryRewardGold = 15000
+  else if (gameMode === 'PVP') victoryRewardGold = 8000
+  else if (gameMode === 'TOWER') victoryRewardGold = 5000
+  else victoryRewardGold = currentStage ? currentStage.rewardGold : 1000
 
   const handleReturnLobby = () => {
     setShowVictoryModal(false)
@@ -97,7 +106,7 @@ export default function VictoryModal() {
           <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Coins size={24} color="#f1c40f" />
-              <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#fef08a' }}>+10,000 Vàng</span>
+              <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#fef08a' }}>+{victoryRewardGold.toLocaleString()} Vàng</span>
             </div>
 
             {droppedItem && (
