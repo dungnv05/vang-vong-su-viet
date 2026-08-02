@@ -24,15 +24,26 @@ export function removeSharedCookie(name: string) {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttr}`
 }
 
-const rawUrl = (import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL || '').trim()
-const rawKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '').trim()
+// Read Supabase environment variables from Vite env (VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY)
+const envUrl = (import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL || '').trim()
+const envAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '').trim()
 
-const isDummyUrl = !rawUrl || rawUrl.includes('your-project') || rawUrl.includes('demo-vietnam-gacha')
+// Local development fallbacks if environment variables are not set
+const LOCAL_FALLBACK_URL = 'http://localhost:54321'
+const LOCAL_FALLBACK_KEY = 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH'
 
 export const SUPABASE_CONFIG = {
-  url: isDummyUrl ? 'http://localhost:54321' : rawUrl,
-  anonKey: isDummyUrl ? 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' : rawKey
+  url: envUrl || LOCAL_FALLBACK_URL,
+  anonKey: envAnonKey || LOCAL_FALLBACK_KEY
 }
+
+// Helper flag to check if custom environment variables are provided
+export const isSupabaseConfigured = Boolean(
+  envUrl &&
+  envAnonKey &&
+  !envUrl.includes('your-project') &&
+  !envUrl.includes('localhost')
+)
 
 // Initialize Supabase Client with SSO token key across *.yundev.space
 export const supabase = createClient(
