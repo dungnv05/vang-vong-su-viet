@@ -1,0 +1,46 @@
+{
+  "h7": {
+    "name": "Thánh Gióng",
+    "scale": 1.0,
+    "rotation": [0, 0, 0],
+    "positionOffset": [0, 0, 0],
+    "animations": {
+      "idle": "Idle",
+      "attack": "Attack",
+      "ultimate": "Skill"
+    }
+  },
+  "h3": {
+    "name": "Trần Hưng Đạo",
+    "scale": 1.0,
+    "rotation": [0, 0, 0],
+    "positionOffset": [0, 0, 0],
+    "animations": {
+      "idle": "Idle",
+      "attack": "Attack",
+      "ultimate": "Skill"
+    }
+  },
+  "h4": {
+    "name": "Quang Trung",
+    "scale": 1.0,
+    "rotation": [0, 3.14, 0],
+    "positionOffset": [0, -0.4, 0]
+  },
+  "h1": {
+    "name": "Lê Lợi",
+    "scale": 1.0,
+    "rotation": [0, 1.57, 0],
+    "positionOffset": [0, -0.4, 0]
+  },
+  "h6": {
+    "name": "Bà Triệu",
+    "scale": 0.015,
+    "positionOffset": [0, -0.4, 0],
+    "animations": {
+      "idle": "Idle",
+      "attack": "Attack",
+      "ultimate": "Skill"
+    }
+  }
+}

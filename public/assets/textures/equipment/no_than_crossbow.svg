@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bronzeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="cyanMagic" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="#0f172a" rx="32"/>
+
+  <!-- Cánh Nỏ Thần Đông Sơn -->
+  <path d="M 80 200 Q 256 80 432 200 Q 256 160 80 200 Z" fill="url(#bronzeGradient)" stroke="#38bdf8" stroke-width="3"/>
+  <path d="M 100 210 Q 256 120 412 210" stroke="url(#cyanMagic)" stroke-width="4" fill="none"/>
+
+  <!-- Thân Nỏ & Rãnh Tên -->
+  <rect x="236" y="150" width="40" height="260" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="256" y1="130" x2="256" y2="400" stroke="#7dd3fc" stroke-width="3" stroke-dasharray="8,4"/>
+
+  <!-- Mặt Trời Đông Sơn Khắc Nổi Cửa Nỏ -->
+  <circle cx="256" cy="220" r="28" fill="#0284c7" stroke="#7dd3fc" stroke-width="3"/>
+  <path d="M 256 185 L 256 255 M 221 220 L 291 220 M 231 195 L 281 245 M 231 245 L 281 195" stroke="#fef08a" stroke-width="2"/>
+</svg>
