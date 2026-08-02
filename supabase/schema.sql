@@ -47,6 +47,12 @@ DROP POLICY IF EXISTS "Cho phép tất cả người chơi đọc ghi dữ liệ
 DROP POLICY IF EXISTS "Cho phép đọc ghi danh sách tướng" ON public.player_heroes;
 DROP POLICY IF EXISTS "Cho phép đọc ghi mảnh tướng" ON public.player_shards;
 
-CREATE POLICY "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles FOR ALL USING (true);
-CREATE POLICY "Cho phép đọc ghi danh sách tướng" ON public.player_heroes FOR ALL USING (true);
-CREATE POLICY "Cho phép đọc ghi mảnh tướng" ON public.player_shards FOR ALL USING (true);
+CREATE POLICY "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Cho phép đọc ghi danh sách tướng" ON public.player_heroes FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Cho phép đọc ghi mảnh tướng" ON public.player_shards FOR ALL USING (true) WITH CHECK (true);
+
+-- Cấp quyền truy cập đầy đủ cho anon (khách) và authenticated (đã đăng nhập)
+GRANT ALL ON public.player_profiles TO anon, authenticated;
+GRANT ALL ON public.player_heroes TO anon, authenticated;
+GRANT ALL ON public.player_shards TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;

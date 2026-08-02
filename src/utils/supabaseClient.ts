@@ -161,6 +161,7 @@ class CloudDatabaseService {
 
   // Tải dữ liệu tiến trình từ Supabase Cloud
   public async fetchCloudProfile(): Promise<CloudPlayerProfile | null> {
+    if (!isSupabaseConfigured) return null
     try {
       const playerId = this.getPlayerId()
       const { data, error } = await supabase
@@ -191,6 +192,7 @@ class CloudDatabaseService {
 
   // Lưu tiến trình đầy đủ lên Supabase Cloud
   public async saveCloudProfile(fullGameState: any): Promise<boolean> {
+    if (!isSupabaseConfigured) return false
     try {
       const playerId = this.getPlayerId()
       const playerName = this.getPlayerName()
@@ -255,6 +257,7 @@ class CloudDatabaseService {
 
   // Tải Bảng Xếp Hạng Top Cao Thủ từ Supabase Cloud
   public async fetchLeaderboard(): Promise<any[]> {
+    if (!isSupabaseConfigured) return []
     try {
       const { data, error } = await supabase
         .from('player_profiles')
