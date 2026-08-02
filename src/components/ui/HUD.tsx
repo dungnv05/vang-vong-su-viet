@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Swords, Move, Map, Volume2, VolumeX, Home, Zap, Bot, Star } from 'lucide-react'
 import HeroModal from './HeroModal'
@@ -19,7 +18,8 @@ import MainLobby from './MainLobby'
 import { CAMPAIGN_STAGES } from '../../data/stages'
 
 export default function HUD() {
-  const [showCloudModal, setShowCloudModal] = useState<boolean>(false)
+  const showCloudModal = useGameStore(state => state.showCloudModal)
+  const setShowCloudModal = useGameStore(state => state.setShowCloudModal)
 
   const turn = useGameStore(state => state.turn)
   const heroes = useGameStore(state => state.heroes)

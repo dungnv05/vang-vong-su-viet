@@ -58,6 +58,7 @@ interface GameState {
   showDefeatModal: boolean
   lastIdleClaimTime: number
   showIdleModal: boolean
+  showCloudModal: boolean
   
   // Actions
   setCurrentScreen: (screen: 'LOBBY' | 'BATTLE') => void
@@ -78,6 +79,7 @@ interface GameState {
   setShowRankModal: (show: boolean) => void
   setShowDefeatModal: (show: boolean) => void
   setShowIdleModal: (show: boolean) => void
+  setShowCloudModal: (show: boolean) => void
   getIdleRewards: () => { gold: number; shards: number; elapsedSec: number; goldRatePerSec: number }
   claimIdleRewards: () => { gold: number; shards: number }
   setRankLevel: (level: number) => void
@@ -140,6 +142,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   showDefeatModal: false,
   lastIdleClaimTime: Date.now() - 3600 * 1000 * 2.5,
   showIdleModal: false,
+  showCloudModal: false,
 
   setCurrentScreen: (screen) => {
     audioEngine.playClick()
@@ -230,6 +233,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   setShowIdleModal: (show) => {
     audioEngine.playClick()
     set({ showIdleModal: show })
+  },
+  setShowCloudModal: (show) => {
+    audioEngine.playClick()
+    set({ showCloudModal: show })
   },
 
   getIdleRewards: () => {
