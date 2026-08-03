@@ -1,7 +1,7 @@
 # 🎨 TOÀN BỘ PROMPT SINH ẢNH AI CHO VANG VỌNG SỬ VIỆT 3D
 
 > **Công cụ khuyến dùng:** Midjourney v6, Stable Diffusion XL, Leonardo AI, hoặc Flux.
-> **Lưu ý chung:** Tất cả prompt đều thiết kế cho phong cách `epic digital fantasy art`, phù hợp game Gacha thẻ bài lịch sử Việt Nam.
+> **Lưu ý chung:** Tất cả prompt đều thiết kế cho phong cách `realistic fantasy portrait`, phù hợp game Gacha thẻ bài lịch sử Việt Nam.
 
 ---
 
@@ -23,7 +23,7 @@
 ### Quy tắc chung cho Avatar:
 - Góc máy: Close-up head and shoulders portrait, centered face, looking at viewer
 - Nền: Soft bokeh background, depth of field, glowing particles
-- Phong cách: Epic digital fantasy character portrait, 8k, artstation quality
+- Phong cách: realistic realistic fantasy portrait, 8k, artstation quality
 - Ánh sáng: Dramatic Rembrandt lighting, rim light
 
 ---
@@ -33,13 +33,13 @@
 #### 1.1 Trần Hưng Đạo — Hưng Đạo Đại Vương
 **Tên file:** `tran_hung_dao.png`
 ```
-Close-up head and shoulders portrait of legendary Vietnamese general Tran Hung Dao, heroic handsome middle-aged man, sharp determined eyes, thick eyebrows, short black beard, wearing a majestic golden dragon headband (khan dong) with jade lotus ornament, ancient bronze and gold chest armor with dragon engravings, crimson silk cape over one shoulder, looking at viewer with fierce determination, soft warm golden bokeh background with floating embers and ancient battle flags, dramatic Rembrandt lighting, epic digital fantasy character portrait, 8k resolution, artstation trending --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of legendary Vietnamese general Tran Hung Dao, heroic handsome middle-aged man, sharp determined eyes, thick eyebrows, short black beard, wearing a majestic golden dragon headband (khan dong) with jade lotus ornament, ancient bronze and gold chest armor with dragon engravings, crimson silk cape over one shoulder, looking at viewer with fierce determination, soft warm golden bokeh background with floating embers and ancient battle flags, dramatic Rembrandt lighting, realistic realistic fantasy portrait, 8k resolution, artstation trending --ar 1:1 --v 6.0
 ```
 
 #### 1.2 Quang Trung — Bắc Bình Vương
 **Tên file:** `quang_trung.png`
 ```
-Close-up head and shoulders portrait of emperor Quang Trung Nguyen Hue, fierce young Vietnamese warrior king, intense burning eyes full of ambition, strong jawline, wearing a crimson dragon war helmet with ornate gold trim and red silk tassel, dark red lacquered chest armor with tiger motifs, red battle scarf tied around neck, heroic confident expression, fiery red and orange bokeh background with thunder sparks and smoke of war, dramatic side lighting, photorealistic fantasy portrait, 8k detail --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of emperor Quang Trung Nguyen Hue, fierce young Vietnamese warrior king, intense burning eyes full of ambition, strong jawline, wearing a crimson dragon war helmet with ornate gold trim and red silk tassel, dark red lacquered chest armor with tiger motifs, red battle scarf tied around neck, heroic confident expression, fiery red and orange bokeh background with thunder sparks and smoke of war, dramatic side lighting, photorealistic realistic fantasy portrait, 8k detail --ar 1:1 --v 6.0
 ```
 
 #### 1.3 Bà Triệu — Nhụy Kiều Tướng Quân
@@ -51,13 +51,13 @@ Close-up head and shoulders portrait of Vietnamese warrior queen Lady Trieu (Ba 
 #### 1.4 Đinh Tiên Hoàng — Vạn Thắng Vương
 **Tên file:** `dinh_tien_hoang.png`
 ```
-Close-up head and shoulders portrait of Vietnamese emperor Dinh Tien Hoang (Dinh Bo Linh), rugged battle-hardened warrior king, sharp cunning eyes, strong weathered face with a scar, black hair tied in a topknot with golden dragon crown, dark iron and gold armor with lotus engravings, holding a ceremonial dragon scepter near shoulder, intense golden bokeh background with ancient fortress silhouettes, dramatic chiaroscuro lighting, epic digital fantasy art, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese emperor Dinh Tien Hoang (Dinh Bo Linh), rugged battle-hardened warrior king, sharp cunning eyes, strong weathered face with a scar, black hair tied in a topknot with golden dragon crown, dark iron and gold armor with lotus engravings, holding a ceremonial dragon scepter near shoulder, intense golden bokeh background with ancient fortress silhouettes, dramatic chiaroscuro lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.5 Trần Quốc Toản — Hoài Văn Hầu
 **Tên file:** `tran_quoc_toan.png`
 ```
-Close-up head and shoulders portrait of young Vietnamese prince-warrior Tran Quoc Toan, handsome teenage boy around 16 years old, fierce youthful eyes burning with patriotic rage, headband with a torn red battle flag, lightweight leather and bronze shoulder armor, fist clenched crushing a small orange in his hand (symbolic), fiery red bokeh background with war drums and battle smoke, dynamic dramatic lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of young Vietnamese prince-warrior Tran Quoc Toan, handsome teenage boy around 16 years old, fierce youthful eyes burning with patriotic rage, headband with a torn red battle flag, lightweight leather and bronze shoulder armor, fist clenched crushing a small orange in his hand (symbolic), fiery red bokeh background with war drums and battle smoke, dynamic dramatic lighting, realistic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 ---
@@ -67,43 +67,43 @@ Close-up head and shoulders portrait of young Vietnamese prince-warrior Tran Quo
 #### 1.6 Lê Lợi — Bình Định Vương
 **Tên file:** `le_loi.png`
 ```
-Close-up head and shoulders portrait of King Le Loi, wise and regal Vietnamese general, calm determined eyes showing years of hardship and resilience, neatly trimmed beard, wearing a royal yellow silk headband (khan dong) with dragon embroidery, simple but dignified dark green and gold shoulder armor, a faint golden glow of the sacred Thuan Thien sword visible near his shoulder, warm golden bokeh background with autumn forest and mountain mist, Rembrandt lighting, epic digital fantasy art, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of King Le Loi, wise and regal Vietnamese general, calm determined eyes showing years of hardship and resilience, neatly trimmed beard, wearing a royal yellow silk headband (khan dong) with dragon embroidery, simple but dignified dark green and gold shoulder armor, a faint golden glow of the sacred Thuan Thien sword visible near his shoulder, warm golden bokeh background with autumn forest and mountain mist, Rembrandt lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.7 Nguyễn Trãi — Ức Trai Tiên Sinh
 **Tên file:** `nguyen_trai.png`
 ```
-Close-up head and shoulders portrait of Vietnamese scholar-strategist Nguyen Trai, intellectual handsome middle-aged statesman, calm serene eyes radiating wisdom, thin elegant mustache, wearing a traditional blue silk mandarin scholar cap (mu cung), deep blue and white scholar robes with subtle ink-brush cloud patterns, holding a calligraphy brush near his chin, soft bamboo forest bokeh background with floating ink particles and scrolls, gentle warm lighting, painterly digital art style, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese scholar-strategist Nguyen Trai, intellectual handsome middle-aged statesman, calm serene eyes radiating wisdom, thin elegant mustache, wearing a traditional blue silk mandarin scholar cap (mu cung), deep blue and white scholar robes with subtle ink-brush cloud patterns, holding a calligraphy brush near his chin, soft bamboo forest bokeh background with floating ink particles and scrolls, gentle warm lighting, painterly realistic fantasy portrait style, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.8 Ngô Quyền — Tiền Ngô Vương
 **Tên file:** `ngo_quyen.png`
 ```
-Close-up head and shoulders portrait of Vietnamese king Ngo Quyen, strong resolute naval commander, broad face with thick eyebrows and determined jaw, wearing a green and bronze battle helmet with river wave motifs, dark green scaled armor with iron studs, a wooden stake (Bach Dang stake) visible near his shoulder, deep emerald green bokeh background with river water reflections and moonlight, dramatic lighting, epic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese king Ngo Quyen, strong resolute naval commander, broad face with thick eyebrows and determined jaw, wearing a green and bronze battle helmet with river wave motifs, dark green scaled armor with iron studs, a wooden stake (Bach Dang stake) visible near his shoulder, deep emerald green bokeh background with river water reflections and moonlight, dramatic lighting, epic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.9 Hai Bà Trưng — Trưng Vương
 **Tên file:** `hai_ba_trung.png`
 ```
-Close-up head and shoulders portrait of two Vietnamese warrior queens Trung Trac and Trung Nhi standing side by side, two beautiful fierce women, elder sister has commanding eyes and gold crown, younger sister has bold fierce expression with silver headpiece, both wearing ancient bronze Dong Son armor with red silk sashes, pink lotus flowers in the background, soft pink and emerald bokeh with river mist, elegant dramatic lighting, high quality digital painting, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of two Vietnamese warrior queens Trung Trac and Trung Nhi standing side by side, two beautiful fierce women, elder sister has commanding eyes and gold crown, younger sister has bold fierce expression with silver headpiece, both wearing ancient bronze Dong Son armor with red silk sashes, pink lotus flowers in the background, soft pink and emerald bokeh with river mist, elegant dramatic lighting, high quality realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.10 Lý Thường Kiệt — Thái Úy Quốc Công
 **Tên file:** `ly_thuong_kiet.png`
 ```
-Close-up head and shoulders portrait of Vietnamese general Ly Thuong Kiet, dignified elderly commander with white hair and long thin white beard, wise penetrating eyes, wearing a dark blue mandarin military cap with gold phoenix ornament, dark blue and silver ceremonial armor, a scroll tucked near his shoulder representing the poem Nam Quoc Son Ha, deep navy blue bokeh background with starry night sky and fortress walls, soft moonlight, epic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese general Ly Thuong Kiet, dignified elderly commander with white hair and long thin white beard, wise penetrating eyes, wearing a dark blue mandarin military cap with gold phoenix ornament, dark blue and silver ceremonial armor, a scroll tucked near his shoulder representing the poem Nam Quoc Son Ha, deep navy blue bokeh background with starry night sky and fortress walls, soft moonlight, epic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.11 Lê Đại Hành — Lê Hoàn Hoàng Đế
 **Tên file:** `le_dai_hanh.png`
 ```
-Close-up head and shoulders portrait of Vietnamese emperor Le Dai Hanh (Le Hoan), strong commanding warrior-king, broad shoulders, intense battle-ready eyes, wearing an imperial dark green and gold dragon crown, heavy iron and bronze chest armor with mountain motifs, dark green war cape, deep forest green bokeh background with misty mountains and ancient citadel, dramatic warm lighting, epic digital fantasy art, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese emperor Le Dai Hanh (Le Hoan), strong commanding warrior-king, broad shoulders, intense battle-ready eyes, wearing an imperial dark green and gold dragon crown, heavy iron and bronze chest armor with mountain motifs, dark green war cape, deep forest green bokeh background with misty mountains and ancient citadel, dramatic warm lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.12 Bố Cái Đại Vương — Phùng Hưng
 **Tên file:** `phung_hung.png`
 ```
-Close-up head and shoulders portrait of Vietnamese rebel hero Phung Hung (Bo Cai Dai Vuong), incredibly muscular powerful man, wild fierce eyes showing raw strength, thick black hair tied back, wearing simple bronze and leather warrior vest showing massive arms, a tiger claw necklace around his thick neck, deep emerald and earth-tone bokeh background with jungle and wild elephants silhouette, dramatic harsh lighting, gritty fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese rebel hero Phung Hung (Bo Cai Dai Vuong), incredibly muscular powerful man, wild fierce eyes showing raw strength, thick black hair tied back, wearing simple bronze and leather warrior vest showing massive arms, a tiger claw necklace around his thick neck, deep emerald and earth-tone bokeh background with jungle and wild elephants silhouette, dramatic harsh lighting, gritty realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 ---
@@ -113,19 +113,19 @@ Close-up head and shoulders portrait of Vietnamese rebel hero Phung Hung (Bo Cai
 #### 1.13 Phạm Ngũ Lão — Điện Thần Tướng Quân
 **Tên file:** `pham_ngu_lao.png`
 ```
-Close-up head and shoulders portrait of Vietnamese warrior Pham Ngu Lao, young strong soldier, focused intense eyes, wearing a simple green cloth headband, lightweight leather and bronze shoulder guards, holding a large bamboo spear near his shoulder, green forest bokeh background with rice fields and distant mountains, natural warm sunlight, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese warrior Pham Ngu Lao, young strong soldier, focused intense eyes, wearing a simple green cloth headband, lightweight leather and bronze shoulder guards, holding a large bamboo spear near his shoulder, green forest bokeh background with rice fields and distant mountains, natural warm sunlight, realistic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.14 Yết Kiêu — Thần Thủy Chiến
 **Tên file:** `yet_kieu.png`
 ```
-Close-up head and shoulders portrait of Vietnamese underwater warrior Yet Kieu, lean athletic young man with sharp aquatic eyes, wet black hair slicked back, bare muscular shoulders with blue wave tattoos, a rope and knife strapped across his chest, deep ocean blue bokeh background with underwater bubbles and moonlit river surface above, cool blue dramatic lighting, fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese underwater warrior Yet Kieu, lean athletic young man with sharp aquatic eyes, wet black hair slicked back, bare muscular shoulders with blue wave tattoos, a rope and knife strapped across his chest, deep ocean blue bokeh background with underwater bubbles and moonlit river surface above, cool blue dramatic lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.15 Dã Tượng — Tướng Quân Huấn Luyện Voi
 **Tên file:** `da_tuong.png`
 ```
-Close-up head and shoulders portrait of Vietnamese elephant commander Da Tuong, burly strong man with kind but fierce eyes, dark weathered skin, wearing a green and brown leather vest with elephant tusk ornaments, a small elephant figurine pendant around his neck, olive green and brown bokeh background with jungle canopy and distant elephant silhouettes, warm natural lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese elephant commander Da Tuong, burly strong man with kind but fierce eyes, dark weathered skin, wearing a green and brown leather vest with elephant tusk ornaments, a small elephant figurine pendant around his neck, olive green and brown bokeh background with jungle canopy and distant elephant silhouettes, warm natural lighting, realistic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.16 Thánh Gióng — Phù Đổng Thiên Vương
@@ -141,39 +141,39 @@ Epic anime portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warr
 #### 1.17 Tô Định — Thái Thú Đông Hán (Boss Ải 1)
 **Tên file:** `to_dinh.png`
 ```
-Evil Han dynasty warlord boss To Dinh, dark aggressive armor, menacing warlord face portrait, red glowing eyes, fantasy digital art, 8k --ar 1:1 --v 6.0
+Evil Han dynasty warlord boss To Dinh, dark aggressive armor, menacing warlord face portrait, red glowing eyes, fantasy realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.18 Lưu Hoằng Tháo — Chủ Tướng Nam Hán (Boss Ải 2)
 **Tên file:** `luu_hoang_thao.png`
 ```
-Liu Hongcao, Southern Han naval commander boss, arrogant face, wearing ornate blue and silver armor, standing on a warship, digital art, 8k --ar 1:1 --v 6.0
+Liu Hongcao, Southern Han naval commander boss, arrogant face, wearing ornate blue and silver armor, standing on a warship, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.19 Ô Mã Nhi — Đại Tướng Nguyên Mông (Boss Ải 3)
 **Tên file:** `o_ma_nhi.png`
 ```
-Mongol general enemy boss Omar, fierce barbarian warlord with fur helmet and spiked armor, dark digital art portrait, intimidating, 8k --ar 1:1 --v 6.0
+Mongol general enemy boss Omar, fierce barbarian warlord with fur helmet and spiked armor, dark realistic fantasy portrait portrait, intimidating, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.20 Vương Thông — Tướng Nhà Minh (Boss Ải 4)
 **Tên file:** `vuong_thong.png`
 ```
-Ming Dynasty commander boss Wang Tong, wearing heavy silver plate armor, holding a large guan dao, stern and tactical expression, digital art, 8k --ar 1:1 --v 6.0
+Ming Dynasty commander boss Wang Tong, wearing heavy silver plate armor, holding a large guan dao, stern and tactical expression, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.21 Sầm Nghi Đống — Đô Đốc Nhà Thanh (Boss Ải 5)
 **Tên file:** `sam_nghi_dong.png`
 ```
-Qing Dynasty commander boss Cen Yidong, wearing traditional Qing military armor with a tiger motif, fierce expression, holding a massive weapon, digital art, 8k --ar 1:1 --v 6.0
+Qing Dynasty commander boss Cen Yidong, wearing traditional Qing military armor with a tiger motif, fierce expression, holding a massive weapon, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.22 Quái Vật Phụ (Lính Tiên Phong / Kỵ Binh / Bát Kỳ Binh)
 **Tên file:** `linh_han.png`, `ky_binh.png`, `bat_ky.png`
 ```
-Ancient Han dynasty foot soldier, wearing standard iron infantry armor, holding a spear, dark menacing look, fantasy concept art, 8k --ar 1:1 --v 6.0
-Mongol cavalry warrior, riding a fierce war horse, wearing leather and iron armor, holding a bow and arrow, dynamic action, digital art, 8k --ar 1:1 --v 6.0
-Qing Dynasty Eight Banners elite soldier, wearing yellow and red studded armor, holding a musket rifle, disciplined and deadly, digital art, 8k --ar 1:1 --v 6.0
+Ancient Han dynasty foot soldier, wearing standard iron infantry armor, holding a spear, dark menacing look, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Mongol cavalry warrior, riding a fierce war horse, wearing leather and iron armor, holding a bow and arrow, dynamic action, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Qing Dynasty Eight Banners elite soldier, wearing yellow and red studded armor, holding a musket rifle, disciplined and deadly, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 ---

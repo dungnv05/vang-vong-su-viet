@@ -22,72 +22,72 @@ CHARACTER_PROMPTS = [
     # ---- VÕ TƯỚNG ----
     {
         "filename": "src/assets/heroes/avatars/thanh_giong.png",
-        "prompt": "Epic anime portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warrior in golden glowing armor riding a fiery iron horse, holding a bamboo spear, dark fantasy background, HD detailed 8k"
+        "prompt": "Epic realistic fantasy portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warrior in golden glowing armor riding a fiery iron horse, holding a bamboo spear, dark fantasy background, HD detailed 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/le_loi.png",
-        "prompt": "Emperor Le Loi of Vietnam holding the glowing golden divine sword Thuan Thien, wearing royal dragon armor, heroic Vietnamese king portrait, digital anime art, 8k"
+        "prompt": "Emperor Le Loi of Vietnam holding the glowing golden divine sword Thuan Thien, wearing royal dragon armor, heroic Vietnamese king, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/nguyen_trai.png",
-        "prompt": "Nguyen Trai ancient Vietnamese scholar strategist, wearing blue traditional royal robes holding a calligraphy scroll and sword, dignified portrait, digital anime art, 8k"
+        "prompt": "Nguyen Trai ancient Vietnamese scholar strategist, wearing blue traditional royal robes holding a calligraphy scroll and sword, dignified, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/tran_hung_dao.png",
-        "prompt": "Tran Hung Dao, legendary Vietnamese grand commander, wearing majestic crimson and gold armor, holding a tactical sword, commanding naval fleet in background, digital painting, 8k"
+        "prompt": "Tran Hung Dao, legendary Vietnamese grand commander, wearing majestic crimson and gold armor, holding a tactical sword, commanding naval fleet in background, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/quang_trung.png",
-        "prompt": "Emperor Quang Trung Nguyen Hue in battle, riding an elephant, wearing red and yellow imperial warrior armor, fierce expression, dynamic action portrait, digital art 8k"
+        "prompt": "Emperor Quang Trung Nguyen Hue in battle, riding an elephant, wearing red and yellow imperial warrior armor, fierce expression, dynamic action, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/hai_ba_trung.png",
-        "prompt": "The Trung Sisters (Hai Ba Trung), two heroic Vietnamese queens riding war elephants together, golden armor, dual swords, majestic and fierce, anime digital illustration, 8k"
+        "prompt": "The Trung Sisters (Hai Ba Trung), two heroic Vietnamese queens riding war elephants together, golden armor, dual swords, majestic and fierce, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/ba_trieu.png",
-        "prompt": "Lady Trieu (Ba Trieu), fierce Vietnamese female warrior wearing yellow armor and riding a giant elephant, holding dual swords, heroic pose, cinematic lighting, digital art, 8k"
+        "prompt": "Lady Trieu (Ba Trieu), fierce Vietnamese female warrior wearing yellow armor and riding a giant elephant, holding dual swords, heroic pose, cinematic lighting, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/yet_kieu.png",
-        "prompt": "Yet Kieu, legendary Vietnamese naval warrior in dark blue armor, swimming underwater holding a sharp drill to destroy enemy ships, cinematic underwater lighting, digital art, 8k"
+        "prompt": "Yet Kieu, legendary Vietnamese naval warrior in dark blue armor, swimming underwater holding a sharp drill to destroy enemy ships, cinematic underwater lighting, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/heroes/avatars/da_tuong.png",
-        "prompt": "Da Tuong, strong Vietnamese warrior general commanding war elephants, wearing heavy green and brown armor, holding a giant spear, fierce battle scene, digital art, 8k"
+        "prompt": "Da Tuong, strong Vietnamese warrior general commanding war elephants, wearing heavy green and brown armor, holding a giant spear, fierce battle scene, realistic fantasy portrait, 8k"
     },
     # ---- QUÁI VẬT & BOSS ----
     {
         "filename": "src/assets/monsters/avatars/to_dinh.png",
-        "prompt": "Evil Han dynasty warlord boss To Dinh, dark aggressive armor, menacing warlord face portrait, red glowing eyes, fantasy digital art, 8k"
+        "prompt": "Evil Han dynasty warlord boss To Dinh, dark aggressive armor, menacing warlord face, red glowing eyes, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/luu_hoang_thao.png",
-        "prompt": "Liu Hongcao (Luu Hoang Thao), Southern Han naval commander boss, arrogant face, wearing ornate blue and silver armor, standing on a warship, digital art, 8k"
+        "prompt": "Liu Hongcao (Luu Hoang Thao), Southern Han naval commander boss, arrogant face, wearing ornate blue and silver armor, standing on a warship, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/o_ma_nhi.png",
-        "prompt": "Mongol general enemy boss Omar (O Ma Nhi), fierce barbarian warlord with fur helmet and spiked armor, dark digital art portrait, intimidating, 8k"
+        "prompt": "Mongol general enemy boss Omar (O Ma Nhi), fierce barbarian warlord with fur helmet and spiked armor, intimidating, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/vuong_thong.png",
-        "prompt": "Ming Dynasty commander boss Wang Tong (Vuong Thong), wearing heavy silver plate armor, holding a large guan dao, stern and tactical expression, digital art, 8k"
+        "prompt": "Ming Dynasty commander boss Wang Tong (Vuong Thong), wearing heavy silver plate armor, holding a large guan dao, stern and tactical expression, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/sam_nghi_dong.png",
-        "prompt": "Qing Dynasty commander boss Cen Yidong (Sam Nghi Dong), wearing traditional Qing military armor with a tiger motif, fierce expression, holding a massive weapon, digital art, 8k"
+        "prompt": "Qing Dynasty commander boss Cen Yidong (Sam Nghi Dong), wearing traditional Qing military armor with a tiger motif, fierce expression, holding a massive weapon, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/linh_han.png",
-        "prompt": "Ancient Han dynasty foot soldier, wearing standard iron infantry armor, holding a spear, dark menacing look, fantasy concept art, 8k"
+        "prompt": "Ancient Han dynasty foot soldier, wearing standard iron infantry armor, holding a spear, dark menacing look, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/ky_binh.png",
-        "prompt": "Mongol cavalry warrior (Ky Binh Mong Co), riding a fierce war horse, wearing leather and iron armor, holding a bow and arrow, dynamic action, digital art, 8k"
+        "prompt": "Mongol cavalry warrior (Ky Binh Mong Co), riding a fierce war horse, wearing leather and iron armor, holding a bow and arrow, dynamic action, realistic fantasy portrait, 8k"
     },
     {
         "filename": "src/assets/monsters/avatars/bat_ky.png",
-        "prompt": "Qing Dynasty Eight Banners elite soldier (Bat Ky Binh), wearing yellow and red studded armor, holding a musket rifle, disciplined and deadly, digital art, 8k"
+        "prompt": "Qing Dynasty Eight Banners elite soldier (Bat Ky Binh), wearing yellow and red studded armor, holding a musket rifle, disciplined and deadly, realistic fantasy portrait, 8k"
     }
 ]
 
