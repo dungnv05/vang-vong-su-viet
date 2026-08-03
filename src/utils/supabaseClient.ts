@@ -143,6 +143,45 @@ export interface CloudPlayerProfile {
   lastSyncedAt?: string
 }
 
+// Export helper function to synchronize wildcard session across yundev.space
+export async function syncSharedSSOSession(): Promise<User | null> {
+  if (typeof window === 'undefined') return null
+
+  const sharedSessionCookie = getSharedCookie('yundev_supabase_auth_token')
+  const sharedAccessToken = getSharedCookie('yundev_session')
+  const { data: { session: currentSession } } = await supabase.auth.getSession()
+
+  // 1. If yundev.space has NO shared session cookie, but game currently has an active session -> User logged out on yundev.space!
+  if (!sharedSessionCookie && !sharedAccessToken && currentSession) {
+    console.log('[SSO Sync] Detected logout on yundev.space. Logging out of game...')
+    await signOutUser()
+    return null
+  }
+
+  // 2. If yundev.space HAS a shared session cookie, but game currently has no active session or session token differs -> User logged in on yundev.space!
+  if (sharedSessionCookie) {
+    try {
+      const parsedSession = JSON.parse(sharedSessionCookie)
+      if (parsedSession && parsedSession.access_token) {
+        if (!currentSession || currentSession.access_token !== parsedSession.access_token) {
+          console.log('[SSO Sync] Detected new login on yundev.space. Synchronizing session into game...')
+          const { data, error } = await supabase.auth.setSession({
+            access_token: parsedSession.access_token,
+            refresh_token: parsedSession.refresh_token || ''
+          })
+          if (!error && data.session) {
+            return data.session.user
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[SSO Sync Parsing Error]:', err)
+    }
+  }
+
+  return currentSession?.user || null
+}
+
 // Cloud Database & SSO Synchronized Player Profile Service
 class CloudDatabaseService {
   private isConnected: boolean = true
@@ -157,6 +196,35 @@ class CloudDatabaseService {
   }
 
   private initAuthListener() {
+    if (typeof window !== 'undefined') {
+      // Sync immediately on startup
+      syncSharedSSOSession().then(user => {
+        this.currentUser = user
+      })
+
+      // Sync when tab regains focus or visibility changes
+      window.addEventListener('focus', () => {
+        syncSharedSSOSession().then(user => { this.currentUser = user })
+      })
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          syncSharedSSOSession().then(user => { this.currentUser = user })
+        }
+      })
+
+      // Sync when storage event fires (cross-tab)
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'yundev_session' || e.key === 'yundev_supabase_auth_token') {
+          syncSharedSSOSession().then(user => { this.currentUser = user })
+        }
+      })
+
+      // Periodic check every 2.5 seconds
+      setInterval(() => {
+        syncSharedSSOSession().then(user => { this.currentUser = user })
+      }, 2500)
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       this.currentUser = session?.user || null
       if (session) {

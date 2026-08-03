@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Arena2D from './components/2d/Arena2D'
 import HUD from './components/ui/HUD'
 import LandingPage from './components/ui/LandingPage'
-import { cloudService, supabase } from './utils/supabaseClient'
+import { cloudService, supabase, syncSharedSSOSession } from './utils/supabaseClient'
 import { useGameStore } from './store/gameStore'
 import type { User } from '@supabase/supabase-js'
 
@@ -11,11 +11,22 @@ export default function App() {
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true)
 
   useEffect(() => {
-    // Check initial auth session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user || null)
+    // Initial SSO sync & session restore
+    syncSharedSSOSession().then(currentUser => {
+      setUser(currentUser)
       setLoadingAuth(false)
     })
+
+    // Listen to window focus & visibility change for real-time SSO sync from yundev.space
+    const handleFocusSync = () => {
+      syncSharedSSOSession().then(currentUser => {
+        setUser(currentUser)
+      })
+    }
+
+    window.addEventListener('focus', handleFocusSync)
+    document.addEventListener('visibilitychange', handleFocusSync)
+    window.addEventListener('storage', handleFocusSync)
 
     // Listen to real-time auth changes (Login / Logout / SignUp)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -33,7 +44,12 @@ export default function App() {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('focus', handleFocusSync)
+      document.removeEventListener('visibilitychange', handleFocusSync)
+      window.removeEventListener('storage', handleFocusSync)
+    }
   }, [])
 
   // If still checking initial auth session
