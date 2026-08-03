@@ -57,7 +57,7 @@ Close-up head and shoulders portrait of Vietnamese emperor Dinh Tien Hoang (Dinh
 #### 1.5 Trần Quốc Toản — Hoài Văn Hầu
 **Tên file:** `tran_quoc_toan.png`
 ```
-Close-up head and shoulders portrait of young Vietnamese prince-warrior Tran Quoc Toan, handsome teenage boy around 16 years old, fierce youthful eyes burning with patriotic rage, headband with a torn red battle flag, lightweight leather and bronze shoulder armor, fist clenched crushing a small orange in his hand (symbolic), fiery red bokeh background with war drums and battle smoke, dynamic dramatic lighting, anime-inspired fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of young Vietnamese prince-warrior Tran Quoc Toan, handsome teenage boy around 16 years old, fierce youthful eyes burning with patriotic rage, headband with a torn red battle flag, lightweight leather and bronze shoulder armor, fist clenched crushing a small orange in his hand (symbolic), fiery red bokeh background with war drums and battle smoke, dynamic dramatic lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 ---
@@ -126,6 +126,54 @@ Close-up head and shoulders portrait of Vietnamese underwater warrior Yet Kieu, 
 **Tên file:** `da_tuong.png`
 ```
 Close-up head and shoulders portrait of Vietnamese elephant commander Da Tuong, burly strong man with kind but fierce eyes, dark weathered skin, wearing a green and brown leather vest with elephant tusk ornaments, a small elephant figurine pendant around his neck, olive green and brown bokeh background with jungle canopy and distant elephant silhouettes, warm natural lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.16 Thánh Gióng — Phù Đổng Thiên Vương
+**Tên file:** `thanh_giong.png`
+```
+Epic anime portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warrior in golden glowing armor riding a fiery iron horse, holding a bamboo spear, dark fantasy background, HD detailed 8k --ar 1:1 --v 6.0
+```
+
+---
+
+### 🔴 QUÁI VẬT & BOSS CÁC ẢI (MONSTERS & BOSSES)
+
+#### 1.17 Tô Định — Thái Thú Đông Hán (Boss Ải 1)
+**Tên file:** `to_dinh.png`
+```
+Evil Han dynasty warlord boss To Dinh, dark aggressive armor, menacing warlord face portrait, red glowing eyes, fantasy digital art, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.18 Lưu Hoằng Tháo — Chủ Tướng Nam Hán (Boss Ải 2)
+**Tên file:** `luu_hoang_thao.png`
+```
+Liu Hongcao, Southern Han naval commander boss, arrogant face, wearing ornate blue and silver armor, standing on a warship, digital art, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.19 Ô Mã Nhi — Đại Tướng Nguyên Mông (Boss Ải 3)
+**Tên file:** `o_ma_nhi.png`
+```
+Mongol general enemy boss Omar, fierce barbarian warlord with fur helmet and spiked armor, dark digital art portrait, intimidating, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.20 Vương Thông — Tướng Nhà Minh (Boss Ải 4)
+**Tên file:** `vuong_thong.png`
+```
+Ming Dynasty commander boss Wang Tong, wearing heavy silver plate armor, holding a large guan dao, stern and tactical expression, digital art, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.21 Sầm Nghi Đống — Đô Đốc Nhà Thanh (Boss Ải 5)
+**Tên file:** `sam_nghi_dong.png`
+```
+Qing Dynasty commander boss Cen Yidong, wearing traditional Qing military armor with a tiger motif, fierce expression, holding a massive weapon, digital art, 8k --ar 1:1 --v 6.0
+```
+
+#### 1.22 Quái Vật Phụ (Lính Tiên Phong / Kỵ Binh / Bát Kỳ Binh)
+**Tên file:** `linh_han.png`, `ky_binh.png`, `bat_ky.png`
+```
+Ancient Han dynasty foot soldier, wearing standard iron infantry armor, holding a spear, dark menacing look, fantasy concept art, 8k --ar 1:1 --v 6.0
+Mongol cavalry warrior, riding a fierce war horse, wearing leather and iron armor, holding a bow and arrow, dynamic action, digital art, 8k --ar 1:1 --v 6.0
+Qing Dynasty Eight Banners elite soldier, wearing yellow and red studded armor, holding a musket rifle, disciplined and deadly, digital art, 8k --ar 1:1 --v 6.0
 ```
 
 ---
