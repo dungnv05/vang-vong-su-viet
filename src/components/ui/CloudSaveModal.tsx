@@ -114,6 +114,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         setShowAuthForm(false)
         setAuthMessage({ type: 'success', text: 'Đăng nhập thành công!' })
         handleSaveToCloud()
+        onClose()
       }
     } catch (err: any) {
       setAuthMessage({ type: 'error', text: err.message || 'Thao tác thất bại. Vui lòng thử lại.' })

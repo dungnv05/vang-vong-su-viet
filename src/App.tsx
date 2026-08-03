@@ -35,6 +35,7 @@ export default function App() {
       setLoadingAuth(false)
       
       if (currentUser) {
+        useGameStore.getState().setShowCloudModal(false)
         // Tự động khôi phục dữ liệu tiến trình từ Supabase Cloud khi vừa đăng nhập thành công
         cloudService.fetchCloudProfile().then(cloudProfile => {
           if (cloudProfile && cloudProfile.fullStateJson) {
