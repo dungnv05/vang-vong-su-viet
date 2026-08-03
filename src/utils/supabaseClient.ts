@@ -22,6 +22,7 @@ export function getSharedCookie(name: string) {
 export function removeSharedCookie(name: string) {
   const domainAttr = COOKIE_DOMAIN ? `; Domain=${COOKIE_DOMAIN}` : ''
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttr}`
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
 }
 
 // Hybrid Shared Cookie Storage Adapter for Wildcard SSO (*.yundev.space)
@@ -120,6 +121,10 @@ export async function signInWithEmail(email: string, password: string) {
 export async function signOutUser() {
   removeSharedCookie('yundev_session')
   removeSharedCookie('yundev_supabase_auth_token')
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('yundev_session')
+    localStorage.removeItem('yundev_supabase_auth_token')
+  }
   return await supabase.auth.signOut()
 }
 
@@ -154,10 +159,29 @@ class CloudDatabaseService {
   private initAuthListener() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       this.currentUser = session?.user || null
+      if (session) {
+        setSharedCookie('yundev_session', session.access_token)
+        setSharedCookie('yundev_supabase_auth_token', JSON.stringify(session))
+      }
     })
 
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       this.currentUser = session?.user || null
+      if (session) {
+        setSharedCookie('yundev_session', session.access_token)
+        setSharedCookie('yundev_supabase_auth_token', JSON.stringify(session))
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('yundev_session', session.access_token)
+          localStorage.setItem('yundev_supabase_auth_token', JSON.stringify(session))
+        }
+      } else if (event === 'SIGNED_OUT' || !session) {
+        removeSharedCookie('yundev_session')
+        removeSharedCookie('yundev_supabase_auth_token')
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('yundev_session')
+          localStorage.removeItem('yundev_supabase_auth_token')
+        }
+      }
     })
   }
 
