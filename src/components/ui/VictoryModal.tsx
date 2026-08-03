@@ -39,7 +39,7 @@ export default function VictoryModal() {
   }
 
   return (
-    <div style={{
+    <div onClick={() => setShowVictoryModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -54,7 +54,7 @@ export default function VictoryModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
         border: '3px solid #f1c40f',
         borderRadius: '28px',

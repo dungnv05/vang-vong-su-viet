@@ -19,7 +19,7 @@ export default function TowerModal() {
   const sortedFloorNumbers = [...unlockedFloors, ...lockedFloors]
 
   return (
-    <div style={{
+    <div onClick={() => setShowTowerModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -34,7 +34,7 @@ export default function TowerModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
         border: '2px solid #a855f7',
         borderRadius: '24px',

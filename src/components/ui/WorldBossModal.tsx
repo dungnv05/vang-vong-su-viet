@@ -10,7 +10,7 @@ export default function WorldBossModal() {
   if (!showWorldBossModal) return null
 
   return (
-    <div style={{
+    <div onClick={() => setShowWorldBossModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -25,7 +25,7 @@ export default function WorldBossModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
         border: '2px solid #9333ea',
         borderRadius: '24px',

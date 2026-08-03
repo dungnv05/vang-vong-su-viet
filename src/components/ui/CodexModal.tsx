@@ -34,7 +34,7 @@ export default function CodexModal() {
   const selectedItem = MOCK_ITEMS.find(item => item.id === selectedItemId) || MOCK_ITEMS[0]
 
   return (
-    <div style={{
+    <div onClick={() => setShowCodexModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -49,7 +49,7 @@ export default function CodexModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
         border: '2px solid #f1c40f',
         borderRadius: '24px',

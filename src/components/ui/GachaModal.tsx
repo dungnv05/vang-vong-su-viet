@@ -14,7 +14,7 @@ export default function GachaModal() {
   if (!showGachaModal) return null
 
   return (
-    <div style={{
+    <div onClick={() => setShowGachaModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -29,7 +29,7 @@ export default function GachaModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
         border: '2px solid #f1c40f',
         borderRadius: '24px',

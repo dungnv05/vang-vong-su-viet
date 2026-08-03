@@ -19,7 +19,7 @@ export default function ImperialRankModal() {
   const nextRank = IMPERIAL_RANKS.find(r => r.level === rankLevel + 1)
 
   return (
-    <div style={{
+    <div onClick={() => setShowRankModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -34,7 +34,7 @@ export default function ImperialRankModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
         border: '2px solid #f1c40f',
         borderRadius: '24px',

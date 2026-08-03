@@ -26,7 +26,7 @@ export default function DefeatModal() {
   }
 
   return (
-    <div style={{
+    <div onClick={() => setShowDefeatModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -41,7 +41,7 @@ export default function DefeatModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #4a0404 0%, #1a0202 100%)',
         border: '3px solid #e74c3c',
         borderRadius: '28px',

@@ -12,7 +12,7 @@ export default function StageModal() {
   if (!showStageSelectModal) return null
 
   return (
-    <div style={{
+    <div onClick={() => setShowStageSelectModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -27,7 +27,7 @@ export default function StageModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
         border: '2px solid #d4af37',
         borderRadius: '20px',

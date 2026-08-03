@@ -14,7 +14,7 @@ export default function PvPModal() {
   const opponents = getPvPOpponents()
 
   return (
-    <div style={{
+    <div onClick={() => setShowPvPModal(false)} style={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -29,7 +29,7 @@ export default function PvPModal() {
       alignItems: 'center',
       padding: '20px'
     }}>
-      <div style={{
+      <div onClick={(e) => e.stopPropagation()} style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
         border: '2px solid #e74c3c',
         borderRadius: '24px',
