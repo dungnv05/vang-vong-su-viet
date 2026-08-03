@@ -44,68 +44,127 @@ class SoundEngine {
     osc.stop(this.ctx.currentTime + 0.08)
   }
 
-  // 2. Âm thanh Hợp Kích Tráng Lệ 3.2 giây (Dồn Trống Trận -> Tích Năng Lượng -> Oanh Kích Sét Bùng Nổ)
-  public playComboSFX() {
+  // 2. Âm thanh Đánh Thường (Chém/Vung vũ khí)
+  public playAttackSFX() {
     if (this.isMuted) return
     this.initCtx()
     if (!this.ctx) return
 
     const now = this.ctx.currentTime
+    const osc = this.ctx.createOscillator()
+    const gain = this.ctx.createGain()
 
-    // Giai đoạn 1: Dồn Trống Trận Xuất Quân (0.0s - 1.2s) - 4 Nhịp trống liên tiếp
-    const drumTimes = [0.0, 0.3, 0.6, 0.9]
-    drumTimes.forEach((dt, idx) => {
+    // Sóng Sawtooth tạo tiếng xé gió sắc bén
+    osc.type = 'sawtooth'
+    osc.frequency.setValueAtTime(800, now)
+    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1)
+
+    gain.gain.setValueAtTime(0.4, now)
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15)
+
+    osc.connect(gain)
+    gain.connect(this.ctx.destination)
+
+    osc.start(now)
+    osc.stop(now + 0.15)
+  }
+
+  // 3. Âm thanh Hồi Máu (Rising Arpeggio phép thuật)
+  public playHealSFX() {
+    if (this.isMuted) return
+    this.initCtx()
+    if (!this.ctx) return
+
+    const now = this.ctx.currentTime
+    const notes = [440, 554.37, 659.25, 880] // A major chord
+
+    notes.forEach((freq, idx) => {
       if (!this.ctx) return
-      const drumOsc = this.ctx.createOscillator()
-      const drumGain = this.ctx.createGain()
+      const osc = this.ctx.createOscillator()
+      const gain = this.ctx.createGain()
 
-      drumOsc.type = 'triangle'
-      const freq = 120 + idx * 30
-      drumOsc.frequency.setValueAtTime(freq, now + dt)
-      drumOsc.frequency.exponentialRampToValueAtTime(30, now + dt + 0.25)
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, now + idx * 0.05)
 
-      drumGain.gain.setValueAtTime(0.5, now + dt)
-      drumGain.gain.exponentialRampToValueAtTime(0.01, now + dt + 0.25)
+      gain.gain.setValueAtTime(0.2, now + idx * 0.05)
+      gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.05 + 0.3)
 
-      drumOsc.connect(drumGain)
-      drumGain.connect(this.ctx.destination)
+      osc.connect(gain)
+      gain.connect(this.ctx.destination)
 
-      drumOsc.start(now + dt)
-      drumOsc.stop(now + dt + 0.25)
+      osc.start(now + idx * 0.05)
+      osc.stop(now + idx * 0.05 + 0.3)
     })
+  }
 
-    // Giai đoạn 2: Tù Và Xuất Trận & Tích Năng Lượng Khí Cầu (1.0s - 2.2s)
-    const hornOsc = this.ctx.createOscillator()
-    const hornGain = this.ctx.createGain()
-    hornOsc.type = 'sawtooth'
-    hornOsc.frequency.setValueAtTime(300, now + 1.0)
-    hornOsc.frequency.exponentialRampToValueAtTime(600, now + 2.0)
+  // 4. Âm thanh Hiệu Ứng Nổ Kỹ Năng (Thay thế cho playComboSFX cũ)
+  public playSkillImpactSFX() {
+    if (this.isMuted) return
+    this.initCtx()
+    if (!this.ctx) return
 
-    hornGain.gain.setValueAtTime(0.01, now + 1.0)
-    hornGain.gain.linearRampToValueAtTime(0.35, now + 1.8)
-    hornGain.gain.exponentialRampToValueAtTime(0.01, now + 2.2)
+    const now = this.ctx.currentTime
+    
+    // Tiếng rít gồng năng lượng nhanh (0 - 0.2s)
+    const chargeOsc = this.ctx.createOscillator()
+    const chargeGain = this.ctx.createGain()
+    chargeOsc.type = 'sawtooth'
+    chargeOsc.frequency.setValueAtTime(200, now)
+    chargeOsc.frequency.exponentialRampToValueAtTime(800, now + 0.2)
 
-    hornOsc.connect(hornGain)
-    hornGain.connect(this.ctx.destination)
+    chargeGain.gain.setValueAtTime(0.01, now)
+    chargeGain.gain.linearRampToValueAtTime(0.3, now + 0.15)
+    chargeGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2)
 
-    hornOsc.start(now + 1.0)
-    hornOsc.stop(now + 2.2)
+    chargeOsc.connect(chargeGain)
+    chargeGain.connect(this.ctx.destination)
+    chargeOsc.start(now)
+    chargeOsc.stop(now + 0.2)
 
-    // Giai đoạn 3: OANH KÍCH SẤM SÉT BÙNG NỔ (2.2s - 3.2s) - Sub-bass + Hi-freq Crash
+    // Tiếng nổ rền Sub-bass (0.2s - 0.8s)
     const impactOsc = this.ctx.createOscillator()
     const impactGain = this.ctx.createGain()
     impactOsc.type = 'square'
-    impactOsc.frequency.setValueAtTime(250, now + 2.2)
-    impactOsc.frequency.exponentialRampToValueAtTime(20, now + 3.2)
+    impactOsc.frequency.setValueAtTime(300, now + 0.2)
+    impactOsc.frequency.exponentialRampToValueAtTime(20, now + 0.8)
 
-    impactGain.gain.setValueAtTime(0.7, now + 2.2)
-    impactGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2)
+    impactGain.gain.setValueAtTime(0.6, now + 0.2)
+    impactGain.gain.exponentialRampToValueAtTime(0.01, now + 0.8)
 
     impactOsc.connect(impactGain)
     impactGain.connect(this.ctx.destination)
+    impactOsc.start(now + 0.2)
+    impactOsc.stop(now + 0.8)
+  }
 
-    impactOsc.start(now + 2.2)
-    impactOsc.stop(now + 3.2)
+  // 5. Đọc Tên Kỹ Năng Bằng Giọng Nói (Text-To-Speech)
+  public playSkillVoice(skillName: string, battleSpeed: number = 1) {
+    if (this.isMuted) return
+    if (!('speechSynthesis' in window)) return
+
+    // Hủy bỏ giọng đọc cũ đang dang dở
+    window.speechSynthesis.cancel()
+
+    const utterance = new SpeechSynthesisUtterance(skillName)
+    utterance.lang = 'vi-VN'
+    
+    // Tốc độ phụ thuộc vào tốc độ trận đấu (battleSpeed)
+    // battleSpeed = 1 -> rate = 1.2 (nhanh hơn xíu cho hype)
+    // battleSpeed = 2 -> rate = 1.6
+    // battleSpeed = 3 -> rate = 2.0
+    utterance.rate = 1.0 + (battleSpeed * 0.3)
+    
+    // Tăng cao độ (pitch) một chút để nghe quyết liệt hơn
+    utterance.pitch = 1.2
+    
+    // Cố gắng chọn giọng Tiếng Việt
+    const voices = window.speechSynthesis.getVoices()
+    const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VI'))
+    if (viVoice) {
+      utterance.voice = viVoice
+    }
+
+    window.speechSynthesis.speak(utterance)
   }
 
   // 3. Âm thanh Quay Gacha Hào Quang Huyền Diệu

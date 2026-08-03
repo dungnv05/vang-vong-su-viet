@@ -787,7 +787,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       let healDmg = 0
 
       if (isSupportHeal) {
-        audioEngine.playEquipSFX()
+        audioEngine.playHealSFX()
         healDmg = Math.floor(attacker.atk * 1.4 * (isCrit ? 1.6 : 1.0))
         actionMsg = `${isCrit ? '💥 CHÍ MẠNG! ' : ''}+${healDmg.toLocaleString()} HP`
         newAttackerRage = newAttackerRage + 40
@@ -805,7 +805,10 @@ export const useGameStore = create<GameState>((set, get) => ({
           })
         }
       } else if (isUltimate) {
-        audioEngine.playComboSFX()
+        if (attacker.skill?.name) {
+          audioEngine.playSkillVoice(attacker.skill.name, state.battleSpeed)
+        }
+        audioEngine.playSkillImpactSFX()
         const mult = attacker.skill?.damageMultiplier || 2.0
         const rageBonus = 1 + (excessRage * 0.01) // +1% sát thương mỗi điểm nộ dư
         dmg = Math.floor(dmg * mult * rageBonus)
@@ -821,7 +824,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           newAttackerRage += attacker.skill.rageSteal
         }
       } else {
-        audioEngine.playEquipSFX()
+        audioEngine.playAttackSFX()
         actionMsg = `${isCrit ? '💥 CHÍ MẠNG! ' : ''}-${dmg.toLocaleString()} HP`
         newAttackerRage = newAttackerRage + (attacker.role === 'DPS' ? 60 : 40)
       }
