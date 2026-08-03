@@ -8,6 +8,8 @@ import quangTrungBg from '../assets/heroes/backgrounds/quang_trung.png'
 import haiBaTrungBg from '../assets/heroes/backgrounds/hai_ba_trung.png'
 import baTrieuBg from '../assets/heroes/backgrounds/ba_trieu.png'
 
+import { rehydrateHeroes } from './heroes'
+
 export interface GachaHeroTemplate {
   name: string
   role: 'Tank' | 'DPS' | 'Support' | 'Assassin'
@@ -32,7 +34,7 @@ export interface GachaHeroTemplate {
   }
 }
 
-export const GACHA_HERO_POOL: GachaHeroTemplate[] = [
+const RAW_GACHA_HERO_POOL: GachaHeroTemplate[] = [
   // HẠNG UR (CỰC PHẨM THÁI BÌNH)
   {
     name: 'Trần Hưng Đạo',
@@ -287,3 +289,5 @@ export const GACHA_HERO_POOL: GachaHeroTemplate[] = [
     skill: { name: 'Tượng Binh Xung Kích', damageMultiplier: 1.7, rageRecovery: 10 }
   }
 ]
+
+export const GACHA_HERO_POOL: GachaHeroTemplate[] = rehydrateHeroes(RAW_GACHA_HERO_POOL)

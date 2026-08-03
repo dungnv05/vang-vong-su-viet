@@ -1,4 +1,4 @@
-import { type HeroData } from './heroes'
+import { type HeroData, rehydrateHeroes } from './heroes'
 
 export interface StageData {
   id: number
@@ -12,7 +12,7 @@ export interface StageData {
 }
 
 // Sắp xếp các Ải Màn Chơi theo đúng Tiến Trình Thời Gian Lịch Sử Việt Nam (Chronological Order)
-export const CAMPAIGN_STAGES: StageData[] = [
+export const RAW_CAMPAIGN_STAGES: StageData[] = [
   {
     id: 1,
     year: 'Năm 40',
@@ -99,3 +99,8 @@ export const CAMPAIGN_STAGES: StageData[] = [
     ]
   }
 ]
+
+export const CAMPAIGN_STAGES: StageData[] = RAW_CAMPAIGN_STAGES.map(s => ({
+  ...s,
+  enemies: rehydrateHeroes(s.enemies)
+}))

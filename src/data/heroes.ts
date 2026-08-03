@@ -30,9 +30,13 @@ export const HERO_BACKGROUND_MAP: Record<string, string> = {
   'Bà Triệu': baTrieuBg
 }
 
-export function getHeroAvatarUrl(heroIdOrName?: string): string | undefined {
+import { getFallbackAvatar } from '../utils/svgAvatarGenerator'
+
+export function getHeroAvatarUrl(heroIdOrName?: string, color?: string): string | undefined {
   if (!heroIdOrName) return undefined
-  return HERO_AVATAR_MAP[heroIdOrName] || HERO_AVATAR_MAP[heroIdOrName.toLowerCase()]
+  const mapped = HERO_AVATAR_MAP[heroIdOrName] || HERO_AVATAR_MAP[heroIdOrName.toLowerCase()]
+  if (mapped) return mapped
+  return getFallbackAvatar(heroIdOrName, color)
 }
 
 export function getHeroBackgroundUrl(heroIdOrName?: string): string | undefined {
@@ -40,9 +44,9 @@ export function getHeroBackgroundUrl(heroIdOrName?: string): string | undefined 
   return HERO_BACKGROUND_MAP[heroIdOrName] || HERO_BACKGROUND_MAP[heroIdOrName.toLowerCase()]
 }
 
-export function rehydrateHero<T extends { id?: string; name?: string; avatarUrl?: string; backgroundUrl?: string }>(hero: T): T {
-  const avatar = getHeroAvatarUrl(hero.id) || getHeroAvatarUrl(hero.name) || hero.avatarUrl
-  const bg = getHeroBackgroundUrl(hero.id) || getHeroBackgroundUrl(hero.name) || hero.backgroundUrl
+export function rehydrateHero<T extends { id?: string; name?: string; color?: string; avatarUrl?: string; backgroundUrl?: string }>(hero: T): T {
+  const avatar = getHeroAvatarUrl(hero.id, hero.color) || getHeroAvatarUrl(hero.name, hero.color) || hero.avatarUrl
+  const bg = getHeroBackgroundUrl(hero.id) || getHeroBackgroundUrl(hero.name) || hero.backgroundUrl || avatar
   return {
     ...hero,
     avatarUrl: avatar,
@@ -165,7 +169,7 @@ export const get2DSlotPosition = (isEnemy: boolean, slotIndex: number): { left: 
   }
 }
 
-export const MOCK_HEROES: HeroData[] = [
+const RAW_MOCK_HEROES: HeroData[] = [
   {
     id: 'h7',
     name: 'Thánh Gióng',
@@ -352,3 +356,5 @@ export const MOCK_HEROES: HeroData[] = [
     }
   }
 ]
+
+export const MOCK_HEROES: HeroData[] = rehydrateHeroes(RAW_MOCK_HEROES)
