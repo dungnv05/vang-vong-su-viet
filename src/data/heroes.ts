@@ -25,6 +25,14 @@ import kyBinhAvatar from '../assets/monsters/avatars/ky_binh.png'
 import batKyAvatar from '../assets/monsters/avatars/bat_ky.png'
 
 export const HERO_AVATAR_MAP: Record<string, string> = {
+  'h3': tranHungDaoAvatar,
+  'h4': quangTrungAvatar,
+  'h5': haiBaTrungAvatar,
+  'h6': baTrieuAvatar,
+  'h7': thanhGiongAvatar,
+  'h1': leLoiAvatar,
+  'h2': nguyenTraiAvatar,
+
   'tran_hung_dao': tranHungDaoAvatar,
   'quang_trung': quangTrungAvatar,
   'hai_ba_trung': haiBaTrungAvatar,
@@ -70,6 +78,14 @@ export const HERO_AVATAR_MAP: Record<string, string> = {
 }
 
 export const HERO_BACKGROUND_MAP: Record<string, string> = {
+  'h3': tranHungDaoBg,
+  'h4': quangTrungBg,
+  'h5': haiBaTrungBg,
+  'h6': baTrieuBg,
+  'h7': thanhGiongBg,
+  'h1': leLoiBg,
+  'h2': nguyenTraiBg,
+
   'tran_hung_dao': tranHungDaoBg,
   'quang_trung': quangTrungBg,
   'hai_ba_trung': haiBaTrungBg,
@@ -102,8 +118,12 @@ export function getHeroBackgroundUrl(heroIdOrName?: string): string | undefined 
 }
 
 export function rehydrateHero<T extends { id?: string; name?: string; color?: string; avatarUrl?: string; backgroundUrl?: string }>(hero: T): T {
-  const avatar = getHeroAvatarUrl(hero.id, hero.color) || getHeroAvatarUrl(hero.name, hero.color) || hero.avatarUrl
-  const bg = getHeroBackgroundUrl(hero.id) || getHeroBackgroundUrl(hero.name) || hero.backgroundUrl || avatar
+  const realAvatar = (hero.name ? HERO_AVATAR_MAP[hero.name] : undefined) || (hero.id ? HERO_AVATAR_MAP[hero.id] : undefined)
+  const realBg = (hero.name ? HERO_BACKGROUND_MAP[hero.name] : undefined) || (hero.id ? HERO_BACKGROUND_MAP[hero.id] : undefined)
+
+  const avatar = realAvatar || getHeroAvatarUrl(hero.name, hero.color) || getHeroAvatarUrl(hero.id, hero.color) || hero.avatarUrl
+  const bg = realBg || getHeroBackgroundUrl(hero.name) || getHeroBackgroundUrl(hero.id) || hero.backgroundUrl || avatar
+
   return {
     ...hero,
     avatarUrl: avatar,
