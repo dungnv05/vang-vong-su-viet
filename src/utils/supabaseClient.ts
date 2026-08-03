@@ -114,6 +114,10 @@ export async function signInWithEmail(email: string, password: string) {
   if (res.data?.session) {
     setSharedCookie('yundev_session', res.data.session.access_token)
     setSharedCookie('yundev_supabase_auth_token', JSON.stringify(res.data.session))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('yundev_session', res.data.session.access_token)
+      localStorage.setItem('yundev_supabase_auth_token', JSON.stringify(res.data.session))
+    }
   }
   return res
 }
