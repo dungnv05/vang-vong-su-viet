@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
-import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins } from 'lucide-react'
+import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins, Volume2, VolumeX } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
 import { cloudService, supabase } from '../../utils/supabaseClient'
@@ -13,6 +13,8 @@ export default function MainLobby() {
   const heroes = useGameStore(state => state.heroes)
   const gold = useGameStore(state => state.gold)
   const activeBeastId = useGameStore(state => state.activeBeastId)
+  const isMuted = useGameStore(state => state.isMuted)
+  const toggleMute = useGameStore(state => state.toggleMute)
 
   const setShowSquadModal = useGameStore(state => state.setShowSquadModal)
   const setShowGachaModal = useGameStore(state => state.setShowGachaModal)
@@ -107,6 +109,32 @@ export default function MainLobby() {
 
         {/* Tổng Lực Chiến, Linh Vật, User Badge & Rương Treo Máy AFK */}
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          {/* Nút Bật / Tắt Âm Thanh */}
+          <button
+            onClick={toggleMute}
+            title={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
+            style={{
+              background: isMuted
+                ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.15) 100%)'
+                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(29, 78, 216, 0.15) 100%)',
+              border: isMuted ? '2px solid #ef4444' : '2px solid #3b82f6',
+              borderRadius: '16px',
+              padding: '10px 16px',
+              boxShadow: isMuted ? '0 0 20px rgba(239, 68, 68, 0.35)' : '0 0 20px rgba(59, 130, 246, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer',
+              color: 'white',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            {isMuted ? <VolumeX size={22} color="#fca5a5" /> : <Volume2 size={22} color="#93c5fd" />}
+            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: isMuted ? '#fca5a5' : '#93c5fd' }}>
+              {isMuted ? 'TẮT ÂM' : 'BẬT ÂM'}
+            </span>
+          </button>
+
           {/* User Account / Profile Badge */}
           <button
             onClick={() => setShowCloudModal(true)}
