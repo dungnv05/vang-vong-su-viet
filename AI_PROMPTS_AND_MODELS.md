@@ -125,13 +125,13 @@ Close-up head and shoulders portrait of Vietnamese underwater warrior Yet Kieu, 
 #### 1.15 Dã Tượng — Tướng Quân Huấn Luyện Voi
 **Tên file:** `da_tuong.png`
 ```
-Close-up head and shoulders portrait of Vietnamese elephant commander Da Tuong, burly strong man with kind but fierce eyes, dark weathered skin, wearing a green and brown leather vest with elephant tusk ornaments, a small elephant figurine pendant around his neck, olive green and brown bokeh background with jungle canopy and distant elephant silhouettes, warm natural lighting, realistic realistic fantasy portrait, 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Vietnamese elephant commander Da Tuong, burly strong man with kind but fierce eyes, dark weathered skin, wearing a green and brown leather vest with elephant tusk ornaments, a small elephant figurine pendant around his neck, olive green and brown bokeh background with jungle canopy and distant elephant silhouettes, warm natural lighting, realistic fantasy portrait, 8k --ar 1:1 --v 6.0
 ```
 
 #### 1.16 Thánh Gióng — Phù Đổng Thiên Vương
 **Tên file:** `thanh_giong.png`
 ```
-Epic anime portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warrior in golden glowing armor riding a fiery iron horse, holding a bamboo spear, dark fantasy background, HD detailed 8k --ar 1:1 --v 6.0
+Close-up head and shoulders portrait of Saint Giong (Thanh Giong), legendary Vietnamese hero warrior in golden glowing armor riding a fiery iron horse, holding a bamboo spear, dark fantasy background, realistic fantasy portrait, HD detailed 8k --ar 1:1 --v 6.0
 ```
 
 ---
