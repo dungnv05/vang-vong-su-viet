@@ -289,36 +289,38 @@ export default function HUD() {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (!useGameStore.getState().isAutoBattle) {
-                useGameStore.setState({ isAutoBattle: true })
-              }
-              executeTurn()
-            }}
-            disabled={isAnimating}
-            style={{
-              background: isAnimating
-                ? 'linear-gradient(45deg, #475569, #64748b)'
-                : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-              color: '#ffffff',
-              border: '2px solid #fef08a',
-              padding: '14px 36px',
-              fontSize: '1.15rem',
-              fontWeight: 800,
-              borderRadius: '30px',
-              cursor: isAnimating ? 'not-allowed' : 'pointer',
-              boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              letterSpacing: '1px'
-            }}
-          >
-            <Swords size={22} />
-            {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'BẮT ĐẦU CHIẾN ĐẤU'}
-          </button>
+          {turn === 1 && (
+            <button
+              onClick={() => {
+                if (!useGameStore.getState().isAutoBattle) {
+                  useGameStore.setState({ isAutoBattle: true })
+                }
+                executeTurn()
+              }}
+              disabled={isAnimating}
+              style={{
+                background: isAnimating
+                  ? 'linear-gradient(45deg, #475569, #64748b)'
+                  : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
+                color: '#ffffff',
+                border: '2px solid #fef08a',
+                padding: '14px 36px',
+                fontSize: '1.15rem',
+                fontWeight: 800,
+                borderRadius: '30px',
+                cursor: isAnimating ? 'not-allowed' : 'pointer',
+                boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                letterSpacing: '1px'
+              }}
+            >
+              <Swords size={22} />
+              {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'BẮT ĐẦU CHIẾN ĐẤU'}
+            </button>
+          )}
         </div>
       </div>
 
