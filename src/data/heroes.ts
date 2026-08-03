@@ -2,21 +2,71 @@ import tranHungDaoAvatar from '../assets/heroes/avatars/tran_hung_dao.png'
 import quangTrungAvatar from '../assets/heroes/avatars/quang_trung.png'
 import haiBaTrungAvatar from '../assets/heroes/avatars/hai_ba_trung.png'
 import baTrieuAvatar from '../assets/heroes/avatars/ba_trieu.png'
+import thanhGiongAvatar from '../assets/heroes/avatars/thanh_giong.png'
+import leLoiAvatar from '../assets/heroes/avatars/le_loi.png'
+import nguyenTraiAvatar from '../assets/heroes/avatars/nguyen_trai.png'
 
 import tranHungDaoBg from '../assets/heroes/backgrounds/tran_hung_dao.png'
 import quangTrungBg from '../assets/heroes/backgrounds/quang_trung.png'
 import haiBaTrungBg from '../assets/heroes/backgrounds/hai_ba_trung.png'
 import baTrieuBg from '../assets/heroes/backgrounds/ba_trieu.png'
+import thanhGiongBg from '../assets/heroes/backgrounds/thanh_giong.png'
+import leLoiBg from '../assets/heroes/backgrounds/le_loi.png'
+import nguyenTraiBg from '../assets/heroes/backgrounds/nguyen_trai.png'
+
+// Monsters PNG Avatars
+import toDinhAvatar from '../assets/monsters/avatars/to_dinh.png'
+import luuHoangThaoAvatar from '../assets/monsters/avatars/luu_hoang_thao.png'
+import oMaNhiAvatar from '../assets/monsters/avatars/o_ma_nhi.png'
+import vuongThongAvatar from '../assets/monsters/avatars/vuong_thong.png'
+import samNghiDongAvatar from '../assets/monsters/avatars/sam_nghi_dong.png'
+import linhHanAvatar from '../assets/monsters/avatars/linh_han.png'
+import kyBinhAvatar from '../assets/monsters/avatars/ky_binh.png'
+import batKyAvatar from '../assets/monsters/avatars/bat_ky.png'
 
 export const HERO_AVATAR_MAP: Record<string, string> = {
   'tran_hung_dao': tranHungDaoAvatar,
   'quang_trung': quangTrungAvatar,
   'hai_ba_trung': haiBaTrungAvatar,
   'ba_trieu': baTrieuAvatar,
+  'thanh_giong': thanhGiongAvatar,
+  'le_loi': leLoiAvatar,
+  'nguyen_trai': nguyenTraiAvatar,
+
   'Trần Hưng Đạo': tranHungDaoAvatar,
   'Quang Trung': quangTrungAvatar,
   'Hai Bà Trưng': haiBaTrungAvatar,
-  'Bà Triệu': baTrieuAvatar
+  'Bà Triệu': baTrieuAvatar,
+  'Thánh Gióng': thanhGiongAvatar,
+  'Lê Lợi': leLoiAvatar,
+  'Nguyễn Trãi': nguyenTraiAvatar,
+
+  // Monsters
+  'Tô Định': toDinhAvatar,
+  'Tô Định (Thái Thú Đông Hán)': toDinhAvatar,
+  'Lưu Hoằng Tháo': luuHoangThaoAvatar,
+  'Lưu Hoằng Tháo (Chủ Tướng)': luuHoangThaoAvatar,
+  'Ô Mã Nhi': oMaNhiAvatar,
+  'Ô Mã Nhi (Đại Tướng)': oMaNhiAvatar,
+  'Vương Thông': vuongThongAvatar,
+  'Vương Thông (Tướng Minh)': vuongThongAvatar,
+  'Sầm Nghi Đống': samNghiDongAvatar,
+  'Sầm Nghi Đống (Đô Đốc)': samNghiDongAvatar,
+  'Lính Tiên Phong Hán': linhHanAvatar,
+  'Cung Thủ Đông Hán': linhHanAvatar,
+  'Pháp Sư Đông Hán': linhHanAvatar,
+  'Chiến Thuyền Nam Hán': luuHoangThaoAvatar,
+  'Thủy Binh Nam Hán': luuHoangThaoAvatar,
+  'Chiến Hạm Chỉ Huy': luuHoangThaoAvatar,
+  'Kỵ Binh Mông Cổ': kyBinhAvatar,
+  'Cung Kỵ Mông Cổ': kyBinhAvatar,
+  'Vu Sư Nguyên Mông': oMaNhiAvatar,
+  'Thiết Giáp Binh Minh': vuongThongAvatar,
+  'Pháo Binh Nhà Minh': vuongThongAvatar,
+  'Mưu Sĩ Nhà Minh': vuongThongAvatar,
+  'Bát Kỳ Binh Thanh': batKyAvatar,
+  'Hỏa Mai Binh Thanh': batKyAvatar,
+  'Đại Đô Đốc Tôn Sĩ Nghị': samNghiDongAvatar
 }
 
 export const HERO_BACKGROUND_MAP: Record<string, string> = {
@@ -24,10 +74,17 @@ export const HERO_BACKGROUND_MAP: Record<string, string> = {
   'quang_trung': quangTrungBg,
   'hai_ba_trung': haiBaTrungBg,
   'ba_trieu': baTrieuBg,
+  'thanh_giong': thanhGiongBg,
+  'le_loi': leLoiBg,
+  'nguyen_trai': nguyenTraiBg,
+
   'Trần Hưng Đạo': tranHungDaoBg,
   'Quang Trung': quangTrungBg,
   'Hai Bà Trưng': haiBaTrungBg,
-  'Bà Triệu': baTrieuBg
+  'Bà Triệu': baTrieuBg,
+  'Thánh Gióng': thanhGiongBg,
+  'Lê Lợi': leLoiBg,
+  'Nguyễn Trãi': nguyenTraiBg
 }
 
 import { getFallbackAvatar } from '../utils/svgAvatarGenerator'
