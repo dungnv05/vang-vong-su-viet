@@ -189,7 +189,7 @@ class CloudDatabaseService {
         .from('player_profiles')
         .select('*')
         .eq('id', playerId)
-        .single()
+        .maybeSingle()
 
       if (error || !data) return null
       return {
