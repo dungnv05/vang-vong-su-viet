@@ -43,7 +43,8 @@ export function saveLocalGameState(state: any) {
       pvpScore: state.pvpScore,
       rankLevel: state.rankLevel,
       activeBeastId: state.activeBeastId,
-      lastIdleClaimTime: state.lastIdleClaimTime
+      lastIdleClaimTime: state.lastIdleClaimTime,
+      battleSpeed: state.battleSpeed
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(dataToSave))
   } catch (err) {
@@ -167,7 +168,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   activeBeastId: savedLocal?.activeBeastId || 'beast_kim_quy',
   isMuted: false,
   isAnimating: false,
-  battleSpeed: 1,
+  battleSpeed: savedLocal?.battleSpeed || 1,
   isAutoBattle: true,
   draggingHeroId: null,
   comboBanner: null,
@@ -216,11 +217,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     return { isMuted: nextMuted }
   }),
 
-  toggleBattleSpeed: () => set((state) => {
+  toggleBattleSpeed: () => {
     audioEngine.playClick()
-    const nextSpeed = state.battleSpeed === 1 ? 2 : state.battleSpeed === 2 ? 3 : 1
-    return { battleSpeed: nextSpeed }
-  }),
+    set((state) => ({
+      battleSpeed: state.battleSpeed === 1 ? 2 : state.battleSpeed === 2 ? 3 : 1
+    }))
+    triggerAutoCloudSave()
+  },
 
   toggleAutoBattle: () => set((state) => {
     audioEngine.playClick()
