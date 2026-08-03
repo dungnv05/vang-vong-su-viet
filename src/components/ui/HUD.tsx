@@ -62,7 +62,7 @@ export default function HUD() {
       boxSizing: 'border-box',
       color: 'white'
     }}>
-      {/* Top Bar Tinh Gọn Cho Màn Hình Khai Chiến 3D */}
+      {/* Top Bar Tinh Gọn Cho Màn Hình Khai Chiến */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'auto' }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {/* Nút Về Sảnh Chính Hoàng Gia */}
@@ -106,14 +106,14 @@ export default function HUD() {
           </button>
 
           {/* Nút Chọn Ải Màn Chơi */}
-          <div 
+          <div
             onClick={() => setShowStageSelectModal(true)}
-            style={{ 
-              background: 'rgba(15, 23, 42, 0.85)', 
-              padding: '10px 18px', 
-              borderRadius: '12px', 
+            style={{
+              background: 'rgba(15, 23, 42, 0.85)',
+              padding: '10px 18px',
+              borderRadius: '12px',
               border: '1.5px solid rgba(212, 175, 55, 0.8)',
-              
+
               boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
               cursor: 'pointer',
               display: 'flex',
@@ -132,11 +132,11 @@ export default function HUD() {
             </div>
           </div>
         </div>
-        
-        <div style={{ 
-          background: 'rgba(15, 23, 42, 0.85)', 
-          padding: '10px 16px', 
-          borderRadius: '20px', 
+
+        <div style={{
+          background: 'rgba(15, 23, 42, 0.85)',
+          padding: '10px 16px',
+          borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           display: 'flex',
           alignItems: 'center',
@@ -159,7 +159,7 @@ export default function HUD() {
             const isDeployed = hero.slotIndex >= 0
 
             return (
-              <div 
+              <div
                 key={hero.id}
                 onClick={() => setSelectedHeroId(hero.id)}
                 style={{
@@ -179,16 +179,16 @@ export default function HUD() {
                 onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
               >
                 {hero.avatarUrl ? (
-                  <img 
-                    src={hero.avatarUrl} 
-                    alt={hero.name} 
+                  <img
+                    src={hero.avatarUrl}
+                    alt={hero.name}
                     style={{
                       width: '42px',
                       height: '42px',
                       borderRadius: '10px',
                       objectFit: 'cover',
                       border: `1.5px solid ${hero.color}`
-                    }} 
+                    }}
                   />
                 ) : (
                   <div style={{ fontSize: '1.6rem' }}>🏛️</div>
@@ -247,10 +247,10 @@ export default function HUD() {
             <button
               onClick={toggleBattleSpeed}
               style={{
-                background: battleSpeed === 3 
-                  ? 'linear-gradient(45deg, #dc2626, #ef4444)' 
-                  : battleSpeed === 2 
-                    ? 'linear-gradient(45deg, #d97706, #f59e0b)' 
+                background: battleSpeed === 3
+                  ? 'linear-gradient(45deg, #dc2626, #ef4444)'
+                  : battleSpeed === 2
+                    ? 'linear-gradient(45deg, #d97706, #f59e0b)'
                     : 'rgba(15, 23, 42, 0.9)',
                 border: battleSpeed > 1 ? '1.5px solid #fef08a' : '1px solid rgba(255,255,255,0.2)',
                 color: 'white',
@@ -289,36 +289,36 @@ export default function HUD() {
             </div>
           </div>
 
-            <button 
-              onClick={() => {
-                if (!useGameStore.getState().isAutoBattle) {
-                  useGameStore.setState({ isAutoBattle: true })
-                }
-                executeTurn()
-              }}
-              disabled={isAnimating}
-              style={{
-                background: isAnimating 
-                  ? 'linear-gradient(45deg, #475569, #64748b)'
-                  : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-                color: '#ffffff',
-                border: '2px solid #fef08a',
-                padding: '14px 36px',
-                fontSize: '1.15rem',
-                fontWeight: 800,
-                borderRadius: '30px',
-                cursor: isAnimating ? 'not-allowed' : 'pointer',
-                boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                letterSpacing: '1px'
-              }}
-            >
-              <Swords size={22} />
-              {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'BẮT ĐẦU CHIẾN ĐẤU'}
-            </button>
+          <button
+            onClick={() => {
+              if (!useGameStore.getState().isAutoBattle) {
+                useGameStore.setState({ isAutoBattle: true })
+              }
+              executeTurn()
+            }}
+            disabled={isAnimating}
+            style={{
+              background: isAnimating
+                ? 'linear-gradient(45deg, #475569, #64748b)'
+                : 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
+              color: '#ffffff',
+              border: '2px solid #fef08a',
+              padding: '14px 36px',
+              fontSize: '1.15rem',
+              fontWeight: 800,
+              borderRadius: '30px',
+              cursor: isAnimating ? 'not-allowed' : 'pointer',
+              boxShadow: isAnimating ? 'none' : '0 6px 25px rgba(245, 158, 11, 0.6)',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              letterSpacing: '1px'
+            }}
+          >
+            <Swords size={22} />
+            {isAnimating ? 'ĐANG TỰ ĐỘNG CHIẾN ĐẤU...' : 'BẮT ĐẦU CHIẾN ĐẤU'}
+          </button>
         </div>
       </div>
 

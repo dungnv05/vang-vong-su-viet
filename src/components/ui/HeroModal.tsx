@@ -4,6 +4,7 @@ import { X, Zap, Heart, Star, ArrowUpCircle, Flame, Sparkles } from 'lucide-reac
 import MeridiansModal from './MeridiansModal'
 import heroPlaceholder from '../../assets/hero.png'
 import { getRoleVietnameseInfo } from '../../data/heroes'
+import { getRarityTheme } from '../../utils/rarityColors'
 
 export default function HeroModal() {
   const [showMeridians, setShowMeridians] = useState<boolean>(false)
@@ -23,6 +24,7 @@ export default function HeroModal() {
   const hero = heroes.find(h => h.id === selectedHeroId)
   if (!hero) return null
 
+  const theme = getRarityTheme(hero.rarity)
   const roleInfo = getRoleVietnameseInfo(hero.role)
   const partnerHero = hero.synergy ? heroes.find(h => h.id === hero.synergy?.partnerId) : null
   const currentShards = shards[hero.name] || 0
@@ -114,17 +116,17 @@ export default function HeroModal() {
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', color: hero.color, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{hero.name}</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', color: theme.hex, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{hero.name}</h2>
                 <span style={{
-                  background: hero.color,
+                  background: theme.badgeBg,
                   color: 'white',
                   fontSize: '0.7rem',
-                  fontWeight: 'bold',
+                  fontWeight: '900',
                   padding: '2px 8px',
                   borderRadius: '10px',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                  boxShadow: theme.glowBoxShadow
                 }}>
-                  {hero.rarity || 'SR'}
+                  {theme.rarity} • {theme.title}
                 </span>
               </div>
               <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#cbd5e1', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>

@@ -3,6 +3,7 @@ import { useGameStore } from '../../store/gameStore'
 import { CODEX_HEROES } from '../../data/codexData'
 import { MOCK_ITEMS } from '../../data/items'
 import { getRoleVietnameseInfo } from '../../data/heroes'
+import { getRarityTheme } from '../../utils/rarityColors'
 import { X, BookOpen, Scroll, Swords, Medal, Quote, Zap, Heart } from 'lucide-react'
 
 export default function CodexModal() {
@@ -247,8 +248,16 @@ export default function CodexModal() {
                   {/* Row 1: Rarity, Class & Stats */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ background: matchingGameHero.color, color: 'white', fontSize: '0.8rem', fontWeight: 900, padding: '3px 10px', borderRadius: '8px' }}>
-                        {matchingGameHero.rarity || 'SSR'}
+                      <span style={{
+                        background: getRarityTheme(matchingGameHero.rarity).badgeBg,
+                        color: 'white',
+                        fontSize: '0.8rem',
+                        fontWeight: 900,
+                        padding: '3px 10px',
+                        borderRadius: '8px',
+                        boxShadow: getRarityTheme(matchingGameHero.rarity).glowBoxShadow
+                      }}>
+                        {matchingGameHero.rarity || 'SSR'} • {getRarityTheme(matchingGameHero.rarity).title}
                       </span>
                       {roleInfo && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', fontWeight: 'bold', color: roleInfo.color }}>

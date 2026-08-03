@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { X, Users, Zap, Swords } from 'lucide-react'
 import { type HeroData } from '../../data/heroes'
+import { getRarityTheme } from '../../utils/rarityColors'
 
 // Hàm tính Lực Chiến (Combat Power Score)
 export function getPowerScore(hero: HeroData): number {
@@ -22,14 +24,17 @@ export default function SquadModal() {
   const deployHeroToSlot = useGameStore(state => state.deployHeroToSlot)
   const benchHero = useGameStore(state => state.benchHero)
 
+  const [rarityFilter, setRarityFilter] = useState<'ALL' | 'UR' | 'SSR' | 'SR'>('ALL')
+
   if (!showSquadModal) return null
 
   // Tướng đang trong 6 ô chiến đấu
   const activeHeroes = heroes.filter(h => h.slotIndex >= 0)
   
-  // Tướng dự bị (Slot -1) -> SẮP XẾP MẶC ĐỊNH THEO ĐỘ HIỂM VÀ LỰC CHIẾN (Giảm dần)
+  // Tướng dự bị (Slot -1) -> SẮP XẾP MẶC ĐỊNH THEO ĐỘ HIẾM VÀ LỰC CHIẾN (Giảm dần)
   const reserveHeroes = heroes
     .filter(h => h.slotIndex === -1)
+    .filter(h => rarityFilter === 'ALL' || (h.rarity || 'SR') === rarityFilter)
     .sort((a, b) => {
       const rarityA = RARITY_WEIGHT[a.rarity || 'SR'] || 1
       const rarityB = RARITY_WEIGHT[b.rarity || 'SR'] || 1
@@ -199,38 +204,66 @@ export default function SquadModal() {
           </div>
         </div>
 
-        {/* Kho Tướng Dự Bị (Sắp xếp mặc định theo Độ Hiếm & Lực Chiến) */}
+        {/* Kho Tướng Dự Bị (Phân loại theo Màu Phẩm Chất Rarity & Lực Chiến) */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <h3 style={{ margin: 0, fontSize: '1rem', color: '#cbd5e1' }}>
               📦 Kho Tướng Dự Bị ({reserveHeroes.length} Tướng)
             </h3>
-            <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontStyle: 'italic' }}>
-              ⚡ Đã sắp xếp mặc định: Độ Hiếm (UR ➔ SSR ➔ SR) & Lực Chiến cao nhất
-            </span>
+
+            {/* Thanh Bộ Lọc Màu Phẩm Chất (Rarity Filter Bar) */}
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              {[
+                { key: 'ALL', label: 'Tất Cả', color: '#94a3b8' },
+                { key: 'UR', label: '🔴 UR (Thượng Cổ)', color: '#ef4444' },
+                { key: 'SSR', label: '🟡 SSR (Tuyệt Phẩm)', color: '#f59e0b' },
+                { key: 'SR', label: '🟣 SR (Danh Tướng)', color: '#a855f7' }
+              ].map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => setRarityFilter(f.key as any)}
+                  style={{
+                    background: rarityFilter === f.key ? f.color : 'rgba(30, 41, 59, 0.6)',
+                    color: rarityFilter === f.key ? '#ffffff' : '#cbd5e1',
+                    border: `1px solid ${rarityFilter === f.key ? f.color : 'rgba(255,255,255,0.15)'}`,
+                    borderRadius: '8px',
+                    padding: '4px 10px',
+                    fontSize: '0.72rem',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: rarityFilter === f.key ? `0 0 10px ${f.color}66` : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {reserveHeroes.length === 0 ? (
             <div style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '16px' }}>
-              Tất cả các tướng đã xuất trận! Bạn có thể vào phần "Chiêu Mộ Tướng" để quay thêm tướng mới.
+              Không có tướng thuộc phẩm chất này trong kho dự bị!
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', maxHeight: '170px', overflowY: 'auto', paddingRight: '4px' }}>
               {reserveHeroes.map(hero => {
                 const power = getPowerScore(hero)
+                const theme = getRarityTheme(hero.rarity)
 
                 return (
                   <div 
                     key={hero.id}
                     style={{
-                      background: 'rgba(30, 41, 59, 0.7)',
-                      border: `1.5px solid ${hero.color}`,
+                      background: theme.background,
+                      border: `1.5px solid ${theme.borderHex}`,
                       borderRadius: '12px',
                       padding: '10px',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '10px',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      boxShadow: theme.glowBoxShadow
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -243,7 +276,7 @@ export default function SquadModal() {
                             height: '36px',
                             borderRadius: '8px',
                             objectFit: 'cover',
-                            border: `1px solid ${hero.color}`
+                            border: `1.5px solid ${theme.borderHex}`
                           }} 
                         />
                       ) : (
@@ -253,16 +286,17 @@ export default function SquadModal() {
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <span style={{
-                            background: hero.color,
+                            background: theme.badgeBg,
                             color: 'white',
                             fontSize: '0.65rem',
-                            fontWeight: 'bold',
+                            fontWeight: '900',
                             padding: '1px 5px',
-                            borderRadius: '6px'
+                            borderRadius: '6px',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.4)'
                           }}>
                             {hero.rarity || 'SR'}
                           </span>
-                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: hero.color }}>
+                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: theme.hex }}>
                             {hero.name}
                           </span>
                         </div>

@@ -63,7 +63,7 @@ src/
 - [x] Tốc Độ Trận Đấu (1x ➔ 2x ➔ 3x) điều chỉnh thời lượng Cutscene linh hoạt.
 - [x] Chế độ Tự Động Chiến Đấu (Auto-Battle: Bật/Tắt) tự động xuất chiêu liên tục khi đến lượt.
 - [x] Giao Diện Sảnh Chính Hoàng Gia 3D (Main City Lobby `MainLobby.tsx`) tôn vinh Đội Hình Xuất Trận, Tổng Lực Chiến & Linh Vật Hộ Quốc.
-- [x] Tinh gọn giao diện màn hình Khai Chiến 3D (Ẩn các nút rườm rà Chiêu Mộ, Vàng, Tháp Cổ để tập trung góc nhìn 3D).
+- [x] Tinh gọn giao diện màn hình Khai Chiến (Ẩn các nút rườm rà Chiêu Mộ, Vàng, Tháp Cổ để tập trung góc nhìn 3D).
 - [x] Bể tướng phía dưới hiển thị TẤT CẢ các tướng sở hữu (Đang đánh & Dự bị) với nút Xuất/Tháo nhanh cực kỳ tiện lợi.
 - [x] Sắp xếp cụm nút Tốc độ (1x/2x/3x) & Auto nằm DỌC PHÍA TRÊN nút Kết Thúc Lượt, dành 85% không gian cho Bể Tướng.
 - [x] Chế độ Phó Bản Trùm Thế Giới (World Boss Raid - Hắc Long Ma Tướng `WorldBossModal.tsx`): 10 lượt tính tổng sát thương gây ra và trao rương quà Vàng & Bảo Vật Hoàng Gia.

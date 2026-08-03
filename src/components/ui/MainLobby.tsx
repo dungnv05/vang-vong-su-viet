@@ -4,6 +4,7 @@ import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star,
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
 import { cloudService, supabase } from '../../utils/supabaseClient'
+import { getRarityTheme } from '../../utils/rarityColors'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 export default function MainLobby() {
@@ -236,81 +237,85 @@ export default function MainLobby() {
         </h3>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          {activeHeroes.map(hero => (
-            <div
-              key={hero.id}
-              onClick={() => setSelectedHeroId(hero.id)}
-              style={{
-                background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%)',
-                border: `2px solid ${hero.color}`,
-                borderRadius: '20px',
-                width: '135px',
-                padding: '16px 10px',
-                cursor: 'pointer',
-                textAlign: 'center',
-                boxShadow: `0 10px 30px ${hero.color}44`,
-                transition: 'all 0.3s ease',
-                position: 'relative'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-10px) scale(1.05)'
-                e.currentTarget.style.boxShadow = `0 15px 40px ${hero.color}88`
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                e.currentTarget.style.boxShadow = `0 10px 30px ${hero.color}44`
-              }}
-            >
-              <span style={{
-                position: 'absolute',
-                top: '8px',
-                right: '8px',
-                background: hero.color,
-                color: 'white',
-                fontSize: '0.68rem',
-                fontWeight: 'bold',
-                padding: '2px 6px',
-                borderRadius: '8px',
-                zIndex: 2
-              }}>
-                {hero.rarity || 'SR'}
-              </span>
+          {activeHeroes.map(hero => {
+            const theme = getRarityTheme(hero.rarity)
+            return (
+              <div 
+                key={hero.id}
+                onClick={() => setSelectedHeroId(hero.id)}
+                style={{
+                  background: theme.background,
+                  border: `2px solid ${theme.borderHex}`,
+                  borderRadius: '24px',
+                  width: '135px',
+                  padding: '16px 10px',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  boxShadow: theme.glowBoxShadow,
+                  transition: 'all 0.3s ease',
+                  position: 'relative'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-10px) scale(1.05)'
+                  e.currentTarget.style.boxShadow = `0 15px 40px ${theme.hex}88`
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                  e.currentTarget.style.boxShadow = theme.glowBoxShadow
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  background: theme.badgeBg,
+                  color: 'white',
+                  fontSize: '0.68rem',
+                  fontWeight: '900',
+                  padding: '2px 6px',
+                  borderRadius: '8px',
+                  zIndex: 2,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                }}>
+                  {theme.rarity}
+                </span>
 
-              {/* Avatar Image 2D hiển thị sắc nét */}
-              <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0' }}>
-                {hero.avatarUrl ? (
-                  <img 
-                    src={hero.avatarUrl} 
-                    alt={hero.name} 
-                    style={{
-                      width: '72px',
-                      height: '72px',
-                      borderRadius: '16px',
-                      objectFit: 'cover',
-                      border: `2px solid ${hero.color}`,
-                      boxShadow: `0 4px 15px ${hero.color}66`
-                    }} 
-                  />
-                ) : (
-                  <div style={{ fontSize: '2.8rem' }}>🏛️</div>
-                )}
+                {/* Avatar Image 2D hiển thị sắc nét */}
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0' }}>
+                  {hero.avatarUrl ? (
+                    <img
+                      src={hero.avatarUrl}
+                      alt={hero.name}
+                      style={{
+                        width: '72px',
+                        height: '72px',
+                        borderRadius: '16px',
+                        objectFit: 'cover',
+                        border: `2px solid ${theme.borderHex}`,
+                        boxShadow: `0 4px 15px ${theme.hex}66`
+                      }}
+                    />
+                  ) : (
+                    <div style={{ fontSize: '2.8rem' }}>🏛️</div>
+                  )}
+                </div>
+
+                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: theme.hex }}>{hero.name}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>Lv.{hero.level}</div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '6px' }}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      size={12}
+                      color={i < hero.stars ? "#f1c40f" : "#475569"}
+                      fill={i < hero.stars ? "#f1c40f" : "none"}
+                    />
+                  ))}
+                </div>
               </div>
-
-              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: hero.color }}>{hero.name}</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>Lv.{hero.level}</div>
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '6px' }}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star 
-                    key={i} 
-                    size={12} 
-                    color={i < hero.stars ? "#f1c40f" : "#475569"} 
-                    fill={i < hero.stars ? "#f1c40f" : "none"} 
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -507,7 +512,7 @@ export default function MainLobby() {
             textTransform: 'uppercase'
           }}
         >
-          <Swords size={30} /> KHAI CHIẾN 3D
+          <Swords size={30} /> KHAI CHIẾN
         </button>
       </div>
 

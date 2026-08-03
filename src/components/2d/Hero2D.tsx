@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { get2DSlotPosition, type HeroData } from '../../data/heroes'
 import { useGameStore } from '../../store/gameStore'
+import { getRarityTheme } from '../../utils/rarityColors'
 import heroPlaceholder from '../../assets/hero.png'
 
 interface Hero2DProps {
@@ -13,6 +14,7 @@ export default function Hero2D({ data }: Hero2DProps) {
 
   const isDragging = draggingHeroId === data.id
   const isAttacking = activeAttackerId === data.id
+  const theme = getRarityTheme(data.rarity)
   
   // Track HP changes for Hit & Heal Floating Popups
   const prevHpRef = useRef(data.hp)
@@ -142,10 +144,25 @@ export default function Hero2D({ data }: Hero2DProps) {
         }}
       />
 
-      {/* UI: Thanh Máu & Nộ */}
-      <div style={{ width: '100%', background: 'rgba(0,0,0,0.6)', borderRadius: '4px', padding: '4px', marginTop: '4px' }}>
-        <div style={{ fontSize: '12px', color: data.isEnemy ? '#ff4d4d' : '#fff', textAlign: 'center', fontWeight: 'bold', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-          {data.name}
+      {/* UI: Thanh Máu & Nộ & Rarity Badge */}
+      <div style={{ width: '100%', background: 'rgba(0,0,0,0.75)', border: `1px solid ${theme.borderHex}`, borderRadius: '6px', padding: '4px', marginTop: '4px', boxShadow: theme.glowBoxShadow }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+          {!data.isEnemy && (
+            <span style={{
+              background: theme.badgeBg,
+              color: '#ffffff',
+              fontSize: '0.6rem',
+              fontWeight: 900,
+              padding: '0px 4px',
+              borderRadius: '4px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.5)'
+            }}>
+              {theme.rarity}
+            </span>
+          )}
+          <span style={{ fontSize: '11px', color: data.isEnemy ? '#ff4d4d' : '#fff', fontWeight: 'bold', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            {data.name}
+          </span>
         </div>
         
         {/* HP Bar */}

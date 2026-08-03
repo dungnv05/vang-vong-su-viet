@@ -1,5 +1,6 @@
 import { useGameStore } from '../../store/gameStore'
-import { X, Sparkles, Coins } from 'lucide-react'
+import { Sparkles, X, Coins } from 'lucide-react'
+import { getRarityTheme } from '../../utils/rarityColors'
 import { getRoleVietnameseInfo } from '../../data/heroes'
 
 export default function GachaModal() {
@@ -108,34 +109,37 @@ export default function GachaModal() {
               maxHeight: '340px',
               overflowY: 'auto'
             }}>
-              {gachaResults.map((result, idx) => (
-                <div
-                  key={result.id}
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%)',
-                    border: `2px solid ${result.color}`,
-                    borderRadius: '16px',
-                    padding: '14px 10px',
-                    textAlign: 'center',
-                    boxShadow: `0 0 25px ${result.color}88`,
-                    animation: `fadeInCard 0.4s ease forwards ${idx * 0.08}s`,
-                    position: 'relative'
-                  }}
-                >
-                  <span style={{
-                    position: 'absolute',
-                    top: '6px',
-                    right: '6px',
-                    background: result.color,
-                    color: 'white',
-                    fontSize: '0.65rem',
-                    fontWeight: 'bold',
-                    padding: '2px 6px',
-                    borderRadius: '6px',
-                    zIndex: 2
-                  }}>
-                    {result.rarity}
-                  </span>
+              {gachaResults.map((result, idx) => {
+                const theme = getRarityTheme(result.rarity)
+                return (
+                  <div
+                    key={result.id}
+                    style={{
+                      background: theme.background,
+                      border: `2px solid ${theme.borderHex}`,
+                      borderRadius: '16px',
+                      padding: '14px 10px',
+                      textAlign: 'center',
+                      boxShadow: theme.glowBoxShadow,
+                      animation: `fadeInCard 0.4s ease forwards ${idx * 0.08}s`,
+                      position: 'relative'
+                    }}
+                  >
+                    <span style={{
+                      position: 'absolute',
+                      top: '6px',
+                      right: '6px',
+                      background: theme.badgeBg,
+                      color: 'white',
+                      fontSize: '0.65rem',
+                      fontWeight: '900',
+                      padding: '2px 6px',
+                      borderRadius: '6px',
+                      zIndex: 2,
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                    }}>
+                      {theme.rarity}
+                    </span>
 
                   {/* Avatar 2D Image */}
                   <div style={{ display: 'flex', justifyContent: 'center', margin: '6px 0' }}>
@@ -169,7 +173,8 @@ export default function GachaModal() {
                     </div>
                   )}
                 </div>
-              ))}
+              )
+            })}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center' }}>
