@@ -44,7 +44,8 @@ export function saveLocalGameState(state: any) {
       rankLevel: state.rankLevel,
       activeBeastId: state.activeBeastId,
       lastIdleClaimTime: state.lastIdleClaimTime,
-      battleSpeed: state.battleSpeed
+      battleSpeed: state.battleSpeed,
+      isMuted: state.isMuted
     }
     localStorage.setItem(SAVE_KEY, JSON.stringify(dataToSave))
   } catch (err) {
@@ -53,6 +54,9 @@ export function saveLocalGameState(state: any) {
 }
 
 const savedLocal = loadLocalGameState()
+if (savedLocal?.isMuted) {
+  audioEngine.setMuted(true)
+}
 
 const triggerAutoCloudSave = () => {
   if (typeof window !== 'undefined') {
@@ -166,7 +170,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   pvpScore: savedLocal?.pvpScore || 1250,
   rankLevel: savedLocal?.rankLevel || 1,
   activeBeastId: savedLocal?.activeBeastId || 'beast_kim_quy',
-  isMuted: false,
+  isMuted: savedLocal?.isMuted || false,
   isAnimating: false,
   battleSpeed: savedLocal?.battleSpeed || 1,
   isAutoBattle: true,
@@ -211,11 +215,14 @@ export const useGameStore = create<GameState>((set, get) => ({
     })
   },
 
-  toggleMute: () => set((state) => {
-    const nextMuted = !state.isMuted
-    audioEngine.setMuted(nextMuted)
-    return { isMuted: nextMuted }
-  }),
+  toggleMute: () => {
+    set((state) => {
+      const nextMuted = !state.isMuted
+      audioEngine.setMuted(nextMuted)
+      return { isMuted: nextMuted }
+    })
+    triggerAutoCloudSave()
+  },
 
   toggleBattleSpeed: () => {
     audioEngine.playClick()
