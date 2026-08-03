@@ -16,6 +16,15 @@ CREATE TABLE IF NOT EXISTS public.player_profiles (
     last_synced_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Nâng cấp/Bổ sung cột tự động cho các bảng đã khởi tạo từ trước (Migration Safe)
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS tower_floor INT NOT NULL DEFAULT 1;
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS max_tower_floor INT NOT NULL DEFAULT 1;
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS pvp_score INT NOT NULL DEFAULT 1250;
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS world_boss_total_damage BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS active_beast_id TEXT NOT NULL DEFAULT 'beast_kim_quy';
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS full_state_json JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE public.player_profiles ADD COLUMN IF NOT EXISTS last_synced_at TIMESTAMPTZ DEFAULT NOW();
+
 -- 2. Bảng Tướng Sở Hữu (Player Heroes)
 CREATE TABLE IF NOT EXISTS public.player_heroes (
     id TEXT PRIMARY KEY,
@@ -34,9 +43,18 @@ CREATE TABLE IF NOT EXISTS public.player_shards (
     id SERIAL PRIMARY KEY,
     player_id TEXT REFERENCES public.player_profiles(id) ON DELETE CASCADE,
     hero_name TEXT NOT NULL,
-    count INT NOT NULL DEFAULT 0,
-    UNIQUE(player_id, hero_name)
+    count INT NOT NULL DEFAULT 0
 );
+
+-- Bổ sung ràng buộc Unique cho Mảnh Tướng nếu chưa có
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'player_shards_player_id_hero_name_key'
+    ) THEN
+        ALTER TABLE public.player_shards ADD CONSTRAINT player_shards_player_id_hero_name_key UNIQUE (player_id, hero_name);
+    END IF;
+END $$;
 
 -- Row Level Security (RLS) Policies
 ALTER TABLE public.player_profiles ENABLE ROW LEVEL SECURITY;

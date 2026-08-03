@@ -236,36 +236,44 @@ class CloudDatabaseService {
       // 1. Upsert Profile
       const { error: profileErr } = await supabase
         .from('player_profiles')
-        .upsert(payload)
+        .upsert(payload, { onConflict: 'id' })
 
       if (profileErr) {
-        console.warn('[Supabase Cloud Save Warning]:', profileErr)
+        console.warn('[Supabase Cloud Save Profile Warning]:', profileErr)
       }
 
       // 2. Upsert Heroes
-      if (Array.isArray(fullGameState.heroes)) {
-        const heroRecords = fullGameState.heroes.map((h: any) => ({
-          id: `${playerId}_${h.id}`,
-          player_id: playerId,
-          hero_name: h.name,
-          rarity: h.rarity || 'SR',
-          level: h.level || 1,
-          stars: h.stars || 1,
-          slot_index: h.slotIndex ?? -1,
-          equipped_item_ids: h.equippedItemIds || []
-        }))
-        await supabase.from('player_heroes').upsert(heroRecords)
+      if (Array.isArray(fullGameState.heroes) && fullGameState.heroes.length > 0) {
+        try {
+          const heroRecords = fullGameState.heroes.map((h: any) => ({
+            id: `${playerId}_${h.id}`,
+            player_id: playerId,
+            hero_name: h.name,
+            rarity: h.rarity || 'SR',
+            level: h.level || 1,
+            stars: h.stars || 1,
+            slot_index: h.slotIndex ?? -1,
+            equipped_item_ids: h.equippedItemIds || []
+          }))
+          await supabase.from('player_heroes').upsert(heroRecords, { onConflict: 'id' })
+        } catch (heroErr) {
+          console.warn('[Supabase Cloud Save Heroes Warning]:', heroErr)
+        }
       }
 
       // 3. Upsert Shards
       if (fullGameState.shards && typeof fullGameState.shards === 'object') {
-        const shardRecords = Object.entries(fullGameState.shards).map(([heroName, count]) => ({
-          player_id: playerId,
-          hero_name: heroName,
-          count: count
-        }))
-        if (shardRecords.length > 0) {
-          await supabase.from('player_shards').upsert(shardRecords, { onConflict: 'player_id,hero_name' })
+        try {
+          const shardRecords = Object.entries(fullGameState.shards).map(([heroName, count]) => ({
+            player_id: playerId,
+            hero_name: heroName,
+            count: count
+          }))
+          if (shardRecords.length > 0) {
+            await supabase.from('player_shards').upsert(shardRecords, { onConflict: 'player_id,hero_name' })
+          }
+        } catch (shardErr) {
+          console.warn('[Supabase Cloud Save Shards Warning]:', shardErr)
         }
       }
 
@@ -284,10 +292,17 @@ class CloudDatabaseService {
         .from('player_profiles')
         .select('*')
         .order('max_unlocked_stage', { ascending: false })
-        .order('pvp_score', { ascending: false })
         .limit(10)
 
-      if (error || !data) return []
+      if (error || !data) {
+        // Fallback fallback order by gold
+        const fallback = await supabase
+          .from('player_profiles')
+          .select('*')
+          .order('gold', { ascending: false })
+          .limit(10)
+        return fallback.data || []
+      }
       return data
     } catch {
       return []
