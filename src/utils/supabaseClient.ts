@@ -67,6 +67,14 @@ export const isSupabaseConfigured = Boolean(
   !envUrl.includes('localhost')
 )
 
+if (typeof window !== 'undefined') {
+  if (isSupabaseConfigured) {
+    console.log(`[Supabase Status] 🟢 Connected to Cloud Supabase: ${SUPABASE_CONFIG.url}`)
+  } else {
+    console.warn(`[Supabase Status] 🟡 Using Local Fallback (${SUPABASE_CONFIG.url}). Reason: VITE_SUPABASE_URL environment variable was not baked into Vite build.`)
+  }
+}
+
 // Initialize Supabase Client with Wildcard SSO token storage across *.yundev.space
 export const supabase = createClient(
   SUPABASE_CONFIG.url,
