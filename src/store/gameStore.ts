@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { MOCK_HEROES, type HeroData } from '../data/heroes'
+import { MOCK_HEROES, type HeroData, rehydrateHeroes } from '../data/heroes'
 import { MOCK_ITEMS, type ItemData } from '../data/items'
 import { CAMPAIGN_STAGES } from '../data/stages'
 import { GACHA_HERO_POOL, type GachaHeroTemplate } from '../data/gachaPool'
@@ -16,7 +16,11 @@ export function loadLocalGameState() {
   try {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
-    return JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    if (parsed && Array.isArray(parsed.heroes)) {
+      parsed.heroes = rehydrateHeroes(parsed.heroes)
+    }
+    return parsed
   } catch {
     return null
   }
@@ -652,7 +656,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       showIdleModal: false,
       showStageSelectModal: false,
       showBeastModal: false,
-      heroes: cloudState.heroes || state.heroes,
+      heroes: rehydrateHeroes(cloudState.heroes || state.heroes),
       inventory: cloudState.inventory || state.inventory,
       shards: cloudState.shards || state.shards,
       gold: cloudState.gold !== undefined ? cloudState.gold : state.gold,

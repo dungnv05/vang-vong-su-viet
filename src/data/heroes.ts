@@ -8,6 +8,53 @@ import quangTrungBg from '../assets/heroes/backgrounds/quang_trung.png'
 import haiBaTrungBg from '../assets/heroes/backgrounds/hai_ba_trung.png'
 import baTrieuBg from '../assets/heroes/backgrounds/ba_trieu.png'
 
+export const HERO_AVATAR_MAP: Record<string, string> = {
+  'tran_hung_dao': tranHungDaoAvatar,
+  'quang_trung': quangTrungAvatar,
+  'hai_ba_trung': haiBaTrungAvatar,
+  'ba_trieu': baTrieuAvatar,
+  'Trần Hưng Đạo': tranHungDaoAvatar,
+  'Quang Trung': quangTrungAvatar,
+  'Hai Bà Trưng': haiBaTrungAvatar,
+  'Bà Triệu': baTrieuAvatar
+}
+
+export const HERO_BACKGROUND_MAP: Record<string, string> = {
+  'tran_hung_dao': tranHungDaoBg,
+  'quang_trung': quangTrungBg,
+  'hai_ba_trung': haiBaTrungBg,
+  'ba_trieu': baTrieuBg,
+  'Trần Hưng Đạo': tranHungDaoBg,
+  'Quang Trung': quangTrungBg,
+  'Hai Bà Trưng': haiBaTrungBg,
+  'Bà Triệu': baTrieuBg
+}
+
+export function getHeroAvatarUrl(heroIdOrName?: string): string | undefined {
+  if (!heroIdOrName) return undefined
+  return HERO_AVATAR_MAP[heroIdOrName] || HERO_AVATAR_MAP[heroIdOrName.toLowerCase()]
+}
+
+export function getHeroBackgroundUrl(heroIdOrName?: string): string | undefined {
+  if (!heroIdOrName) return undefined
+  return HERO_BACKGROUND_MAP[heroIdOrName] || HERO_BACKGROUND_MAP[heroIdOrName.toLowerCase()]
+}
+
+export function rehydrateHero<T extends { id?: string; name?: string; avatarUrl?: string; backgroundUrl?: string }>(hero: T): T {
+  const avatar = getHeroAvatarUrl(hero.id) || getHeroAvatarUrl(hero.name) || hero.avatarUrl
+  const bg = getHeroBackgroundUrl(hero.id) || getHeroBackgroundUrl(hero.name) || hero.backgroundUrl
+  return {
+    ...hero,
+    avatarUrl: avatar,
+    backgroundUrl: bg
+  }
+}
+
+export function rehydrateHeroes<T extends { id?: string; name?: string; avatarUrl?: string; backgroundUrl?: string }>(heroes: T[]): T[] {
+  if (!Array.isArray(heroes)) return []
+  return heroes.map(rehydrateHero)
+}
+
 export interface HeroData {
   id: string
   name: string
