@@ -5,6 +5,15 @@ import baTrieuAvatar from '../assets/heroes/avatars/ba_trieu.png'
 import thanhGiongAvatar from '../assets/heroes/avatars/thanh_giong.png'
 import leLoiAvatar from '../assets/heroes/avatars/le_loi.png'
 import nguyenTraiAvatar from '../assets/heroes/avatars/nguyen_trai.png'
+import boCaiDaiVuongAvatar from '../assets/heroes/avatars/bo_cai_dai_vuong.png'
+import daTuongAvatar from '../assets/heroes/avatars/da_tuong.png'
+import dinhTienHoangAvatar from '../assets/heroes/avatars/dinh_tien_hoang.png'
+import leDaiHanhAvatar from '../assets/heroes/avatars/le_dai_hanh.png'
+import lyThuongKietAvatar from '../assets/heroes/avatars/ly_thuong_kiet.png'
+import ngoQuyenAvatar from '../assets/heroes/avatars/ngo_quyen.png'
+import phamNguLaoAvatar from '../assets/heroes/avatars/pham_ngu_lao.png'
+import tranQuocToanAvatar from '../assets/heroes/avatars/tran_quoc_toan.png'
+import yetKieuAvatar from '../assets/heroes/avatars/yet_kieu.png'
 
 import tranHungDaoBg from '../assets/heroes/backgrounds/tran_hung_dao.png'
 import quangTrungBg from '../assets/heroes/backgrounds/quang_trung.png'
@@ -40,6 +49,15 @@ export const HERO_AVATAR_MAP: Record<string, string> = {
   'thanh_giong': thanhGiongAvatar,
   'le_loi': leLoiAvatar,
   'nguyen_trai': nguyenTraiAvatar,
+  'bo_cai_dai_vuong': boCaiDaiVuongAvatar,
+  'da_tuong': daTuongAvatar,
+  'dinh_tien_hoang': dinhTienHoangAvatar,
+  'le_dai_hanh': leDaiHanhAvatar,
+  'ly_thuong_kiet': lyThuongKietAvatar,
+  'ngo_quyen': ngoQuyenAvatar,
+  'pham_ngu_lao': phamNguLaoAvatar,
+  'tran_quoc_toan': tranQuocToanAvatar,
+  'yet_kieu': yetKieuAvatar,
 
   'Trần Hưng Đạo': tranHungDaoAvatar,
   'Quang Trung': quangTrungAvatar,
@@ -48,6 +66,16 @@ export const HERO_AVATAR_MAP: Record<string, string> = {
   'Thánh Gióng': thanhGiongAvatar,
   'Lê Lợi': leLoiAvatar,
   'Nguyễn Trãi': nguyenTraiAvatar,
+  'Bố Cái Đại Vương': boCaiDaiVuongAvatar,
+  'Phùng Hưng': boCaiDaiVuongAvatar,
+  'Dã Tượng': daTuongAvatar,
+  'Đinh Tiên Hoàng': dinhTienHoangAvatar,
+  'Lê Đại Hành': leDaiHanhAvatar,
+  'Lý Thường Kiệt': lyThuongKietAvatar,
+  'Ngô Quyền': ngoQuyenAvatar,
+  'Phạm Ngũ Lão': phamNguLaoAvatar,
+  'Trần Quốc Toản': tranQuocToanAvatar,
+  'Yết Kiêu': yetKieuAvatar,
 
   // Monsters
   'Tô Định': toDinhAvatar,
@@ -261,6 +289,8 @@ const RAW_MOCK_HEROES: HeroData[] = [
     level: 30,
     stars: 5,
     equippedItemIds: ['item_1', 'item_2'],
+    avatarUrl: thanhGiongAvatar,
+    backgroundUrl: thanhGiongBg,
     rage: 60,
     maxRage: 100,
     skill: {
@@ -394,6 +424,8 @@ const RAW_MOCK_HEROES: HeroData[] = [
     level: 30,
     stars: 5,
     equippedItemIds: ['item_3'],
+    avatarUrl: nguyenTraiAvatar,
+    backgroundUrl: nguyenTraiBg,
     rage: 0,
     maxRage: 100,
     skill: {
@@ -420,6 +452,8 @@ const RAW_MOCK_HEROES: HeroData[] = [
     level: 30,
     stars: 5,
     equippedItemIds: ['item_1'],
+    avatarUrl: leLoiAvatar,
+    backgroundUrl: leLoiBg,
     rage: 0,
     maxRage: 100,
     skill: {
