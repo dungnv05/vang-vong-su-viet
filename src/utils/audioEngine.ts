@@ -1,8 +1,21 @@
-// Web Audio API Synthesizer cho Âm Thanh Game Sử Việt (Zero External Assets Required)
 class SoundEngine {
   private ctx: AudioContext | null = null
   private bgmGain: GainNode | null = null
   private isMuted: boolean = false
+  private viVoice: SpeechSynthesisVoice | null = null
+
+  constructor() {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const initVoices = () => {
+        const voices = window.speechSynthesis.getVoices()
+        this.viVoice = voices.find(v => v.lang.toLowerCase().includes('vi')) || null
+      }
+      initVoices()
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = initVoices
+      }
+    }
+  }
 
   private initCtx() {
     if (!this.ctx) {
@@ -137,34 +150,38 @@ class SoundEngine {
     impactOsc.stop(now + 0.8)
   }
 
-  // 5. Đọc Tên Kỹ Năng Bằng Giọng Nói (Text-To-Speech)
+  // 5. Đọc Tên Kỹ Năng & Hợp Kỹ Bằng Giọng Nói (Text-To-Speech)
   public playSkillVoice(skillName: string, battleSpeed: number = 1) {
     if (this.isMuted) return
-    if (!('speechSynthesis' in window)) return
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
 
-    // Hủy bỏ giọng đọc cũ đang dang dở
-    window.speechSynthesis.cancel()
+    try {
+      // Loại bỏ các ký tự đặc biệt như [HỢP KỸ], [TUYỆT KỸ] để đọc chuẩn
+      const textToRead = skillName.replace(/\[.*?\]/g, '').trim()
+      if (!textToRead) return
 
-    const utterance = new SpeechSynthesisUtterance(skillName)
-    utterance.lang = 'vi-VN'
-    
-    // Tốc độ phụ thuộc vào tốc độ trận đấu (battleSpeed)
-    // battleSpeed = 1 -> rate = 1.2 (nhanh hơn xíu cho hype)
-    // battleSpeed = 2 -> rate = 1.6
-    // battleSpeed = 3 -> rate = 2.0
-    utterance.rate = 1.0 + (battleSpeed * 0.3)
-    
-    // Tăng cao độ (pitch) một chút để nghe quyết liệt hơn
-    utterance.pitch = 1.2
-    
-    // Cố gắng chọn giọng Tiếng Việt
-    const voices = window.speechSynthesis.getVoices()
-    const viVoice = voices.find(v => v.lang.includes('vi') || v.lang.includes('VI'))
-    if (viVoice) {
-      utterance.voice = viVoice
+      window.speechSynthesis.cancel()
+
+      // Tạo trễ nhỏ (30ms) để Chrome xử lý xong lệnh cancel()
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(textToRead)
+        utterance.lang = 'vi-VN'
+        
+        // Tốc độ điều chỉnh theo battleSpeed (1 -> 1.15, 2 -> 1.4, 3 -> 1.65)
+        utterance.rate = Math.min(2.0, 1.15 + ((battleSpeed - 1) * 0.25))
+        utterance.pitch = 1.1
+
+        const voices = window.speechSynthesis.getVoices()
+        const voice = this.viVoice || voices.find(v => v.lang.toLowerCase().includes('vi'))
+        if (voice) {
+          utterance.voice = voice
+        }
+
+        window.speechSynthesis.speak(utterance)
+      }, 30)
+    } catch (err) {
+      console.warn('TTS Error:', err)
     }
-
-    window.speechSynthesis.speak(utterance)
   }
 
   // 3. Âm thanh Quay Gacha Hào Quang Huyền Diệu

@@ -918,10 +918,14 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ activeAttackerId: null, comboBanner: null }) // Tướng chính lùi về & ẩn banner Tuyệt Kỹ
 
       // Bước 2: Thi triển Hợp Kỹ của Tướng Phối hợp (Có khoảng nghỉ rõ ràng sau Tuyệt Kỹ)
-      if (synergyBanner && assistAttackerId) {
+      if (synergyBanner && assistAttackerId && attacker.synergy) {
         // Khoảng nghỉ giữa đòn Tuyệt Kỹ và đòn Hợp Kỹ
         await sleep(delay * 0.6)
         
+        // Phát giọng đọc tên Hợp Kỹ (TTS) & Tiếng nổ kỹ năng bùng nổ
+        audioEngine.playSkillVoice(attacker.synergy.skillName, state.battleSpeed)
+        audioEngine.playSkillImpactSFX()
+
         // Hiện banner Hợp Kỹ riêng biệt & Tướng Hợp Kích lao lên
         set({ 
           activeAttackerId: assistAttackerId,
