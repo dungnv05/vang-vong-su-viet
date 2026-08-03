@@ -46,9 +46,22 @@ const cookieStorage = {
   }
 }
 
-// Read Supabase environment variables from Vite env (VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY)
-const envUrl = (import.meta.env.VITE_SUPABASE_URL || import.meta.env.SUPABASE_URL || '').trim()
-const envAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.SUPABASE_ANON_KEY || '').trim()
+// Read Supabase environment variables from Vite env (supports VITE_PUBLIC_SUPABASE_URL & VITE_PUBLIC_SUPABASE_ANON_KEY)
+const envUrl = (
+  import.meta.env.VITE_PUBLIC_SUPABASE_URL ||
+  import.meta.env.VITE_SUPABASE_URL ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_URL ||
+  import.meta.env.SUPABASE_URL ||
+  ''
+).trim()
+
+const envAnonKey = (
+  import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY ||
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  import.meta.env.SUPABASE_ANON_KEY ||
+  ''
+).trim()
 
 // Local development fallbacks if environment variables are not set
 const LOCAL_FALLBACK_URL = 'http://localhost:54321'
@@ -71,7 +84,7 @@ if (typeof window !== 'undefined') {
   if (isSupabaseConfigured) {
     console.log(`[Supabase Status] 🟢 Connected to Cloud Supabase: ${SUPABASE_CONFIG.url}`)
   } else {
-    console.warn(`[Supabase Status] 🟡 Using Local Fallback (${SUPABASE_CONFIG.url}). Reason: VITE_SUPABASE_URL environment variable was not baked into Vite build.`)
+    console.warn(`[Supabase Status] 🟡 Using Local Fallback (${SUPABASE_CONFIG.url}). Reason: VITE_PUBLIC_SUPABASE_URL environment variable was not baked into Vite build.`)
   }
 }
 
