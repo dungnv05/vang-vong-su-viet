@@ -8,7 +8,11 @@ import {
   type YunThemeChangeDetail,
 } from '../../theme/yunTheme'
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  variant?: 'floating' | 'inline'
+}
+
+export default function ThemeToggle({ variant = 'floating' }: ThemeToggleProps) {
   const [theme, setCurrentTheme] = useState<YunTheme>(() => resolveTheme())
 
   useEffect(() => {
@@ -32,7 +36,7 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className="vv-theme-toggle"
+      className={`vv-theme-toggle vv-theme-toggle--${variant}`}
       aria-label="Chuyển chế độ sáng/tối"
       title="Chuyển chế độ sáng/tối"
       aria-pressed={isDark}

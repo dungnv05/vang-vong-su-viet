@@ -112,9 +112,11 @@ export default function App() {
     )
   }
 
+  const showFloatingToggle = loadingAuth || (!user && !guest)
+
   return (
     <>
-      <ThemeToggle />
+      {showFloatingToggle && <ThemeToggle variant="floating" />}
       {renderScreen()}
     </>
   )

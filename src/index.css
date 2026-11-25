@@ -151,6 +151,8 @@ html[data-theme="dark"] {
   --vv-rank-2-bg: #cbd5e1;
   --vv-rank-3-bg: #b45309;
   --vv-on-rank-12: #000000;
+  --vv-card-grad: linear-gradient(180deg, color-mix(in srgb, var(--vv-card-accent, transparent) 22%, transparent) 0%, rgba(15, 23, 42, 0.95) 100%);
+  --vv-rarity-mix: 100%;
 }
 
 html[data-theme="light"] {
@@ -305,6 +307,8 @@ html[data-theme="light"] {
   --vv-rank-2-bg: #cbd5e1;
   --vv-rank-3-bg: #b45309;
   --vv-on-rank-12: #0f172a;
+  --vv-card-grad: linear-gradient(180deg, #ffffff, #f1f5f9);
+  --vv-rarity-mix: 55%;
 }
 
 * {
@@ -322,11 +326,6 @@ body, html {
 }
 
 .vv-theme-toggle {
-  position: fixed;
-  left: max(8px, env(safe-area-inset-left));
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1000;
   width: 42px;
   height: 42px;
   padding: 0;
@@ -340,6 +339,17 @@ body, html {
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.vv-theme-toggle--floating {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  z-index: 20;
+}
+
+.vv-theme-toggle--inline {
+  flex-shrink: 0;
 }
 
 .vv-theme-toggle:hover {

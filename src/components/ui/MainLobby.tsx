@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins, Volume2, VolumeX } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
 import { cloudService, type WwwUser } from '../../utils/supabaseClient'
 import { getRarityTheme } from '../../utils/rarityColors'
+import ThemeToggle from './ThemeToggle'
 
 export default function MainLobby() {
   const currentScreen = useGameStore(state => state.currentScreen)
@@ -97,6 +98,8 @@ export default function MainLobby() {
 
         {/* Tổng Lực Chiến, Linh Vật, User Badge & Rương Treo Máy AFK */}
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <ThemeToggle variant="inline" />
+
           {/* Nút Bật / Tắt Âm Thanh */}
           <button
             onClick={toggleMute}
@@ -240,7 +243,7 @@ export default function MainLobby() {
             <span style={{ fontSize: '1.6rem' }}>{activeBeast.icon}</span>
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--vv-text-2)' }}>LINH VẬT HỘ QUỐC</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: activeBeast.color }}>{activeBeast.name}</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: `color-mix(in srgb, ${activeBeast.color} var(--vv-rarity-mix), var(--vv-text))` }}>{activeBeast.name}</div>
             </div>
           </div>
         </div>
@@ -260,7 +263,8 @@ export default function MainLobby() {
                 key={hero.id}
                 onClick={() => setSelectedHeroId(hero.id)}
                 style={{
-                  background: theme.background,
+                  '--vv-card-accent': theme.hex,
+                  background: 'var(--vv-card-grad)',
                   border: `2px solid ${theme.borderHex}`,
                   borderRadius: '24px',
                   width: '135px',
@@ -270,7 +274,7 @@ export default function MainLobby() {
                   boxShadow: theme.glowBoxShadow,
                   transition: 'all 0.3s ease',
                   position: 'relative'
-                }}
+                } as CSSProperties}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-10px) scale(1.05)'
                   e.currentTarget.style.boxShadow = `0 15px 40px ${theme.hex}88`
@@ -316,7 +320,7 @@ export default function MainLobby() {
                   )}
                 </div>
 
-                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: theme.hex }}>{hero.name}</div>
+                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: `color-mix(in srgb, ${theme.hex} var(--vv-rarity-mix), var(--vv-text))` }}>{hero.name}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--vv-muted)', marginTop: '2px' }}>Lv.{hero.level}</div>
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '6px' }}>

@@ -15,6 +15,7 @@ import PvPModal from './PvPModal'
 import ImperialRankModal from './ImperialRankModal'
 import IdleModal from './IdleModal'
 import MainLobby from './MainLobby'
+import ThemeToggle from './ThemeToggle'
 import { CAMPAIGN_STAGES } from '../../data/stages'
 
 export default function HUD() {
@@ -106,6 +107,7 @@ export default function HUD() {
           </button>
 
           {/* Nút Chọn Ải Màn Chơi */}
+          <ThemeToggle variant="inline" />
           <div
             onClick={() => setShowStageSelectModal(true)}
             style={{

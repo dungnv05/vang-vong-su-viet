@@ -35,7 +35,9 @@ test('ThemeToggle uses the shared setTheme/event and header icons', () => {
   assert.match(src, /THEME_EVENT|yh-theme-change/)
   assert.match(src, /aria-pressed/)
   assert.match(src, /isDark \? <Sun/)
-  assert.match(read('src/App.tsx'), /<ThemeToggle \/>/)
+  assert.match(read('src/App.tsx'), /<ThemeToggle variant="floating" \/>/)
+  assert.match(read('src/components/ui/MainLobby.tsx'), /<ThemeToggle variant="inline" \/>/)
+  assert.match(read('src/components/ui/HUD.tsx'), /<ThemeToggle variant="inline" \/>/)
   assert.match(read('src/main.tsx'), /initTheme\(\)/)
 })
 
