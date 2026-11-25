@@ -186,6 +186,13 @@ export async function syncSharedSSOSession(): Promise<User | null> {
   return currentSession?.user || null
 }
 
+export interface LeaderboardEntry {
+  rank: number
+  display_name: string
+  max_unlocked_stage: number
+  pvp_score: number
+}
+
 // Cloud Database & SSO Synchronized Player Profile Service
 class CloudDatabaseService {
   private isConnected: boolean = true
@@ -272,6 +279,15 @@ class CloudDatabaseService {
     return 'Anh Hùng Sử Việt #' + this.guestId.slice(-4)
   }
 
+  // Name stored in player_profiles.player_name and shown on the leaderboard.
+  // Never the email (S-11).
+  public getPublicPlayerName(): string {
+    if (this.currentUser) {
+      return 'Anh Hùng #' + this.currentUser.id.slice(-4)
+    }
+    return 'Anh Hùng Sử Việt #' + this.guestId.slice(-4)
+  }
+
   public getIsConnected(): boolean {
     return this.isConnected
   }
@@ -312,7 +328,7 @@ class CloudDatabaseService {
     if (!isSupabaseConfigured) return false
     try {
       const playerId = this.getPlayerId()
-      const playerName = this.getPlayerName()
+      const playerName = this.getPublicPlayerName()
 
       const payload = {
         id: playerId,
@@ -381,25 +397,19 @@ class CloudDatabaseService {
   }
 
   // Tải Bảng Xếp Hạng Top Cao Thủ từ Supabase Cloud
-  public async fetchLeaderboard(): Promise<any[]> {
+  // Reads the public.vang_vong_leaderboard view (S-11): only rank, display name,
+  // stage and PvP score. Raw player_profiles rows are owner-only under RLS.
+  public async fetchLeaderboard(): Promise<LeaderboardEntry[]> {
     if (!isSupabaseConfigured) return []
     try {
       const { data, error } = await supabase
-        .from('player_profiles')
-        .select('*')
-        .order('max_unlocked_stage', { ascending: false })
+        .from('vang_vong_leaderboard')
+        .select('rank, display_name, max_unlocked_stage, pvp_score')
+        .order('rank', { ascending: true })
         .limit(10)
 
-      if (error || !data) {
-        // Fallback fallback order by gold
-        const fallback = await supabase
-          .from('player_profiles')
-          .select('*')
-          .order('gold', { ascending: false })
-          .limit(10)
-        return fallback.data || []
-      }
-      return data
+      if (error || !data) return []
+      return data as LeaderboardEntry[]
     } catch {
       return []
     }

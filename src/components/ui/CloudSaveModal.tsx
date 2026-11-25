@@ -8,6 +8,7 @@ import {
   supabase,
   isSupabaseConfigured
 } from '../../utils/supabaseClient'
+import type { LeaderboardEntry } from '../../utils/supabaseClient'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { X, CloudCheck, Database, Trophy, LogIn, LogOut, UserCheck, Lock, UserPlus, UploadCloud, DownloadCloud, AlertCircle } from 'lucide-react'
 
@@ -16,7 +17,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
   const [lastSyncTime, setLastSyncTime] = useState<string>(new Date().toLocaleTimeString())
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
-  const [leaderboard, setLeaderboard] = useState<any[]>([])
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [syncStatusMsg, setSyncStatusMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null)
 
   // Auth State
@@ -447,7 +448,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {leaderboard.length > 0 ? (
               leaderboard.map((player, idx) => (
-                <div key={player.id || idx} style={{
+                <div key={player.rank} style={{
                   background: idx === 0 ? 'rgba(212, 175, 55, 0.15)' : 'rgba(30, 41, 59, 0.6)',
                   border: idx === 0 ? '1.5px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '12px',
@@ -459,8 +460,8 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '1.4rem' }}>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
                     <div>
-                      <div style={{ fontWeight: 'bold', color: idx === 0 ? '#fef08a' : '#e2e8f0' }}>{player.player_name || 'Cao Thủ Sử Việt'}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải {player.max_unlocked_stage + 1} | Vàng: {Number(player.gold || 0).toLocaleString()}</div>
+                      <div style={{ fontWeight: 'bold', color: idx === 0 ? '#fef08a' : '#e2e8f0' }}>{player.display_name || 'Cao Thủ Sử Việt'}</div>
+                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải {Number(player.max_unlocked_stage || 0) + 1}</div>
                     </div>
                   </div>
                   <div style={{ fontWeight: 'bold', color: idx === 0 ? '#f1c40f' : '#38bdf8', fontSize: '1.05rem' }}>

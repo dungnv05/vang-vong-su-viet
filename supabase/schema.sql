@@ -56,21 +56,11 @@ BEGIN
     END IF;
 END $$;
 
--- Row Level Security (RLS) Policies
+-- Row Level Security (RLS): always on for these tables.
 ALTER TABLE public.player_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.player_heroes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.player_shards ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles;
-DROP POLICY IF EXISTS "Cho phép đọc ghi danh sách tướng" ON public.player_heroes;
-DROP POLICY IF EXISTS "Cho phép đọc ghi mảnh tướng" ON public.player_shards;
-
-CREATE POLICY "Cho phép tất cả người chơi đọc ghi dữ liệu" ON public.player_profiles FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Cho phép đọc ghi danh sách tướng" ON public.player_heroes FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Cho phép đọc ghi mảnh tướng" ON public.player_shards FOR ALL USING (true) WITH CHECK (true);
-
--- Cấp quyền truy cập đầy đủ cho anon (khách) và authenticated (đã đăng nhập)
-GRANT ALL ON public.player_profiles TO anon, authenticated;
-GRANT ALL ON public.player_heroes TO anon, authenticated;
-GRANT ALL ON public.player_shards TO anon, authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+-- Owner-only policies, grants and the leaderboard view live in
+-- supabase/migrations/20261125060000_s11_rls_leaderboard_view.sql (owner-only, S-11).
+-- Do not re-add open USING (true) policies or GRANT ALL to anon here.
