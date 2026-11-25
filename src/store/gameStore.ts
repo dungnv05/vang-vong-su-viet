@@ -7,7 +7,9 @@ import { getTowerFloorData } from '../data/towerData'
 import { WORLD_BOSS_DATA } from '../data/worldBossData'
 import { type PvPOpponent } from '../data/pvpData'
 import { audioEngine } from '../utils/audioEngine'
-import { cloudService } from '../utils/supabaseClient'
+import { LEVEL_ATK, LEVEL_HP, STAR_ATK, STAR_HP } from '../cloud/heroStats.ts'
+import { bindStore, getSyncController } from '../cloud/runtime.ts'
+import type { LocalStateLike } from '../cloud/saveFormat.ts'
 
 const SAVE_KEY = 'yundev_game_state'
 
@@ -58,12 +60,20 @@ if (savedLocal?.isMuted) {
   audioEngine.setMuted(true)
 }
 
+const notifyCloud = () => {
+  try {
+    getSyncController().notifyLocalChange()
+  } catch {
+    /* not bound yet */
+  }
+}
+
 const triggerAutoCloudSave = () => {
   if (typeof window !== 'undefined') {
     const state = useGameStore.getState()
     saveLocalGameState(state)
     setTimeout(() => {
-      cloudService.saveCloudProfile(useGameStore.getState())
+      notifyCloud()
     }, 300)
   }
 }
@@ -393,9 +403,9 @@ export const useGameStore = create<GameState>((set, get) => ({
           return {
             ...h,
             level: newLevel,
-            atk: h.atk + 25,
-            maxHp: h.maxHp + 150,
-            hp: h.hp + 150
+            atk: h.atk + LEVEL_ATK,
+            maxHp: h.maxHp + LEVEL_HP,
+            hp: h.hp + LEVEL_HP
           }
         }
         return h
@@ -424,9 +434,9 @@ export const useGameStore = create<GameState>((set, get) => ({
           return {
             ...h,
             stars: h.stars + 1,
-            atk: h.atk + 120,
-            maxHp: h.maxHp + 600,
-            hp: h.hp + 600
+            atk: h.atk + STAR_ATK,
+            maxHp: h.maxHp + STAR_HP,
+            hp: h.hp + STAR_HP
           }
         }
         return h
@@ -652,6 +662,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   }),
 
   importGameState: (cloudState: Partial<GameState>) => {
+    queueMicrotask(() => saveLocalGameState(get()))
     set(state => ({
       ...state,
       ...cloudState,
@@ -1094,12 +1105,15 @@ export const useGameStore = create<GameState>((set, get) => ({
 }))
 
 if (typeof window !== 'undefined') {
-  let cloudSaveDebounce: any = null
+  bindStore(
+    () => useGameStore.getState() as unknown as LocalStateLike,
+    (s) => useGameStore.getState().importGameState(s as unknown as Partial<GameState>),
+  )
   useGameStore.subscribe((state) => {
     saveLocalGameState(state)
-    if (cloudSaveDebounce) clearTimeout(cloudSaveDebounce)
-    cloudSaveDebounce = setTimeout(() => {
-      cloudService.saveCloudProfile(state)
-    }, 1000)
+    notifyCloud()
+
+
+
   })
 }

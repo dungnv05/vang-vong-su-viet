@@ -1,21 +1,40 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Arena2D from './components/2d/Arena2D'
 import HUD from './components/ui/HUD'
 import LandingPage from './components/ui/LandingPage'
 import { cloudService, fetchWwwUser, type WwwUser } from './utils/supabaseClient'
+import { getSyncController } from './cloud/runtime'
 
 export default function App() {
   const [user, setUser] = useState<WwwUser | null>(() => cloudService.getCurrentUser())
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true)
   const [guest, setGuest] = useState<boolean>(() => localStorage.getItem('vv_guest_mode') === '1')
+  const syncedUserIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     let mounted = true
     let lastCheck = Date.now()
 
+    const syncAuthUser = (u: WwwUser | null) => {
+      try {
+        if (u) {
+          if (syncedUserIdRef.current !== u.id) {
+            syncedUserIdRef.current = u.id
+            void getSyncController().start(u.id)
+          }
+        } else {
+          syncedUserIdRef.current = null
+          getSyncController().stop()
+        }
+      } catch {
+        // Ignore sync controller errors
+      }
+    }
+
     fetchWwwUser().then(u => {
       if (!mounted) return
       cloudService.setCurrentUser(u)
+      syncAuthUser(u)
       setUser(u)
       setLoadingAuth(false)
     })
@@ -27,6 +46,7 @@ export default function App() {
       fetchWwwUser().then(u => {
         if (!mounted) return
         cloudService.setCurrentUser(u)
+        syncAuthUser(u)
         setUser(u)
       })
     }
