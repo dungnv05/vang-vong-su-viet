@@ -51,7 +51,7 @@ const CATALOG = {
   ],
 }
 
-const STARTERS = ['Trần Hưng Đạo']
+const STARTERS = [{ name: 'Trần Hưng Đạo', level: 1, stars: 1 }]
 
 function makeLocal(overrides = {}) {
   return {
@@ -365,7 +365,7 @@ describe('syncController', () => {
         restoredCalls += 1
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -401,7 +401,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -458,7 +458,7 @@ describe('syncController', () => {
         restoredCount += 1
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -558,7 +558,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -609,7 +609,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -661,7 +661,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -706,7 +706,7 @@ describe('syncController', () => {
         restoredGold = s.gold
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -752,7 +752,7 @@ describe('syncController', () => {
         localState = { ...localState, gold: s.gold }
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -816,7 +816,7 @@ describe('syncController', () => {
         ctrl.notifyLocalChange()
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -874,7 +874,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -935,7 +935,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -995,7 +995,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1053,7 +1053,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1123,7 +1123,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1188,7 +1188,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1205,7 +1205,7 @@ describe('syncController', () => {
         ctrlB.notifyLocalChange()
       },
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1249,7 +1249,7 @@ describe('syncController', () => {
       getLocal: () => makeProgressLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1317,7 +1317,7 @@ describe('syncController', () => {
       getLocal: () => makeLocal(),
       applyRestored: () => {},
       catalog: CATALOG,
-      starterHeroNames: STARTERS,
+      starters: STARTERS,
       now: timers.now,
       setTimer: timers.setTimer,
       clearTimer: timers.clearTimer,
@@ -1333,6 +1333,86 @@ describe('syncController', () => {
 
     ctrl.dismiss()
     assert.equal(ctrl.getSnapshot().notice, null)
+  })
+
+  it('25. CS-V4 Bug B: cloud null + non-fresh local + legacyAvailable -> offer_import, 0 PUT; uploadLocal -> PUT baseVersion 0', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers()
+    const putCalls = []
+
+    const api = {
+      async get() {
+        return { kind: 'ok', save: null, legacyAvailable: true }
+      },
+      async put(data, baseVersion) {
+        putCalls.push({ data, baseVersion })
+        return { kind: 'ok', version: 1, updated_at: '2026-01-01T00:00:00Z' }
+      },
+      putKeepalive: () => false,
+      async importLegacy() {
+        throw new Error('unexpected import')
+      },
+    }
+
+    const ctrl = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeProgressLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starters: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrl.start('U')
+    assert.equal(ctrl.getSnapshot().status, 'offer_import')
+    assert.equal(ctrl.getSnapshot().legacyAvailable, true)
+    assert.equal(putCalls.length, 0)
+
+    const ok = await ctrl.uploadLocal()
+    assert.equal(ok, true)
+    assert.equal(putCalls.length, 1)
+    assert.equal(putCalls[0].baseVersion, 0)
+    assert.equal(ctrl.getSnapshot().status, 'synced')
+  })
+
+  it('26. CS-V4 Bug B: cloud null + fresh local + legacyAvailable -> offer_import, 0 PUT', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers()
+    const putCalls = []
+
+    const api = {
+      async get() {
+        return { kind: 'ok', save: null, legacyAvailable: true }
+      },
+      async put(data, baseVersion) {
+        putCalls.push({ data, baseVersion })
+        return { kind: 'ok', version: 1, updated_at: '2026-01-01T00:00:00Z' }
+      },
+      putKeepalive: () => false,
+      async importLegacy() {
+        throw new Error('unexpected import')
+      },
+    }
+
+    const ctrl = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starters: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrl.start('U')
+    assert.equal(ctrl.getSnapshot().status, 'offer_import')
+    assert.equal(ctrl.getSnapshot().legacyAvailable, true)
+    assert.equal(putCalls.length, 0)
   })
 
   it('20. no console.log calls during the whole suite', () => {

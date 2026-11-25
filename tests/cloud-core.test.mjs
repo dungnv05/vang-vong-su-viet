@@ -294,7 +294,7 @@ describe('fromCloudSave', () => {
 })
 
 describe('isFreshLocal', () => {
-  const starters = ['Trần Hưng Đạo']
+  const starters = [{ name: 'Trần Hưng Đạo', level: 1, stars: 1 }]
 
   it('returns true for default starter state and false on any progress', () => {
     assert.equal(isFreshLocal(makeStarterLocal(), starters), true)
@@ -343,6 +343,39 @@ describe('isFreshLocal', () => {
       ),
       false,
     )
+  })
+
+  it('treats starters at Lv30/5★ as fresh and Lv31 as non-fresh', () => {
+    const lv30Starters = [{ name: 'A', level: 30, stars: 5 }]
+    const freshLv30 = makeStarterLocal({
+      maxUnlockedStage: 0,
+      heroes: [
+        {
+          id: 'h1',
+          name: 'A',
+          level: 30,
+          stars: 5,
+          slotIndex: 0,
+          equippedItemIds: [],
+        },
+      ],
+    })
+    assert.equal(isFreshLocal(freshLv30, lv30Starters), true)
+
+    const leveledLv31 = makeStarterLocal({
+      maxUnlockedStage: 0,
+      heroes: [
+        {
+          id: 'h1',
+          name: 'A',
+          level: 31,
+          stars: 5,
+          slotIndex: 0,
+          equippedItemIds: [],
+        },
+      ],
+    })
+    assert.equal(isFreshLocal(leveledLv31, lv30Starters), false)
   })
 })
 

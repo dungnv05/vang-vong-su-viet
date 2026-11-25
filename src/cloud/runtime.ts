@@ -60,7 +60,7 @@ export function getSyncController(): SyncController {
       heroTemplates: buildHeroTemplates(),
       items: MOCK_ITEMS,
     },
-    starterHeroNames: MOCK_HEROES.map((h) => h.name),
+    starters: MOCK_HEROES.map((h) => ({ name: h.name, level: h.level, stars: h.stars })),
     now: Date.now,
     setTimer: (fn, ms) => globalThis.setTimeout(fn, ms),
     clearTimer: (h) => globalThis.clearTimeout(h as ReturnType<typeof setTimeout>),

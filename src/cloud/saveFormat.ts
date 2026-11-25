@@ -172,23 +172,25 @@ export function summarizeSave(s: CloudSaveV1): SaveSummary {
 
 export function isFreshLocal(
   local: LocalStateLike,
-  starterHeroNames: readonly string[],
-  starterStarsByName?: Readonly<Record<string, number>>,
+  starters: readonly { name: string; level: number; stars: number }[],
 ): boolean {
   if (local.maxUnlockedStage !== 0) return false
   if (local.maxTowerFloor > 1) return false
   if (local.rankLevel > 1) return false
 
   const heroes = local.heroes.filter((h) => h.isEnemy !== true)
-  if (heroes.length > starterHeroNames.length) return false
+  if (heroes.length > starters.length) return false
 
-  const starterSet = new Set(starterHeroNames.map((n) => n.normalize('NFC')))
+  const starterByName = new Map<string, { name: string; level: number; stars: number }>()
+  for (const s of starters) {
+    starterByName.set(s.name.normalize('NFC'), s)
+  }
   for (const h of heroes) {
     const normName = h.name.normalize('NFC')
-    if (!starterSet.has(normName)) return false
-    if (h.level > 1) return false
-    const maxStarterStars = starterStarsByName?.[normName] ?? 1
-    if (h.stars > maxStarterStars) return false
+    const starter = starterByName.get(normName)
+    if (!starter) return false
+    if (h.level > starter.level) return false
+    if (h.stars > starter.stars) return false
   }
 
   return true

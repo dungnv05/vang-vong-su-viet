@@ -340,7 +340,42 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         )
 
       case 'offer_import':
-        return renderLegacyImportBanner()
+        return (
+          <div style={{
+            marginTop: '12px',
+            background: 'rgba(56, 189, 248, 0.12)',
+            border: '1px solid rgba(56, 189, 248, 0.45)',
+            borderRadius: '12px',
+            padding: '12px 14px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px'
+          }}>
+            <span style={{ fontSize: '0.88rem', color: '#bae6fd' }}>
+              Tìm thấy tiến trình cũ của tài khoản. Chọn một bản để dùng trên cloud.
+            </span>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => void runAction(() => ctrl.importLegacy())}
+                disabled={busy}
+                style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy)}
+              >
+                Nhập tiến trình cũ
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm('Tải tiến trình trên máy lên cloud? Sau đó sẽ không nhập được tiến trình cũ nữa.')) {
+                    void runAction(() => ctrl.uploadLocal())
+                  }
+                }}
+                disabled={busy}
+                style={secondaryBtnStyle(busy)}
+              >
+                Dùng tiến trình trên máy này
+              </button>
+            </div>
+          </div>
+        )
 
       case 'account_mismatch':
         return (
