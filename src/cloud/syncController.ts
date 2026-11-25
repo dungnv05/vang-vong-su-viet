@@ -213,6 +213,12 @@ export function createSyncController(deps: SyncDeps): SyncController {
     return await fn()
   }
 
+  function isForeignAccount(): boolean {
+    if (userId === null) return true
+    const stored = loadSyncState(isFreshLocal(deps.getLocal(), deps.starters), deps.storage)
+    return stored.userId !== null && stored.userId !== userId
+  }
+
   function trySummarize(data: unknown): SaveSummary | null {
     if (!isRecord(data)) return null
     const res = fromCloudSave(
@@ -725,7 +731,9 @@ export function createSyncController(deps: SyncDeps): SyncController {
     },
 
     notifyLocalChange(): void {
-      if (applying || userId === null) return
+      if (applying) return
+      if (isForeignAccount()) return
+      if (userId === null) return
       if (
         status === 'disabled' ||
         status === 'session_expired' ||
@@ -889,6 +897,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
 
     async uploadLocal(): Promise<boolean> {
       return await withLock(async () => {
+        if (isForeignAccount()) return false
         if (userId === null || status === 'disabled' || status === 'session_expired') {
           return false
         }
@@ -964,6 +973,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
     },
 
     flushKeepalive(): void {
+      if (isForeignAccount()) return
       if (userId === null) return
       if (status !== 'synced' && status !== 'idle') return
       if (notice === 'local_only') return
