@@ -4,7 +4,6 @@ import { createCloudApi, KEEPALIVE_MAX_BYTES } from '../src/cloud/cloudApi.ts'
 import { createSyncController } from '../src/cloud/syncController.ts'
 import { toCloudSave } from '../src/cloud/saveFormat.ts'
 import {
-  SYNC_KEY,
   BACKUP_KEY,
   loadSyncState,
   saveSyncState,
@@ -205,7 +204,7 @@ describe('cloudApi', () => {
       fetch: async () => {
         fetchCount += 1
         if (fetchCount === 1) return makeResponse(401, { error: 'unauthorized' })
-        return makeResponse(200, { save: null, legacyAvailable: false })
+        return makeResponse(200, { ok: true, save: null, legacy_available: false })
       },
       readCsrf: () => 'csrf-1',
       refresh: async () => {
@@ -312,6 +311,25 @@ describe('cloudApi', () => {
     const parsed = JSON.parse(calls[0].init.body)
     assert.deepEqual(Object.keys(parsed), ['data', 'baseVersion'])
     assert.equal(parsed.baseVersion, 1)
+  })
+
+  it('6b. M1 contract: GET reads snake_case legacy_available into legacyAvailable', async () => {
+    let nextBody = { ok: true, save: null, legacy_available: true }
+    const api = createCloudApi({
+      fetch: async () => makeResponse(200, nextBody),
+      readCsrf: () => 'csrf-1',
+      refresh: async () => 'failed',
+      sleep: async () => {},
+    })
+
+    const r1 = await api.get()
+    assert.equal(r1.kind, 'ok')
+    if (r1.kind === 'ok') assert.equal(r1.legacyAvailable, true)
+
+    nextBody = { ok: true, save: null, legacy_available: false }
+    const r2 = await api.get()
+    assert.equal(r2.kind, 'ok')
+    if (r2.kind === 'ok') assert.equal(r2.legacyAvailable, false)
   })
 })
 
@@ -494,7 +512,7 @@ describe('syncController', () => {
         return {
           kind: 'ok',
           save: {
-            data: toCloudSave(makeProgressLocal()),
+            data: toCloudSave(makeProgressLocal({ gold: 888 })),
             version: 2,
             updated_at: '2026-01-01T00:00:00Z',
           },
@@ -933,9 +951,10 @@ describe('syncController', () => {
     assert.equal(getCalls, 1)
   })
 
-  it('18. account mismatch: stored userId A, start(B) -> account_mismatch; chooseLocal remembers; next start(B) skips prompt', async () => {
+  it('18. M3 account mismatch: stored userId A, start(B) -> account_mismatch; chooseLocal keeps local with 0 PUTs; next start(B) -> idle + local_only', async () => {
     const storage = createFakeStorage()
     const timers = createFakeTimers()
+    let putCalls = 0
     saveSyncState(
       {
         userId: 'A',
@@ -961,6 +980,7 @@ describe('syncController', () => {
         }
       },
       async put() {
+        putCalls += 1
         return { kind: 'ok', version: 6, updated_at: '2026-01-02T00:00:00Z' }
       },
       putKeepalive: () => false,
@@ -986,23 +1006,19 @@ describe('syncController', () => {
 
     const ok = await ctrl.chooseLocal()
     assert.equal(ok, true)
+    assert.equal(putCalls, 0)
     assert.equal(isKeepLocalRemembered('A', 'B', storage), true)
+    assert.equal(ctrl.getSnapshot().status, 'idle')
+    assert.equal(ctrl.getSnapshot().notice, 'local_only')
+    assert.equal(loadSyncState(false, storage).userId, 'A')
 
-    // Simulate local state still having userId 'A' on next start('B')
-    saveSyncState(
-      {
-        userId: 'A',
-        baseVersion: 2,
-        dirty: false,
-        localChangedAt: null,
-        lastSyncedAt: 100,
-        schemaVersion: 1,
-      },
-      storage,
-    )
+    ctrl.notifyLocalChange()
+    assert.equal(timers.pendingCount(), 0)
+
     await ctrl.start('B')
-    assert.notEqual(ctrl.getSnapshot().status, 'account_mismatch')
-    assert.equal(ctrl.getSnapshot().status, 'synced')
+    assert.equal(ctrl.getSnapshot().status, 'idle')
+    assert.equal(ctrl.getSnapshot().notice, 'local_only')
+    assert.equal(putCalls, 0)
   })
 
   it('19. locks: every network op goes through locks.request(vv-cloud-sync, ...)', async () => {
@@ -1059,6 +1075,264 @@ describe('syncController', () => {
       'vv-cloud-sync',
       'vv-cloud-sync',
     ])
+  })
+
+  it('21. M2.5: flushKeepalive onOk updates stored baseVersion to N+1 and dirty to false', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers(5_000_000)
+    saveSyncState(
+      {
+        userId: 'U',
+        baseVersion: 1,
+        dirty: false,
+        localChangedAt: null,
+        lastSyncedAt: 100,
+        schemaVersion: 1,
+      },
+      storage,
+    )
+
+    let pendingOnOk = null
+    const api = {
+      async get() {
+        return {
+          kind: 'ok',
+          save: {
+            data: toCloudSave(makeProgressLocal()),
+            version: 1,
+            updated_at: 't1',
+          },
+          legacyAvailable: false,
+        }
+      },
+      async put() {
+        throw new Error('unexpected put')
+      },
+      putKeepalive(_data, _baseVersion, onOk) {
+        pendingOnOk = onOk
+        return true
+      },
+      async importLegacy() {
+        throw new Error('unexpected import')
+      },
+    }
+
+    const ctrl = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeProgressLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starterHeroNames: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrl.start('U')
+    ctrl.notifyLocalChange()
+    ctrl.flushKeepalive()
+    assert.equal(typeof pendingOnOk, 'function')
+
+    pendingOnOk(2, 't2')
+    await Promise.resolve()
+    await Promise.resolve()
+
+    const stored = loadSyncState(false, storage)
+    assert.equal(stored.baseVersion, 2)
+    assert.equal(stored.dirty, false)
+  })
+
+  it('22. S2: reloadFromStorage calls reloadLocal once when another tab advances baseVersion and ignores notifyLocalChange', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers()
+    let cloudVersion = 1
+    let reloadCalls = 0
+    saveSyncState(
+      {
+        userId: 'U',
+        baseVersion: 1,
+        dirty: false,
+        localChangedAt: null,
+        lastSyncedAt: 100,
+        schemaVersion: 1,
+      },
+      storage,
+    )
+
+    const api = {
+      async get() {
+        return {
+          kind: 'ok',
+          save: {
+            data: toCloudSave(makeProgressLocal()),
+            version: cloudVersion,
+            updated_at: 't1',
+          },
+          legacyAvailable: false,
+        }
+      },
+      async put() {
+        cloudVersion += 1
+        return { kind: 'ok', version: cloudVersion, updated_at: 't2' }
+      },
+      putKeepalive: () => false,
+      async importLegacy() {
+        throw new Error('unexpected import')
+      },
+    }
+
+    const ctrlA = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeProgressLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starterHeroNames: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    let ctrlB
+    ctrlB = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeProgressLocal(),
+      applyRestored: () => {},
+      reloadLocal: () => {
+        reloadCalls += 1
+        ctrlB.notifyLocalChange()
+      },
+      catalog: CATALOG,
+      starterHeroNames: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrlA.start('U')
+    await ctrlB.start('U')
+
+    ctrlA.notifyLocalChange()
+    await ctrlA.syncNow()
+    assert.equal(loadSyncState(false, storage).baseVersion, 2)
+
+    ctrlB.reloadFromStorage()
+    assert.equal(reloadCalls, 1)
+    assert.equal(loadSyncState(false, storage).dirty, false)
+    assert.equal(timers.pendingCount(), 0)
+
+    ctrlB.reloadFromStorage()
+    assert.equal(reloadCalls, 1)
+  })
+
+  it('23. S4: PUT 400 unsupported_schema sets status cloud_unsupported and canKeepLocal false', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers()
+    const api = {
+      async get() {
+        return { kind: 'ok', save: null, legacyAvailable: false }
+      },
+      async put() {
+        return { kind: 'rejected', status: 400, code: 'unsupported_schema' }
+      },
+      putKeepalive: () => false,
+      async importLegacy() {
+        throw new Error('unexpected import')
+      },
+    }
+
+    const ctrl = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeProgressLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starterHeroNames: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrl.start('U')
+    assert.equal(ctrl.getSnapshot().status, 'cloud_unsupported')
+    assert.equal(ctrl.getSnapshot().canKeepLocal, false)
+  })
+
+  it('24. S5: importLegacy 409 conflict sets notice import_exists, runs syncNow, returns false, clears on dismiss', async () => {
+    const storage = createFakeStorage()
+    const timers = createFakeTimers()
+    let getCalls = 0
+    let cloudSave = null
+
+    const api = {
+      async get() {
+        getCalls += 1
+        return {
+          kind: 'ok',
+          save: cloudSave,
+          legacyAvailable: cloudSave === null,
+        }
+      },
+      async put() {
+        throw new Error('unexpected put')
+      },
+      putKeepalive: () => false,
+      async importLegacy() {
+        cloudSave = {
+          data: toCloudSave(makeProgressLocal({ gold: 5000 })),
+          version: 1,
+          updated_at: 't1',
+        }
+        return {
+          kind: 'conflict',
+          info: {
+            server: {
+              version: 1,
+              updated_at: 't1',
+              schemaVersion: 1,
+              summary: null,
+            },
+            client: {
+              baseVersion: 0,
+              summary: {
+                currentStageIndex: 0,
+                maxUnlockedStage: 0,
+                maxTowerFloor: 1,
+                rankLevel: 1,
+                pvpScore: 0,
+                gold: 500,
+                heroCount: 1,
+              },
+            },
+          },
+        }
+      },
+    }
+
+    const ctrl = createSyncController({
+      api,
+      storage,
+      getLocal: () => makeLocal(),
+      applyRestored: () => {},
+      catalog: CATALOG,
+      starterHeroNames: STARTERS,
+      now: timers.now,
+      setTimer: timers.setTimer,
+      clearTimer: timers.clearTimer,
+    })
+
+    await ctrl.start('U')
+    assert.equal(ctrl.getSnapshot().status, 'offer_import')
+
+    const ok = await ctrl.importLegacy()
+    assert.equal(ok, false)
+    assert.equal(ctrl.getSnapshot().notice, 'import_exists')
+    assert.equal(getCalls >= 2, true)
+
+    ctrl.dismiss()
+    assert.equal(ctrl.getSnapshot().notice, null)
   })
 
   it('20. no console.log calls during the whole suite', () => {

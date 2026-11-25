@@ -56,7 +56,7 @@ export function findCredentialLiterals(code, options = {}) {
     if (emailMatches && emailMatches.length > 0) {
       let denylistedCount = 0
       for (const match of emailMatches) {
-        const digest = createHash('sha256').update(match).digest('hex')
+        const digest = createHash('sha256').update(match.toLowerCase()).digest('hex')
         if (denyset.has(digest)) {
           denylistedCount++
         }

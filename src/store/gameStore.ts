@@ -1132,6 +1132,10 @@ if (typeof window !== 'undefined') {
   bindStore(
     () => useGameStore.getState() as unknown as LocalStateLike,
     (s) => useGameStore.getState().importGameState(s as unknown as Partial<GameState>),
+    () => {
+      const s = loadLocalGameState()
+      if (s) useGameStore.getState().importGameState(s)
+    },
   )
   let lastFingerprint = persistedFingerprint(useGameStore.getState())
   useGameStore.subscribe((state) => {

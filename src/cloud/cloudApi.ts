@@ -50,7 +50,11 @@ export interface CloudApi {
     data: CloudSaveV1,
     baseVersion: number,
   ): Promise<ApiResult<{ version: number; updated_at: string | null }>>
-  putKeepalive(data: CloudSaveV1, baseVersion: number): boolean
+  putKeepalive(
+    data: CloudSaveV1,
+    baseVersion: number,
+    onOk?: (version: number, updated_at: string | null) => void,
+  ): boolean
   importLegacy(): Promise<ApiResult<{ version: number; updated_at: string | null }>>
 }
 
@@ -204,7 +208,7 @@ export function createCloudApi(deps: CloudApiDeps): CloudApi {
       return {
         kind: 'ok',
         save,
-        legacyAvailable: Boolean(parsed.value.legacyAvailable),
+        legacyAvailable: parsed.value.legacy_available === true,
       }
     },
 
@@ -242,7 +246,11 @@ export function createCloudApi(deps: CloudApiDeps): CloudApi {
       }
     },
 
-    putKeepalive(data: CloudSaveV1, baseVersion: number): boolean {
+    putKeepalive(
+    data: CloudSaveV1,
+    baseVersion: number,
+    onOk?: (version: number, updated_at: string | null) => void,
+  ): boolean {
       const csrf = deps.readCsrf()
       if (!csrf) return false
 
@@ -262,7 +270,22 @@ export function createCloudApi(deps: CloudApiDeps): CloudApi {
           },
           body,
         }),
-      ).catch(() => {})
+      )
+        .then(async (res) => {
+          if (!res || res.status !== 200) return
+          const parsed = await parseJsonSafe(res)
+          if (!parsed.ok || !isRecord(parsed.value)) return
+          if (
+            parsed.value.ok === true &&
+            typeof parsed.value.version === 'number' &&
+            Number.isSafeInteger(parsed.value.version)
+          ) {
+            const updatedAt =
+              typeof parsed.value.updated_at === 'string' ? parsed.value.updated_at : null
+            onOk?.(parsed.value.version, updatedAt)
+          }
+        })
+        .catch(() => {})
 
       return true
     },

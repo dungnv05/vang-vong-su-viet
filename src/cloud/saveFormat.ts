@@ -114,10 +114,11 @@ export function toCloudSave(local: LocalStateLike, nowMs?: number): CloudSaveV1 
       ? local.battleSpeed
       : 1
 
+  const now = nowMs ?? Date.now()
   const rawIdleTime =
     typeof local.lastIdleClaimTime === 'number' && Number.isFinite(local.lastIdleClaimTime)
       ? local.lastIdleClaimTime
-      : (nowMs ?? Date.now())
+      : now
 
   const heroes: CloudHeroV1[] = []
   for (const h of local.heroes) {
@@ -149,7 +150,7 @@ export function toCloudSave(local: LocalStateLike, nowMs?: number): CloudSaveV1 
     pvpScore: local.pvpScore,
     rankLevel: local.rankLevel,
     battleSpeed,
-    lastIdleClaimTime: Math.trunc(rawIdleTime),
+    lastIdleClaimTime: Math.trunc(Math.min(rawIdleTime, now)),
     isMuted: Boolean(local.isMuted),
     activeBeastId: local.activeBeastId,
     heroes,
@@ -281,4 +282,27 @@ export function fromCloudSave(
       shards,
     },
   }
+}
+
+function canonicalize(value: unknown, isRoot = false): unknown {
+  if (value === null || typeof value !== 'object') return value
+  if (Array.isArray(value)) {
+    return value.map((item) => canonicalize(item, false))
+  }
+  const obj = value as Record<string, unknown>
+  const sorted: Record<string, unknown> = {}
+  const keys = Object.keys(obj).sort()
+  for (const key of keys) {
+    if (isRoot && key === 'lastIdleClaimTime') continue
+    const v = obj[key]
+    if (v === undefined) continue
+    sorted[key] = canonicalize(v, false)
+  }
+  return sorted
+}
+
+export function sameSave(a: unknown, b: unknown): boolean {
+  if (typeof a !== 'object' || a === null || Array.isArray(a)) return false
+  if (typeof b !== 'object' || b === null || Array.isArray(b)) return false
+  return JSON.stringify(canonicalize(a, true)) === JSON.stringify(canonicalize(b, true))
 }

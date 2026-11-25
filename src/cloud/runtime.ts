@@ -11,6 +11,7 @@ import { MOCK_ITEMS } from '../data/items'
 let controller: SyncController | null = null
 let boundGetLocal: (() => LocalStateLike) | null = null
 let boundApplyRestored: ((s: RestoredState) => void) | null = null
+let boundReloadLocal: (() => void) | undefined
 
 function buildHeroTemplates(): (HeroTemplateLike & Record<string, unknown>)[] {
   const seen = new Set<string>()
@@ -26,9 +27,11 @@ function buildHeroTemplates(): (HeroTemplateLike & Record<string, unknown>)[] {
 export function bindStore(
   getLocal: () => LocalStateLike,
   applyRestored: (s: RestoredState) => void,
+  reloadLocal?: () => void,
 ): void {
   boundGetLocal = getLocal
   boundApplyRestored = applyRestored
+  boundReloadLocal = reloadLocal
 }
 
 export function getSyncController(): SyncController {
@@ -52,6 +55,7 @@ export function getSyncController(): SyncController {
     storage: typeof localStorage !== 'undefined' ? localStorage : undefined,
     getLocal,
     applyRestored,
+    reloadLocal: boundReloadLocal,
     catalog: {
       heroTemplates: buildHeroTemplates(),
       items: MOCK_ITEMS,

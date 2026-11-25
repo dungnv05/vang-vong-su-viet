@@ -166,6 +166,15 @@ describe('credential-literal-guard', () => {
     assert.equal(JSON.stringify(findings).includes(leakedEmail), false)
   })
 
+  it('detects mixed-case variants of denylisted emails by lowercasing before hashing', () => {
+    const fakeLower = 'mixedcase-demo@example.test'
+    const fakeMixed = 'MixedCase-Demo@Example.TEST'
+    const digest = createHash('sha256').update(fakeLower).digest('hex')
+    const findings = findCredentialLiterals(`const u = "${fakeMixed}";`, { denylist: [digest] })
+    assert.deepEqual(findings, [{ name: 'denylisted_email', count: 1 }])
+    assert.equal(JSON.stringify(findings).includes(fakeMixed), false)
+  })
+
   it('still ignores placeholder email paired with non-literal value', () => {
     const findings = findCredentialLiterals('placeholder:"name@example.test",value:e')
     assert.deepEqual(findings, [])

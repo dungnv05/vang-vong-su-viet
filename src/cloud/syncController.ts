@@ -3,6 +3,7 @@ import {
   SUPPORTED_CLOUD_SCHEMAS,
   fromCloudSave,
   isFreshLocal,
+  sameSave,
   summarizeSave,
   toCloudSave,
 } from './saveFormat.ts'
@@ -48,6 +49,7 @@ export interface SyncSnapshot {
   backupAvailable: boolean
   lastSyncedAt: number | null
   canKeepLocal: boolean
+  notice: 'local_only' | 'import_exists' | null
 }
 
 export interface SyncDeps {
@@ -55,6 +57,7 @@ export interface SyncDeps {
   storage?: StorageLike
   getLocal: () => LocalStateLike
   applyRestored: (s: RestoredState) => void
+  reloadLocal?: () => void
   catalog: {
     heroTemplates: readonly (HeroTemplateLike & Record<string, unknown>)[]
     items: readonly ItemLike[]
@@ -107,6 +110,8 @@ export function createSyncController(deps: SyncDeps): SyncController {
   let legacyAvailable = false
   let lastSyncedAt: number | null = null
   let canKeepLocal = true
+  let notice: 'local_only' | 'import_exists' | null = null
+  let lastKnownBase: number | null = null
 
   let applying = false
   let running = false
@@ -131,6 +136,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
       backupAvailable: readBackup(deps.now(), deps.storage) !== null,
       lastSyncedAt,
       canKeepLocal,
+      notice,
     }
   }
 
@@ -165,6 +171,24 @@ export function createSyncController(deps: SyncDeps): SyncController {
   function clearAllTimers(): void {
     clearDebounceTimers()
     clearRetryTimer()
+  }
+
+  function scheduleDebounceTimers(nowMs: number): void {
+    if (firstDirtyAt === null) {
+      firstDirtyAt = nowMs
+      maxWaitTimer = deps.setTimer(() => {
+        clearDebounceTimers()
+        void syncNow()
+      }, MAX_WAIT_MS)
+    }
+
+    if (debounceTimer !== null) {
+      deps.clearTimer(debounceTimer)
+    }
+    debounceTimer = deps.setTimer(() => {
+      clearDebounceTimers()
+      void syncNow()
+    }, DEBOUNCE_MS)
   }
 
   function scheduleRetryIn(ms: number): void {
@@ -226,8 +250,16 @@ export function createSyncController(deps: SyncDeps): SyncController {
         emit()
         return
       case 'rejected':
+        if (res.code === 'unsupported_schema') {
+          conflict = null
+          canKeepLocal = false
+          status = 'cloud_unsupported'
+          clearAllTimers()
+          emit()
+          return
+        }
         status = 'error'
-        if (res.code === 'invalid_save' || res.code === 'unsupported_schema') {
+        if (res.code === 'invalid_save') {
           console.warn('cloud save rejected', res.status)
         }
         emit()
@@ -243,23 +275,47 @@ export function createSyncController(deps: SyncDeps): SyncController {
     local: LocalStateLike,
     baseVersion: number,
     is409Retry = false,
+    preserveNotice = false,
   ): Promise<boolean> {
     if (userId === null) return false
+    const snapChangedAt = sync.localChangedAt
     const nowMs = deps.now()
     const payload = toCloudSave(local, nowMs)
     const res = await deps.api.put(payload, baseVersion)
 
     if (res.kind === 'ok') {
       retryCount = 0
-      const nextSync = markSynced(sync, userId, res.version, nowMs)
-      saveSyncState(nextSync, deps.storage)
-      lastSyncedAt = nowMs
+      const curLocal = deps.getLocal()
+      const stored = loadSyncState(
+        isFreshLocal(curLocal, deps.starterHeroNames),
+        deps.storage,
+      )
       conflict = null
       cloudSummary = null
       cloudUpdatedAt = null
       localSummary = null
+      if (!preserveNotice) notice = null
       canKeepLocal = true
       status = 'synced'
+
+      if (stored.localChangedAt !== snapChangedAt) {
+        const nextSync: SyncState = {
+          ...stored,
+          userId,
+          baseVersion: res.version,
+          dirty: true,
+        }
+        saveSyncState(nextSync, deps.storage)
+        lastKnownBase = nextSync.baseVersion
+        scheduleDebounceTimers(deps.now())
+        emit()
+        return true
+      }
+
+      const nextSync = markSynced(stored, userId, res.version, nowMs)
+      saveSyncState(nextSync, deps.storage)
+      lastKnownBase = nextSync.baseVersion
+      lastSyncedAt = nowMs
       emit()
       return true
     }
@@ -275,7 +331,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
         : null
       const d2 = decideAfterConflict409(serverRow)
       if (d2.kind === 'first_upload' && !is409Retry) {
-        return await doPut(sync, local, 0, true)
+        return await doPut(sync, local, 0, true, preserveNotice)
       }
       if (d2.kind === 'cloud_unsupported') {
         conflict = null
@@ -283,6 +339,38 @@ export function createSyncController(deps: SyncDeps): SyncController {
         status = 'cloud_unsupported'
         emit()
         return false
+      }
+      if (serverInfo !== null) {
+        const getRes = await deps.api.get()
+        if (getRes.kind === 'ok' && getRes.save !== null) {
+          const curLocal = deps.getLocal()
+          const adoptNow = deps.now()
+          if (sameSave(getRes.save.data, toCloudSave(curLocal, adoptNow))) {
+            const curSync = loadSyncState(
+              isFreshLocal(curLocal, deps.starterHeroNames),
+              deps.storage,
+            )
+            const nextSync: SyncState = {
+              ...curSync,
+              userId,
+              baseVersion: getRes.save.version,
+              dirty: false,
+              lastSyncedAt: adoptNow,
+            }
+            saveSyncState(nextSync, deps.storage)
+            lastKnownBase = nextSync.baseVersion
+            lastSyncedAt = adoptNow
+            conflict = null
+            cloudSummary = null
+            cloudUpdatedAt = null
+            localSummary = null
+            if (!preserveNotice) notice = null
+            canKeepLocal = true
+            status = 'synced'
+            emit()
+            return true
+          }
+        }
       }
       conflict = res.info
       cloudSummary = serverInfo?.summary ?? null
@@ -304,8 +392,17 @@ export function createSyncController(deps: SyncDeps): SyncController {
     localFresh: boolean,
     row: ServerRow,
     reason: 'pull' | 'chose_cloud' | 'account_switch',
+    preserveNotice = false,
   ): Promise<boolean> {
     if (userId === null) return false
+    const latestSync = loadSyncState(
+      isFreshLocal(deps.getLocal(), deps.starterHeroNames),
+      deps.storage,
+    )
+    if (latestSync.localChangedAt !== sync.localChangedAt) {
+      pendingAgain = true
+      return false
+    }
     if (!isRecord(row.data)) {
       canKeepLocal = false
       status = 'cloud_unsupported'
@@ -346,15 +443,205 @@ export function createSyncController(deps: SyncDeps): SyncController {
 
     const nextSync = markSynced(sync, userId, row.version, nowMs)
     saveSyncState(nextSync, deps.storage)
+    lastKnownBase = nextSync.baseVersion
     lastSyncedAt = nowMs
     conflict = null
     cloudSummary = null
     cloudUpdatedAt = null
     localSummary = null
+    if (!preserveNotice) notice = null
     canKeepLocal = true
     status = 'synced'
     emit()
     return true
+  }
+
+  async function runSyncLocked(preserveNotice = false): Promise<void> {
+    if (userId === null || status === 'disabled' || status === 'session_expired') {
+      return
+    }
+
+    status = 'syncing'
+    emit()
+
+    const local = deps.getLocal()
+    const localFresh = isFreshLocal(local, deps.starterHeroNames)
+    let sync = loadSyncState(localFresh, deps.storage)
+    lastKnownBase = sync.baseVersion
+
+    const res = await deps.api.get()
+    if (res.kind !== 'ok') {
+      handleApiError(res)
+      return
+    }
+
+    retryCount = 0
+    const row = res.save
+    legacyAvailable = res.legacyAvailable
+
+    const cloud: CloudRow =
+      row !== null
+        ? {
+            version: row.version,
+            updated_at: row.updated_at,
+            schemaVersion: getSchemaVersion(row.data),
+          }
+        : null
+
+    const decision = decideSync({
+      sync,
+      signedInUserId: userId,
+      cloud,
+      legacyAvailable,
+      localFresh,
+      keepLocalRemembered: isKeepLocalRemembered(sync.userId, userId, deps.storage),
+    })
+
+    switch (decision.kind) {
+      case 'noop':
+        if (decision.adoptUser) {
+          if (sync.userId !== userId) {
+            sync = { ...sync, userId }
+            saveSyncState(sync, deps.storage)
+            lastKnownBase = sync.baseVersion
+          }
+          lastSyncedAt = sync.lastSyncedAt
+          conflict = null
+          cloudSummary = null
+          cloudUpdatedAt = null
+          localSummary = null
+          if (!preserveNotice) notice = null
+          canKeepLocal = true
+          status = 'synced'
+        } else {
+          lastSyncedAt = sync.lastSyncedAt
+          conflict = null
+          cloudSummary = null
+          cloudUpdatedAt = null
+          localSummary = null
+          notice = 'local_only'
+          canKeepLocal = true
+          status = 'idle'
+        }
+        emit()
+        break
+
+      case 'offer_import':
+        conflict = null
+        cloudSummary = null
+        cloudUpdatedAt = null
+        localSummary = null
+        canKeepLocal = true
+        status = 'offer_import'
+        emit()
+        break
+
+      case 'first_upload':
+        await doPut(sync, local, 0, false, preserveNotice)
+        break
+
+      case 'push':
+        await doPut(sync, local, decision.baseVersion, false, preserveNotice)
+        break
+
+      case 'pull':
+        if (row !== null) {
+          await applyCloud(sync, local, localFresh, row, 'pull', preserveNotice)
+        }
+        break
+
+      case 'reset_base':
+        sync = { ...sync, baseVersion: decision.baseVersion, userId }
+        saveSyncState(sync, deps.storage)
+        lastKnownBase = sync.baseVersion
+        lastSyncedAt = sync.lastSyncedAt
+        conflict = null
+        cloudSummary = null
+        cloudUpdatedAt = null
+        localSummary = null
+        if (!preserveNotice) notice = null
+        canKeepLocal = true
+        status = 'synced'
+        emit()
+        break
+
+      case 'conflict':
+        if (row !== null) {
+          const nowMs = deps.now()
+          if (sameSave(row.data, toCloudSave(local, nowMs))) {
+            const nextSync: SyncState = {
+              ...sync,
+              userId,
+              baseVersion: row.version,
+              dirty: false,
+              lastSyncedAt: nowMs,
+            }
+            saveSyncState(nextSync, deps.storage)
+            lastKnownBase = nextSync.baseVersion
+            lastSyncedAt = nowMs
+            conflict = null
+            cloudSummary = null
+            cloudUpdatedAt = null
+            localSummary = null
+            if (!preserveNotice) notice = null
+            canKeepLocal = true
+            status = 'synced'
+            emit()
+            break
+          }
+          const serverSummary = trySummarize(row.data)
+          const localSum = summarizeSave(toCloudSave(local, nowMs))
+          conflict = {
+            server: {
+              version: row.version,
+              updated_at: row.updated_at,
+              schemaVersion: cloud?.schemaVersion ?? null,
+              summary: serverSummary,
+            },
+            client: {
+              baseVersion: sync.baseVersion,
+              summary: localSum,
+            },
+          }
+          cloudSummary = serverSummary
+          cloudUpdatedAt = row.updated_at
+          localSummary = localSum
+          canKeepLocal = true
+          status = 'conflict'
+          emit()
+        }
+        break
+
+      case 'offer_restore':
+        cloudSummary = row ? trySummarize(row.data) : null
+        cloudUpdatedAt = row ? row.updated_at : null
+        localSummary = summarizeSave(toCloudSave(local, deps.now()))
+        conflict = null
+        canKeepLocal = true
+        status = 'offer_restore'
+        emit()
+        break
+
+      case 'account_mismatch':
+        cloudSummary = row ? trySummarize(row.data) : null
+        cloudUpdatedAt = row ? row.updated_at : null
+        localSummary = summarizeSave(toCloudSave(local, deps.now()))
+        conflict = null
+        canKeepLocal = true
+        status = 'account_mismatch'
+        emit()
+        break
+
+      case 'cloud_unsupported':
+        conflict = null
+        cloudSummary = null
+        cloudUpdatedAt = row ? row.updated_at : null
+        localSummary = summarizeSave(toCloudSave(local, deps.now()))
+        canKeepLocal = false
+        status = 'cloud_unsupported'
+        emit()
+        break
+    }
   }
 
   async function syncNow(): Promise<void> {
@@ -372,153 +659,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
 
     try {
       await withLock(async () => {
-        if (userId === null || status === 'disabled' || status === 'session_expired') {
-          return
-        }
-
-        status = 'syncing'
-        emit()
-
-        const local = deps.getLocal()
-        const localFresh = isFreshLocal(local, deps.starterHeroNames)
-        let sync = loadSyncState(localFresh, deps.storage)
-
-        const res = await deps.api.get()
-        if (res.kind !== 'ok') {
-          handleApiError(res)
-          return
-        }
-
-        retryCount = 0
-        const row = res.save
-        legacyAvailable = res.legacyAvailable
-
-        const cloud: CloudRow =
-          row !== null
-            ? {
-                version: row.version,
-                updated_at: row.updated_at,
-                schemaVersion: getSchemaVersion(row.data),
-              }
-            : null
-
-        const decision = decideSync({
-          sync,
-          signedInUserId: userId,
-          cloud,
-          legacyAvailable,
-          localFresh,
-          keepLocalRemembered: isKeepLocalRemembered(sync.userId, userId, deps.storage),
-        })
-
-        switch (decision.kind) {
-          case 'noop':
-            if (decision.adoptUser && sync.userId !== userId) {
-              sync = { ...sync, userId }
-              saveSyncState(sync, deps.storage)
-            }
-            lastSyncedAt = sync.lastSyncedAt
-            conflict = null
-            cloudSummary = null
-            cloudUpdatedAt = null
-            localSummary = null
-            canKeepLocal = true
-            status = 'synced'
-            emit()
-            break
-
-          case 'offer_import':
-            conflict = null
-            cloudSummary = null
-            cloudUpdatedAt = null
-            localSummary = null
-            canKeepLocal = true
-            status = 'offer_import'
-            emit()
-            break
-
-          case 'first_upload':
-            await doPut(sync, local, 0)
-            break
-
-          case 'push':
-            await doPut(sync, local, decision.baseVersion)
-            break
-
-          case 'pull':
-            if (row !== null) {
-              await applyCloud(sync, local, localFresh, row, 'pull')
-            }
-            break
-
-          case 'reset_base':
-            sync = { ...sync, baseVersion: decision.baseVersion, userId }
-            saveSyncState(sync, deps.storage)
-            lastSyncedAt = sync.lastSyncedAt
-            conflict = null
-            cloudSummary = null
-            cloudUpdatedAt = null
-            localSummary = null
-            canKeepLocal = true
-            status = 'synced'
-            emit()
-            break
-
-          case 'conflict':
-            if (row !== null) {
-              const serverSummary = trySummarize(row.data)
-              const localSum = summarizeSave(toCloudSave(local, deps.now()))
-              conflict = {
-                server: {
-                  version: row.version,
-                  updated_at: row.updated_at,
-                  schemaVersion: cloud?.schemaVersion ?? null,
-                  summary: serverSummary,
-                },
-                client: {
-                  baseVersion: sync.baseVersion,
-                  summary: localSum,
-                },
-              }
-              cloudSummary = serverSummary
-              cloudUpdatedAt = row.updated_at
-              localSummary = localSum
-              canKeepLocal = true
-              status = 'conflict'
-              emit()
-            }
-            break
-
-          case 'offer_restore':
-            cloudSummary = row ? trySummarize(row.data) : null
-            cloudUpdatedAt = row ? row.updated_at : null
-            localSummary = summarizeSave(toCloudSave(local, deps.now()))
-            conflict = null
-            canKeepLocal = true
-            status = 'offer_restore'
-            emit()
-            break
-
-          case 'account_mismatch':
-            cloudSummary = row ? trySummarize(row.data) : null
-            cloudUpdatedAt = row ? row.updated_at : null
-            localSummary = summarizeSave(toCloudSave(local, deps.now()))
-            conflict = null
-            canKeepLocal = true
-            status = 'account_mismatch'
-            emit()
-            break
-
-          case 'cloud_unsupported':
-            conflict = null
-            cloudSummary = null
-            cloudUpdatedAt = row ? row.updated_at : null
-            localSummary = summarizeSave(toCloudSave(local, deps.now()))
-            canKeepLocal = false
-            status = 'cloud_unsupported'
-            emit()
-            break
-        }
+        await runSyncLocked(false)
       })
     } finally {
       running = false
@@ -539,6 +680,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
     async start(nextUserId: string): Promise<void> {
       userId = nextUserId
       status = 'idle'
+      notice = null
       retryCount = 0
       clearAllTimers()
       await syncNow()
@@ -553,6 +695,8 @@ export function createSyncController(deps: SyncDeps): SyncController {
       localSummary = null
       legacyAvailable = false
       canKeepLocal = true
+      notice = null
+      lastKnownBase = null
       retryCount = 0
       pendingAgain = false
       clearAllTimers()
@@ -567,7 +711,8 @@ export function createSyncController(deps: SyncDeps): SyncController {
         status === 'conflict' ||
         status === 'account_mismatch' ||
         status === 'cloud_unsupported' ||
-        status === 'offer_restore'
+        status === 'offer_restore' ||
+        notice === 'local_only'
       ) {
         return
       }
@@ -577,25 +722,10 @@ export function createSyncController(deps: SyncDeps): SyncController {
       const sync = loadSyncState(localFresh, deps.storage)
       const nowMs = deps.now()
 
-      if (!sync.dirty) {
-        saveSyncState(markDirty(sync, nowMs), deps.storage)
-      }
-
-      if (firstDirtyAt === null) {
-        firstDirtyAt = nowMs
-        maxWaitTimer = deps.setTimer(() => {
-          clearDebounceTimers()
-          void syncNow()
-        }, MAX_WAIT_MS)
-      }
-
-      if (debounceTimer !== null) {
-        deps.clearTimer(debounceTimer)
-      }
-      debounceTimer = deps.setTimer(() => {
-        clearDebounceTimers()
-        void syncNow()
-      }, DEBOUNCE_MS)
+      const nextSync = markDirty(sync, nowMs)
+      saveSyncState(nextSync, deps.storage)
+      lastKnownBase = nextSync.baseVersion
+      scheduleDebounceTimers(nowMs)
     },
 
     syncNow,
@@ -616,6 +746,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
         if (userId === null || status === 'disabled' || status === 'session_expired') {
           return false
         }
+        notice = null
         const wasMismatch = status === 'account_mismatch'
         const res = await deps.api.get()
         if (res.kind !== 'ok') {
@@ -643,7 +774,20 @@ export function createSyncController(deps: SyncDeps): SyncController {
         if (userId === null || status === 'disabled' || status === 'session_expired') {
           return false
         }
-        const wasMismatch = status === 'account_mismatch'
+        if (status === 'account_mismatch') {
+          const local = deps.getLocal()
+          const localFresh = isFreshLocal(local, deps.starterHeroNames)
+          const storedSync = loadSyncState(localFresh, deps.storage)
+          rememberKeepLocal(storedSync.userId, userId, deps.storage)
+          conflict = null
+          notice = 'local_only'
+          status = 'idle'
+          emit()
+          return true
+        }
+        if (notice !== 'local_only') {
+          notice = null
+        }
         const res = await deps.api.get()
         if (res.kind !== 'ok') {
           handleApiError(res)
@@ -661,7 +805,7 @@ export function createSyncController(deps: SyncDeps): SyncController {
           writeBackup(
             {
               savedAt: deps.now(),
-              reason: wasMismatch ? 'account_switch' : 'chose_local',
+              reason: 'chose_local',
               side: 'cloud',
               data: row.data,
             },
@@ -673,10 +817,6 @@ export function createSyncController(deps: SyncDeps): SyncController {
         const localFresh = isFreshLocal(local, deps.starterHeroNames)
         const sync = loadSyncState(localFresh, deps.storage)
 
-        if (wasMismatch) {
-          rememberKeepLocal(sync.userId, userId, deps.storage)
-        }
-
         return await doPut(sync, local, row ? row.version : 0)
       })
     },
@@ -684,6 +824,9 @@ export function createSyncController(deps: SyncDeps): SyncController {
     dismiss(): void {
       status = 'idle'
       conflict = null
+      if (notice !== 'local_only') {
+        notice = null
+      }
       emit()
     },
 
@@ -692,7 +835,16 @@ export function createSyncController(deps: SyncDeps): SyncController {
         if (userId === null || status === 'disabled' || status === 'session_expired') {
           return false
         }
+        if (notice !== 'local_only') {
+          notice = null
+        }
         const res = await deps.api.importLegacy()
+        if (res.kind === 'conflict') {
+          notice = 'import_exists'
+          emit()
+          await runSyncLocked(true)
+          return false
+        }
         if (res.kind !== 'ok') {
           handleApiError(res)
           return false
@@ -718,6 +870,9 @@ export function createSyncController(deps: SyncDeps): SyncController {
       return await withLock(async () => {
         if (userId === null || status === 'disabled' || status === 'session_expired') {
           return false
+        }
+        if (notice !== 'local_only') {
+          notice = null
         }
         const nowMs = deps.now()
         const backup = readBackup(nowMs, deps.storage)
@@ -757,15 +912,49 @@ export function createSyncController(deps: SyncDeps): SyncController {
     flushKeepalive(): void {
       if (userId === null) return
       if (status !== 'synced' && status !== 'idle') return
+      if (notice === 'local_only') return
       const local = deps.getLocal()
       const sync = loadSyncState(isFreshLocal(local, deps.starterHeroNames), deps.storage)
       if (!sync.dirty) return
-      deps.api.putKeepalive(toCloudSave(local, deps.now()), sync.baseVersion)
+      const sentChangedAt = sync.localChangedAt
+      const base = sync.baseVersion
+      const activeUserId = userId
+      deps.api.putKeepalive(toCloudSave(local, deps.now()), base, (version) => {
+        void withLock(async () => {
+          if (userId !== activeUserId || activeUserId === null) return
+          const curLocal = deps.getLocal()
+          const curSync = loadSyncState(
+            isFreshLocal(curLocal, deps.starterHeroNames),
+            deps.storage,
+          )
+          if (curSync.baseVersion !== base || curSync.userId !== activeUserId) return
+          const nowMs = deps.now()
+          const nextSync: SyncState =
+            curSync.localChangedAt === sentChangedAt
+              ? markSynced(curSync, activeUserId, version, nowMs)
+              : { ...curSync, baseVersion: version, dirty: true }
+          saveSyncState(nextSync, deps.storage)
+          lastKnownBase = nextSync.baseVersion
+          if (!nextSync.dirty) {
+            lastSyncedAt = nextSync.lastSyncedAt
+          }
+          emit()
+        })
+      })
     },
 
     reloadFromStorage(): void {
       const local = deps.getLocal()
       const sync = loadSyncState(isFreshLocal(local, deps.starterHeroNames), deps.storage)
+      if (lastKnownBase !== null && sync.baseVersion !== lastKnownBase && status !== 'conflict') {
+        applying = true
+        try {
+          deps.reloadLocal?.()
+        } finally {
+          applying = false
+        }
+      }
+      lastKnownBase = sync.baseVersion
       lastSyncedAt = sync.lastSyncedAt
       emit()
     },

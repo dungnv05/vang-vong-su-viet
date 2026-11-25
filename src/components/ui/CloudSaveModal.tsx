@@ -175,6 +175,13 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
       case 'synced':
       case 'idle': {
+        if (snap.notice === 'local_only') {
+          return (
+            <div style={{ fontSize: '0.9rem', color: '#fde68a' }}>
+              Đang giữ bản trên máy, không đồng bộ với tài khoản này.
+            </div>
+          )
+        }
         const syncedTime = formatViTime(snap.lastSyncedAt)
         return (
           <div>
@@ -356,7 +363,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 disabled={busy}
                 style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy)}
               >
-                Giữ tiến trình trên máy cho tài khoản này
+                Giữ bản trên máy, không đồng bộ
               </button>
               <button
                 onClick={() => ctrl.dismiss()}
@@ -512,6 +519,12 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#7dd3fc', fontSize: '1.05rem', marginBottom: '12px' }}>
             <Database size={20} /> Tài Khoản Cloud: <span style={{ color: '#fef08a' }}>{cloudService.getPlayerName()}</span>
           </div>
+
+          {snap.notice === 'import_exists' && (
+            <div style={{ fontSize: '0.88rem', color: '#fbbf24', marginBottom: '10px', fontWeight: 'bold' }}>
+              Đã có bản lưu cloud; không thể nhập bản cũ.
+            </div>
+          )}
 
           {renderSyncContent()}
 

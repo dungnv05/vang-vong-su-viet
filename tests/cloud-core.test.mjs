@@ -12,6 +12,7 @@ import {
   summarizeSave,
   isFreshLocal,
   fromCloudSave,
+  sameSave,
 } from '../src/cloud/saveFormat.ts'
 import {
   SYNC_KEY,
@@ -168,7 +169,7 @@ describe('toCloudSave & summarizeSave', () => {
       shards: { [decomposedName]: 12 },
     })
 
-    const saved = toCloudSave(local, 12345)
+    const saved = toCloudSave(local, 1800000000000)
 
     assert.deepEqual(Object.keys(saved), [
       'schemaVersion',
@@ -674,5 +675,38 @@ describe('decideSync & decideAfterConflict409', () => {
       { kind: 'cloud_unsupported' },
     )
     assert.deepEqual(decideAfterConflict409(cloudV5), { kind: 'conflict' })
+  })
+})
+
+describe('toCloudSave clock clamp & sameSave', () => {
+  it('S3: clamps future lastIdleClaimTime to nowMs', () => {
+    const local = makeStarterLocal({ lastIdleClaimTime: 9999999999999 })
+    const saved = toCloudSave(local, 1700000500000.9)
+    assert.equal(saved.lastIdleClaimTime, 1700000500000)
+  })
+
+  it('M2: sameSave ignores key order and lastIdleClaimTime', () => {
+    const a = toCloudSave(makeStarterLocal({ lastIdleClaimTime: 1000 }), 2000)
+    const b = {
+      shards: { 'Trần Hưng Đạo': 5 },
+      heroes: a.heroes,
+      activeBeastId: 'beast_1',
+      isMuted: false,
+      lastIdleClaimTime: 999999,
+      battleSpeed: 1,
+      rankLevel: 1,
+      pvpScore: 0,
+      pvpRank: 100,
+      worldBossTotalDamage: 0,
+      maxTowerFloor: 1,
+      towerFloor: 1,
+      maxUnlockedStage: 0,
+      currentStageIndex: 0,
+      gold: 500,
+      schemaVersion: 1,
+    }
+    assert.equal(sameSave(a, b), true)
+    assert.equal(sameSave(a, { ...b, gold: 501 }), false)
+    assert.equal(sameSave(null, b), false)
   })
 })
