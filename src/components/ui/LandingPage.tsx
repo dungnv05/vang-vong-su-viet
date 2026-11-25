@@ -77,28 +77,6 @@ export default function LandingPage({ onAuthenticated }: LandingPageProps) {
     }
   }
 
-  // Quick Demo Account Auto-Fill / Auto-Login for Instant Testing
-  const handleQuickDemoLogin = async () => {
-    setEmail('demo@yundev.space')
-    setPassword('123456')
-    setLoading(true)
-    setErrorMsg(null)
-    try {
-      let res = await signInWithEmail('demo@yundev.space', '123456')
-      if (res.error) {
-        // Try sign up if demo account does not exist yet
-        await signUpWithEmail('demo@yundev.space', '123456')
-        res = await signInWithEmail('demo@yundev.space', '123456')
-      }
-      if (res.data?.session && onAuthenticated) {
-        onAuthenticated()
-      }
-    } catch {
-      setErrorMsg('Không thể tự động đăng nhập demo, vui lòng tự nhập email!')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div style={{
@@ -434,31 +412,6 @@ export default function LandingPage({ onAuthenticated }: LandingPageProps) {
             </button>
           </form>
 
-          {/* Quick Demo Experience Button */}
-          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', textAlign: 'center' }}>
-            <button
-              type="button"
-              onClick={handleQuickDemoLogin}
-              disabled={loading}
-              style={{
-                background: 'rgba(34, 197, 94, 0.15)',
-                border: '1px solid #22c55e',
-                color: '#86efac',
-                padding: '10px 16px',
-                borderRadius: '12px',
-                fontSize: '0.82rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <Sparkles size={16} color="#86efac" />
-              <span>Dùng Tài Khoản Demo Nhập Nhập Nhanh</span>
-            </button>
-          </div>
         </div>
 
         {/* Footer info */}
