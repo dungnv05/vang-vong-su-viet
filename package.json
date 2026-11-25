@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test tests/credential-literal-guard.test.mjs",
+    "test": "node --test tests/credential-literal-guard.test.mjs tests/cloud-core.test.mjs",
     "guard:bundle": "node scripts/credential-literal-guard.mjs dist"
   },
   "dependencies": {
