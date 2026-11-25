@@ -3,9 +3,8 @@ import { useGameStore } from '../../store/gameStore'
 import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins, Volume2, VolumeX } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
-import { cloudService, supabase } from '../../utils/supabaseClient'
+import { cloudService, type WwwUser } from '../../utils/supabaseClient'
 import { getRarityTheme } from '../../utils/rarityColors'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 export default function MainLobby() {
   const currentScreen = useGameStore(state => state.currentScreen)
@@ -29,23 +28,12 @@ export default function MainLobby() {
   const getIdleRewards = useGameStore(state => state.getIdleRewards)
   const setSelectedHeroId = useGameStore(state => state.setSelectedHeroId)
 
-  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(cloudService.getCurrentUser())
+  const [currentUser, setCurrentUser] = useState<WwwUser | null>(() => cloudService.getCurrentUser())
   const [, setTick] = useState(0)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user || null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user || null)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  useEffect(() => {
     if (currentScreen !== 'LOBBY') return
+    setCurrentUser(cloudService.getCurrentUser())
     const timer = setInterval(() => setTick(t => t + 1), 1000)
     return () => clearInterval(timer)
   }, [currentScreen])
@@ -165,11 +153,11 @@ export default function MainLobby() {
               color: '#0f172a',
               boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
             }}>
-              {currentUser ? (currentUser.email ? currentUser.email[0].toUpperCase() : '👤') : '👤'}
+              {currentUser ? (currentUser.displayName ? currentUser.displayName[0].toUpperCase() : '👤') : '👤'}
             </div>
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontSize: '0.7rem', color: currentUser ? '#86efac' : '#fef08a', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                {currentUser ? '🟢 CLOUD SSO' : '🟡 CHẾ ĐỘ KHÁCH'}
+                {currentUser ? '🟢 YUNDEV' : '🟡 CHẾ ĐỘ KHÁCH'}
               </div>
               <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#ffffff', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {cloudService.getPlayerName()}
@@ -268,7 +256,7 @@ export default function MainLobby() {
           {activeHeroes.map(hero => {
             const theme = getRarityTheme(hero.rarity)
             return (
-              <div 
+              <div
                 key={hero.id}
                 onClick={() => setSelectedHeroId(hero.id)}
                 style={{
