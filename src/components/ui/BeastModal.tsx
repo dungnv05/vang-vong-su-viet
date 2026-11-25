@@ -17,7 +17,7 @@ export default function BeastModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -27,14 +27,14 @@ export default function BeastModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        border: '2px solid #2ecc71',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-green)',
         borderRadius: '20px',
         width: '100%',
         maxWidth: '750px',
         padding: '28px',
-        boxShadow: '0 10px 40px rgba(46, 204, 113, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-green-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -46,17 +46,17 @@ export default function BeastModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#2ecc71', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-green)', display: 'flex', alignItems: 'center', gap: '10px' }}>
           🐉 Điện Thần Thú & Linh Vật Hộ Quốc
         </h2>
-        <p style={{ margin: '0 0 24px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 24px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Lựa chọn Linh Vật Thượng Cổ xuất trận để kích hoạt Aura gia tăng sức mạnh toàn đội hình.
         </p>
 
@@ -71,11 +71,11 @@ export default function BeastModal() {
                 onClick={() => selectBeast(beast.id)}
                 style={{
                   background: isActive 
-                    ? 'rgba(46, 204, 113, 0.15)' 
-                    : 'rgba(30, 41, 59, 0.5)',
+                    ? 'var(--vv-green-tint)' 
+                    : 'var(--vv-surface-2-alpha)',
                   border: isActive 
                     ? `2px solid ${beast.color}` 
-                    : '1px solid rgba(255,255,255,0.1)',
+                    : '1px solid var(--vv-border-subtle)',
                   borderRadius: '16px',
                   padding: '20px 16px',
                   cursor: 'pointer',
@@ -89,35 +89,39 @@ export default function BeastModal() {
               >
                 <div>
                   <div style={{ fontSize: '3rem', marginBottom: '8px' }}>{beast.icon}</div>
-                  <h3 style={{ margin: '0 0 4px 0', color: beast.color, fontSize: '1.15rem' }}>{beast.name}</h3>
-                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', fontStyle: 'italic', marginBottom: '12px' }}>
+                  <h3 style={{ margin: '0 0 4px 0', color: beast.color, fontSize: '1.15rem' }}>
+                    <span style={{ background: 'var(--vv-hero-chip-bg)', padding: '2px 8px', borderRadius: '8px', display: 'inline-block' }}>
+                      {beast.name}
+                    </span>
+                  </h3>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', fontStyle: 'italic', marginBottom: '12px' }}>
                     {beast.title}
                   </div>
 
                   <div style={{
-                    background: 'rgba(15, 23, 42, 0.6)',
+                    background: 'var(--vv-subcard-bg)',
                     borderRadius: '10px',
                     padding: '8px',
                     fontSize: '0.78rem',
-                    color: '#fef08a',
+                    color: 'var(--vv-gold-soft)',
                     fontWeight: 'bold',
                     marginBottom: '12px'
                   }}>
                     {beast.auraText}
                   </div>
 
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: '1.3' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--vv-muted)', lineHeight: '1.3' }}>
                     {beast.description}
                   </div>
                 </div>
 
                 <div style={{ marginTop: '16px' }}>
                   {isActive ? (
-                    <span style={{ color: '#2ecc71', fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    <span style={{ color: 'var(--vv-green)', fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                       <CheckCircle2 size={16} /> ĐANG XUẤT TRẬN
                     </span>
                   ) : (
-                    <span style={{ color: '#38bdf8', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                    <span style={{ color: 'var(--vv-sky-text)', fontSize: '0.85rem', fontWeight: 'bold' }}>
                       Chọn Xuất Trận ➔
                     </span>
                   )}

@@ -38,7 +38,7 @@ export default function HeroModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -48,7 +48,7 @@ export default function HeroModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        background: 'var(--vv-panel-grad)',
         border: `2px solid ${hero.color}`,
         borderRadius: '24px',
         width: '100%',
@@ -57,7 +57,7 @@ export default function HeroModal() {
         overflowY: 'auto',
         padding: '24px',
         boxShadow: `0 10px 40px ${hero.color}44`,
-        color: 'white',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Close Button */}
@@ -67,12 +67,12 @@ export default function HeroModal() {
             position: 'absolute',
             top: '16px',
             right: '16px',
-            background: 'rgba(0,0,0,0.5)',
+            background: 'var(--vv-close-bg)',
             
             borderRadius: '50%',
             padding: '6px',
-            border: '1px solid rgba(255,255,255,0.2)',
-            color: 'white',
+            border: '1px solid var(--vv-close-border)',
+            color: 'var(--vv-close-color)',
             cursor: 'pointer',
             zIndex: 10,
             display: 'flex',
@@ -89,7 +89,7 @@ export default function HeroModal() {
           width: '100%',
           height: '160px',
           borderRadius: '16px',
-          background: 'radial-gradient(circle at center, #1e293b 0%, #0f172a 100%)',
+          background: 'var(--vv-banner-bg)',
           border: `2px solid ${hero.color}`,
           boxShadow: `0 8px 32px ${hero.color}44`,
           overflow: 'hidden',
@@ -108,7 +108,7 @@ export default function HeroModal() {
             bottom: 0,
             left: 0,
             width: '100%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)',
+            background: 'var(--vv-media-scrim)',
             padding: '20px 16px 12px 16px',
             display: 'flex',
             justifyContent: 'space-between',
@@ -116,10 +116,10 @@ export default function HeroModal() {
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', color: theme.hex, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>{hero.name}</h2>
+                <h2 style={{ margin: 0, fontSize: '1.5rem', color: theme.hex, textShadow: 'var(--vv-text-shadow-media)' }}>{hero.name}</h2>
                 <span style={{
                   background: theme.badgeBg,
-                  color: 'white',
+                  color: 'var(--vv-on-solid)',
                   fontSize: '0.7rem',
                   fontWeight: '900',
                   padding: '2px 8px',
@@ -129,7 +129,7 @@ export default function HeroModal() {
                   {theme.rarity} • {theme.title}
                 </span>
               </div>
-              <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#cbd5e1', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--vv-dark-card-text)', textShadow: 'var(--vv-text-shadow-media)' }}>
                 Cấp {hero.level} • {roleInfo.icon} {roleInfo.name}
               </p>
             </div>
@@ -140,9 +140,9 @@ export default function HeroModal() {
                 <Star 
                   key={i} 
                   size={16} 
-                  color={i < hero.stars ? "#f1c40f" : "#475569"} 
-                  fill={i < hero.stars ? "#f1c40f" : "none"} 
-                  style={{ filter: i < hero.stars ? 'drop-shadow(0 0 4px rgba(241,196,15,0.6))' : 'none' }}
+                  color={i < hero.stars ? "var(--vv-gold-border-strong)" : "var(--vv-subtle)"} 
+                  fill={i < hero.stars ? "var(--vv-gold-border-strong)" : "none"} 
+                  style={{ filter: i < hero.stars ? 'var(--vv-star-glow)' : 'none' }}
                 />
               ))}
             </div>
@@ -151,7 +151,7 @@ export default function HeroModal() {
 
         {/* Class Info Block */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.7)',
+          background: 'var(--vv-subcard-bg)',
           border: `1.5px solid ${roleInfo.color}66`,
           borderRadius: '16px',
           padding: '12px 14px',
@@ -176,10 +176,10 @@ export default function HeroModal() {
           </div>
           <div style={{ flex: 1, textAlign: 'left' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 'bold' }}>LỚP VÕ TƯỚNG (CLASS):</span>
-              <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: roleInfo.color }}>{roleInfo.name}</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--vv-muted)', textTransform: 'uppercase', fontWeight: 'bold' }}>LỚP VÕ TƯỚNG (CLASS):</span>
+              <span style={{ fontWeight: 'bold', fontSize: '0.9rem', color: roleInfo.color, background: 'var(--vv-hero-chip-bg)', padding: '1px 8px', borderRadius: '6px' }}>{roleInfo.name}</span>
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px', lineHeight: '1.3' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', marginTop: '2px', lineHeight: '1.3' }}>
               {roleInfo.desc}
             </div>
           </div>
@@ -190,32 +190,32 @@ export default function HeroModal() {
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '12px',
-          background: 'rgba(15, 23, 42, 0.6)',
+          background: 'var(--vv-subcard-bg)',
           padding: '12px 16px',
           borderRadius: '14px',
           marginBottom: '16px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Zap size={18} color="#e74c3c" />
+            <Zap size={18} color="var(--vv-red)" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>TẤN CÔNG (ATK)</div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: '#e74c3c' }}>{hero.atk.toLocaleString()}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--vv-muted)' }}>TẤN CÔNG (ATK)</div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: 'var(--vv-red)' }}>{hero.atk.toLocaleString()}</div>
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Heart size={18} color="#2ecc71" />
+            <Heart size={18} color="var(--vv-green)" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>SINH LỰC (HP)</div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: '#2ecc71' }}>{hero.hp.toLocaleString()}/{hero.maxHp.toLocaleString()}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--vv-muted)' }}>SINH LỰC (HP)</div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: 'var(--vv-green)' }}>{hero.hp.toLocaleString()}/{hero.maxHp.toLocaleString()}</div>
             </div>
           </div>
         </div>
 
         {/* Skill & Synergy Section */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.7)',
-          border: '1px solid rgba(241, 196, 15, 0.3)',
+          background: 'var(--vv-subcard-bg)',
+          border: '1px solid var(--vv-gold-border)',
           borderRadius: '16px',
           padding: '14px',
           marginBottom: '16px',
@@ -223,22 +223,22 @@ export default function HeroModal() {
           flexDirection: 'column',
           gap: '10px'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Sparkles size={16} color="#f1c40f" />
+          <div style={{ fontSize: '0.85rem', color: 'var(--vv-gold-soft)', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Sparkles size={16} color="var(--vv-gold-border-strong)" />
             <span>KỸ NĂNG & HỢP KỸ DÂN TỘC</span>
           </div>
 
           {/* Tuyệt Kỹ */}
-          <div style={{ background: 'rgba(30, 41, 59, 0.6)', padding: '10px 12px', borderRadius: '12px', borderLeft: `3px solid ${hero.color}` }}>
+          <div style={{ background: 'var(--vv-surface-2-alpha)', padding: '10px 12px', borderRadius: '12px', borderLeft: `3px solid ${hero.color}` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#ffffff' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--vv-text)' }}>
                 👑 [TUYỆT KỸ] {hero.skill?.name || 'Vung Vũ Khí'}
               </div>
-              <span style={{ fontSize: '0.75rem', background: '#3b82f6', color: 'white', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '0.75rem', background: 'var(--vv-blue)', color: 'var(--vv-on-solid)', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
                 {Math.round((hero.skill?.damageMultiplier || 2.0) * 100)}% ATK
               </span>
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '4px', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', marginTop: '4px', lineHeight: '1.4' }}>
               Gây {Math.round((hero.skill?.damageMultiplier || 2.0) * 100)}% sát thương lên mục tiêu.
               {hero.skill?.rageRecovery ? ` Hồi ${hero.skill.rageRecovery} Nộ sau khi xuất chiêu.` : ''}
               {hero.skill?.rageSteal ? ` Hút ${hero.skill.rageSteal} Nộ của kẻ địch.` : ''}
@@ -247,16 +247,16 @@ export default function HeroModal() {
 
           {/* Hợp Kỹ (nếu có) */}
           {hero.synergy && (
-            <div style={{ background: 'rgba(234, 179, 8, 0.12)', padding: '10px 12px', borderRadius: '12px', borderLeft: '3px solid #f1c40f' }}>
+            <div style={{ background: 'var(--vv-gold-tint)', padding: '10px 12px', borderRadius: '12px', borderLeft: '3px solid var(--vv-gold-border-strong)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#fef08a' }}>
+                <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--vv-gold-soft)' }}>
                   💥 [HỢP KỸ] {hero.synergy.skillName}
                 </div>
-                <span style={{ fontSize: '0.75rem', background: '#d97706', color: 'white', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
+                <span style={{ fontSize: '0.75rem', background: 'var(--vv-gold-solid)', color: 'var(--vv-on-solid)', padding: '2px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
                   Phối Hợp: {partnerHero ? partnerHero.name : 'Đồng Đội'}
                 </span>
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#e2e8f0', marginTop: '4px', lineHeight: '1.4' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', marginTop: '4px', lineHeight: '1.4' }}>
                 Khi cùng {partnerHero ? partnerHero.name : 'Đồng Đội'} ra trận, bồi đòn Hợp Kích gây 150% Sát Thương Hợp Kỹ lên kẻ địch!
               </div>
             </div>
@@ -270,9 +270,9 @@ export default function HeroModal() {
             disabled={gold < 200}
             style={{
               flex: 1,
-              background: gold >= 200 ? 'linear-gradient(45deg, #2563eb, #3b82f6)' : '#475569',
+              background: gold >= 200 ? 'var(--vv-btn-blue-grad)' : 'var(--vv-btn-disabled-bg)',
               border: 'none',
-              color: 'white',
+              color: gold >= 200 ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
               padding: '10px',
               borderRadius: '12px',
               fontWeight: 'bold',
@@ -292,9 +292,9 @@ export default function HeroModal() {
             disabled={!canStarUp}
             style={{
               flex: 1,
-              background: canStarUp ? 'linear-gradient(45deg, #d97706, #f59e0b)' : '#475569',
+              background: canStarUp ? 'var(--vv-menu-gold-grad)' : 'var(--vv-btn-disabled-bg)',
               border: 'none',
-              color: 'white',
+              color: canStarUp ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
               padding: '10px',
               borderRadius: '12px',
               fontWeight: 'bold',
@@ -312,9 +312,9 @@ export default function HeroModal() {
           <button
             onClick={() => setShowMeridians(true)}
             style={{
-              background: 'linear-gradient(45deg, #7c3aed, #c084fc)',
+              background: 'var(--vv-menu-purple-grad)',
               border: 'none',
-              color: 'white',
+              color: 'var(--vv-on-solid)',
               padding: '10px 14px',
               borderRadius: '12px',
               fontWeight: 'bold',
@@ -331,7 +331,7 @@ export default function HeroModal() {
 
         {/* Equipment Section */}
         <div>
-          <h3 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: '#f1c40f' }}>TRANG BỊ THẦN KHÍ LỊCH SỬ</h3>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: 'var(--vv-gold)' }}>TRANG BỊ THẦN KHÍ LỊCH SỬ</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {inventory.map(item => {
               const isEquipped = hero.equippedItemIds.includes(item.id)
@@ -341,8 +341,8 @@ export default function HeroModal() {
                   key={item.id}
                   onClick={() => toggleEquipItem(hero.id, item.id)}
                   style={{
-                    background: isEquipped ? 'rgba(241, 196, 15, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-                    border: isEquipped ? '1.5px solid #f1c40f' : '1px solid rgba(255,255,255,0.08)',
+                    background: isEquipped ? 'var(--vv-gold-tint)' : 'var(--vv-surface-2-alpha)',
+                    border: isEquipped ? '1.5px solid var(--vv-gold-border-strong)' : '1px solid var(--vv-border-subtle)',
                     borderRadius: '12px',
                     padding: '10px',
                     cursor: 'pointer',
@@ -354,10 +354,10 @@ export default function HeroModal() {
                 >
                   <div style={{ fontSize: '1.4rem' }}>{item.icon}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '0.8rem', color: isEquipped ? '#fef08a' : 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.8rem', color: isEquipped ? 'var(--vv-gold-soft)' : 'var(--vv-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {item.name}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--vv-muted)' }}>
                       {item.statBonus.atk ? `+${item.statBonus.atk} ATK` : ''} {item.statBonus.hp ? `+${item.statBonus.hp} HP` : ''}
                     </div>
                   </div>

@@ -42,7 +42,7 @@ export default function IdleModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -52,14 +52,14 @@ export default function IdleModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        border: '2px solid #f59e0b',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-gold-solid)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '500px',
         padding: '28px',
-        boxShadow: '0 10px 40px rgba(245, 158, 11, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -73,11 +73,11 @@ export default function IdleModal() {
             position: 'absolute',
             top: '16px',
             right: '16px',
-            background: 'rgba(0,0,0,0.5)',
+            background: 'var(--vv-close-bg)',
             borderRadius: '50%',
             padding: '6px',
-            border: '1px solid rgba(255,255,255,0.2)',
-            color: 'white',
+            border: '1px solid var(--vv-close-border)',
+            color: 'var(--vv-close-color)',
             cursor: 'pointer'
           }}
         >
@@ -88,22 +88,22 @@ export default function IdleModal() {
         <div style={{
           fontSize: '3.5rem',
           marginBottom: '8px',
-          filter: 'drop-shadow(0 0 20px rgba(245,158,11,0.8))'
+          filter: 'var(--vv-drop-glow-gold)'
         }}>
           🎁
         </div>
 
-        <h2 style={{ margin: '0 0 4px 0', fontSize: '1.6rem', color: '#fef08a', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+        <h2 style={{ margin: '0 0 4px 0', fontSize: '1.6rem', color: 'var(--vv-gold)', textShadow: 'var(--vv-text-shadow-dark)' }}>
           RƯƠNG THU HOẠCH TREO MÁY AFK
         </h2>
-        <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: 'var(--vv-muted)' }}>
           Chiến đội tự động tích lũy tài nguyên 24/7 dựa theo Ải {currentStage}.
         </p>
 
         {/* Rate & Timer Info */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.7)',
-          border: '1px solid rgba(245, 158, 11, 0.3)',
+          background: 'var(--vv-subcard-bg)',
+          border: '1px solid var(--vv-gold-border)',
           borderRadius: '16px',
           width: '100%',
           padding: '12px 16px',
@@ -113,22 +113,22 @@ export default function IdleModal() {
           alignItems: 'center'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Zap size={18} color="#f59e0b" />
+            <Zap size={18} color="var(--vv-gold-solid)" />
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>TỐC ĐỘ THU HOẠCH</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#fef08a' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--vv-muted)' }}>TỐC ĐỘ THU HOẠCH</div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--vv-gold)' }}>
                 +{goldPerHour.toLocaleString()} Vàng/Giờ
               </div>
             </div>
           </div>
 
-          <div style={{ height: '24px', width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+          <div style={{ height: '24px', width: '1px', background: 'var(--vv-divider)' }} />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock size={18} color="#38bdf8" />
+            <Clock size={18} color="var(--vv-sky)" />
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>THỜI GIAN TÍCH LŨY</div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#7dd3fc' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--vv-muted)' }}>THỜI GIAN TÍCH LŨY</div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--vv-sky-text)' }}>
                 {formatTime(elapsedSec)} / 12:00:00
               </div>
             </div>
@@ -145,36 +145,36 @@ export default function IdleModal() {
         }}>
           {/* Gold Reward */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.1) 100%)',
-            border: '1.5px solid #f59e0b',
+            background: 'var(--vv-btn-gold-tint)',
+            border: '1.5px solid var(--vv-gold-solid)',
             borderRadius: '16px',
             padding: '16px 12px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            boxShadow: '0 4px 20px rgba(245, 158, 11, 0.2)'
+            boxShadow: 'var(--vv-glow-gold)'
           }}>
             <div style={{ fontSize: '2rem', marginBottom: '4px' }}>🪙</div>
-            <div style={{ fontSize: '0.75rem', color: '#fef08a', fontWeight: 'bold' }}>VÀNG TÍCH LŨY</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--vv-gold-soft)', fontWeight: 'bold' }}>VÀNG TÍCH LŨY</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--vv-text)', marginTop: '2px' }}>
               +{gold.toLocaleString()}
             </div>
           </div>
 
           {/* Shards Reward */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.1) 100%)',
-            border: '1.5px solid #a855f7',
+            background: 'var(--vv-purple-tint)',
+            border: '1.5px solid var(--vv-purple)',
             borderRadius: '16px',
             padding: '16px 12px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            boxShadow: '0 4px 20px rgba(168, 85, 247, 0.2)'
+            boxShadow: 'var(--vv-modal-purple-shadow)'
           }}>
             <div style={{ fontSize: '2rem', marginBottom: '4px' }}>🧩</div>
-            <div style={{ fontSize: '0.75rem', color: '#e9d5ff', fontWeight: 'bold' }}>MẢNH TƯỚNG</div>
-            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#ffffff', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--vv-purple-soft)', fontWeight: 'bold' }}>MẢNH TƯỚNG</div>
+            <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--vv-text)', marginTop: '2px' }}>
               +{shards} Mảnh
             </div>
           </div>
@@ -186,15 +186,15 @@ export default function IdleModal() {
           disabled={gold <= 0}
           style={{
             width: '100%',
-            background: gold > 0 ? 'linear-gradient(45deg, #d97706, #f59e0b, #eab308)' : '#475569',
+            background: gold > 0 ? 'var(--vv-btn-gold-grad)' : 'var(--vv-btn-disabled-bg)',
             border: 'none',
-            color: 'white',
+            color: gold > 0 ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
             padding: '14px',
             borderRadius: '16px',
             fontWeight: 900,
             fontSize: '1.1rem',
             cursor: gold > 0 ? 'pointer' : 'not-allowed',
-            boxShadow: gold > 0 ? '0 6px 25px rgba(245, 158, 11, 0.5)' : 'none',
+            boxShadow: gold > 0 ? 'var(--vv-btn-gold-shadow)' : 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

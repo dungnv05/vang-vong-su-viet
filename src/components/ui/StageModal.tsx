@@ -18,7 +18,7 @@ export default function StageModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -28,14 +28,14 @@ export default function StageModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        border: '2px solid #d4af37',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-gold-border-strong)',
         borderRadius: '20px',
         width: '100%',
         maxWidth: '720px',
         padding: '28px',
-        boxShadow: '0 10px 40px rgba(212, 175, 55, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -47,17 +47,17 @@ export default function StageModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <MapPin color="#f1c40f" /> Tiến Trình Màn Chơi Dòng Chảy Lịch Sử
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <MapPin color="var(--vv-gold)" /> Tiến Trình Màn Chơi Dòng Chảy Lịch Sử
         </h2>
-        <p style={{ margin: '0 0 24px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 24px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Tái hiện các mốc lịch sử hào hùng của dân tộc Việt Nam theo thứ tự thời gian từ thời Bắc Thuộc đến Tây Sơn.
         </p>
 
@@ -73,15 +73,15 @@ export default function StageModal() {
                 onClick={() => isUnlocked && selectStage(idx)}
                 style={{
                   background: isCurrent 
-                    ? 'linear-gradient(90deg, rgba(212, 175, 55, 0.25), rgba(30, 41, 59, 0.8))' 
+                    ? 'var(--vv-stage-current-bg)' 
                     : isUnlocked 
-                      ? 'rgba(30, 41, 59, 0.6)' 
-                      : 'rgba(15, 23, 42, 0.4)',
+                      ? 'var(--vv-surface-2-alpha)' 
+                      : 'var(--vv-slot-empty-bg)',
                   border: isCurrent 
-                    ? '2px solid #f1c40f' 
+                    ? '2px solid var(--vv-gold-border-strong)' 
                     : isUnlocked 
-                      ? '1px solid rgba(255,255,255,0.15)' 
-                      : '1px dashed #475569',
+                      ? '1px solid var(--vv-border-subtle)' 
+                      : '1px dashed var(--vv-border-strong)',
                   borderRadius: '14px',
                   padding: '16px 20px',
                   cursor: isUnlocked ? 'pointer' : 'not-allowed',
@@ -95,9 +95,9 @@ export default function StageModal() {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{
-                      background: 'rgba(212, 175, 55, 0.2)',
-                      color: '#fef08a',
-                      border: '1px solid #d4af37',
+                      background: 'var(--vv-gold-tint-strong)',
+                      color: 'var(--vv-gold-soft)',
+                      border: '1px solid var(--vv-gold-border-strong)',
                       padding: '2px 8px',
                       borderRadius: '8px',
                       fontSize: '0.8rem',
@@ -108,35 +108,35 @@ export default function StageModal() {
                     }}>
                       <Calendar size={12} /> {stage.year}
                     </span>
-                    <h3 style={{ margin: 0, color: isCurrent ? '#fef08a' : isUnlocked ? 'white' : '#64748b', fontSize: '1.15rem' }}>
+                    <h3 style={{ margin: 0, color: isCurrent ? 'var(--vv-gold-soft)' : isUnlocked ? 'var(--vv-text)' : 'var(--vv-subtle)', fontSize: '1.15rem' }}>
                       {stage.name}
                     </h3>
                     {isCurrent && (
-                      <span style={{ background: '#f1c40f', color: '#000', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                      <span style={{ background: 'var(--vv-gold-solid)', color: 'var(--vv-on-gold)', padding: '2px 8px', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 'bold' }}>
                         ĐANG KHIÊU CHIẾN
                       </span>
                     )}
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '6px', fontStyle: 'italic' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--vv-text-2)', marginTop: '6px', fontStyle: 'italic' }}>
                     {stage.subtitle}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
-                    Trùm: <strong style={{ color: '#e74c3c' }}>{stage.bossName}</strong> | {stage.description}
+                  <div style={{ fontSize: '0.8rem', color: 'var(--vv-muted)', marginTop: '4px' }}>
+                    Trùm: <strong style={{ color: 'var(--vv-red)' }}>{stage.bossName}</strong> | {stage.description}
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
                   {isUnlocked ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#f1c40f', fontWeight: 'bold', fontSize: '0.95rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--vv-gold)', fontWeight: 'bold', fontSize: '0.95rem' }}>
                       <Coins size={16} /> +{stage.rewardGold} Vàng
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '0.9rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--vv-subtle)', fontSize: '0.9rem' }}>
                       <Lock size={16} /> Đã Khóa
                     </div>
                   )}
                   {isUnlocked && !isCurrent && (
-                    <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 'bold' }}>Bấm Để Chọn Ải ➔</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--vv-sky-text)', fontWeight: 'bold' }}>Bấm Để Chọn Ải ➔</span>
                   )}
                 </div>
               </div>

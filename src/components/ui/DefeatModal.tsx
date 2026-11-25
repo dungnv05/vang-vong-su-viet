@@ -32,7 +32,7 @@ export default function DefeatModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.9)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -42,14 +42,14 @@ export default function DefeatModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #4a0404 0%, #1a0202 100%)',
-        border: '3px solid #e74c3c',
+        background: 'var(--vv-defeat-panel-grad)',
+        border: '3px solid var(--vv-red-solid)',
         borderRadius: '28px',
         width: '100%',
         maxWidth: '480px',
         padding: '36px',
-        boxShadow: '0 10px 60px rgba(231, 76, 60, 0.4)',
-        color: 'white',
+        boxShadow: 'var(--vv-defeat-shadow)',
+        color: 'var(--vv-text)',
         textAlign: 'center',
         position: 'relative'
       }}>
@@ -59,7 +59,7 @@ export default function DefeatModal() {
           margin: 0,
           fontSize: '2.4rem',
           fontWeight: 900,
-          background: 'linear-gradient(45deg, #ff6b6b, #e74c3c, #c0392b)',
+          background: 'var(--vv-defeat-title-grad)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           letterSpacing: '2px'
@@ -67,7 +67,7 @@ export default function DefeatModal() {
           TỬ TRẬN SA TRƯỜNG!
         </h1>
 
-        <p style={{ margin: '10px 0 32px 0', fontSize: '1rem', color: '#cbd5e1' }}>
+        <p style={{ margin: '10px 0 32px 0', fontSize: '1rem', color: 'var(--vv-text-2)' }}>
           Đội hình của bạn đã bị tiêu diệt hoàn toàn. Hãy cường hóa trang bị, nâng cấp tướng và thử lại!
         </p>
 
@@ -77,15 +77,15 @@ export default function DefeatModal() {
             onClick={handleRetry}
             style={{
               width: '100%',
-              background: 'linear-gradient(45deg, #c0392b, #e74c3c)',
-              border: '2px solid #ff6b6b',
-              color: 'white',
+              background: 'var(--vv-menu-red-grad)',
+              border: '2px solid var(--vv-btn-red-border)',
+              color: 'var(--vv-on-solid)',
               padding: '16px',
               borderRadius: '30px',
               fontSize: '1.15rem',
               fontWeight: 900,
               cursor: 'pointer',
-              boxShadow: '0 6px 20px rgba(231, 76, 60, 0.5)',
+              boxShadow: 'var(--vv-menu-red-shadow)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -100,9 +100,9 @@ export default function DefeatModal() {
             onClick={handleReturnLobby}
             style={{
               width: '100%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              color: '#cbd5e1',
+              background: 'var(--vv-secondary-bg)',
+              border: '1px solid var(--vv-secondary-border)',
+              color: 'var(--vv-text-2)',
               padding: '16px',
               borderRadius: '30px',
               fontSize: '1.1rem',

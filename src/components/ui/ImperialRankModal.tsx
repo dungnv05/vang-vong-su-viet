@@ -25,7 +25,7 @@ export default function ImperialRankModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -35,14 +35,14 @@ export default function ImperialRankModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
-        border: '2px solid #f1c40f',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-gold-border-strong)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '750px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(241, 196, 15, 0.35)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         <button 
@@ -53,24 +53,24 @@ export default function ImperialRankModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Crown color="#f1c40f" /> Hệ Thống Quan Lại & Cấp Bậc Triều Đình
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Crown color="var(--vv-gold)" /> Hệ Thống Quan Lại & Cấp Bậc Triều Đình
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Thăng Quan Tiến Chức tăng Buff % chỉ số cho toàn bộ Tướng xuất trận và nhận Bổng Lộc Hàng Ngày!
         </p>
 
         {/* Khung Phẩm Cấp Hiện Tại */}
         <div style={{
-          background: 'rgba(241, 196, 15, 0.12)',
-          border: '2px solid #f1c40f',
+          background: 'var(--vv-gold-tint)',
+          border: '2px solid var(--vv-gold-border-strong)',
           borderRadius: '20px',
           padding: '20px',
           marginBottom: '24px',
@@ -81,19 +81,21 @@ export default function ImperialRankModal() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
             <div style={{ fontSize: '3rem' }}>{currentRank.icon}</div>
             <div>
-              <div style={{ fontSize: '0.8rem', color: '#cbd5e1', textTransform: 'uppercase', fontWeight: 'bold' }}>CẤP BẬC QUAN LẠI HIỆN TẠI</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', textTransform: 'uppercase', fontWeight: 'bold' }}>CẤP BẬC QUAN LẠI HIỆN TẠI</div>
               <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentRank.color, marginTop: '2px' }}>
-                {currentRank.title}
+                <span style={{ background: 'var(--vv-hero-chip-bg)', padding: '2px 8px', borderRadius: '8px', display: 'inline-block' }}>
+                  {currentRank.title}
+                </span>
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#2ecc71', fontWeight: 'bold', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--vv-green)', fontWeight: 'bold', marginTop: '4px' }}>
                 ⚡ Buff Triều Đình: {currentRank.statBuffText}
               </div>
             </div>
           </div>
 
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>BỔNG LỘC HÀNG NGÀY</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fef08a', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--vv-muted)' }}>BỔNG LỘC HÀNG NGÀY</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--vv-gold-soft)', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end', marginTop: '2px' }}>
               <Coins size={18} /> +{currentRank.dailySalaryGold.toLocaleString()} Vàng
             </div>
           </div>
@@ -102,17 +104,17 @@ export default function ImperialRankModal() {
         {/* Tiến Trình Thăng Quan tiếp theo */}
         {nextRank ? (
           <div style={{
-            background: 'rgba(30, 41, 59, 0.6)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'var(--vv-surface-2-alpha)',
+            border: '1px solid var(--vv-border-subtle)',
             borderRadius: '16px',
             padding: '20px',
             marginBottom: '24px'
           }}>
-            <div style={{ fontWeight: 'bold', fontSize: '1rem', color: '#38bdf8', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Award size={18} /> Cấp Bậc Tiếp Theo: <span style={{ color: nextRank.color }}>{nextRank.title}</span>
+            <div style={{ fontWeight: 'bold', fontSize: '1rem', color: 'var(--vv-sky-text)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Award size={18} /> Cấp Bậc Tiếp Theo: <span style={{ color: nextRank.color, background: 'var(--vv-hero-chip-bg)', padding: '2px 8px', borderRadius: '8px' }}>{nextRank.title}</span>
             </div>
 
-            <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '12px' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--vv-text-2)', marginBottom: '12px' }}>
               Yêu cầu Tổng Lực Chiến: <strong>{totalPower.toLocaleString()} / {nextRank.reqPower.toLocaleString()}</strong>
             </div>
 
@@ -120,7 +122,7 @@ export default function ImperialRankModal() {
             <div style={{
               width: '100%',
               height: '10px',
-              backgroundColor: 'rgba(255,255,255,0.1)',
+              backgroundColor: 'var(--vv-secondary-bg)',
               borderRadius: '5px',
               overflow: 'hidden',
               marginBottom: '16px'
@@ -128,7 +130,7 @@ export default function ImperialRankModal() {
               <div style={{
                 width: `${Math.min(100, (totalPower / nextRank.reqPower) * 100)}%`,
                 height: '100%',
-                backgroundColor: '#f1c40f',
+                backgroundColor: 'var(--vv-gold-border-strong)',
                 transition: 'width 0.3s ease'
               }} />
             </div>
@@ -142,9 +144,9 @@ export default function ImperialRankModal() {
               disabled={totalPower < nextRank.reqPower}
               style={{
                 width: '100%',
-                background: totalPower >= nextRank.reqPower ? 'linear-gradient(45deg, #b45309, #f59e0b)' : '#475569',
+                background: totalPower >= nextRank.reqPower ? 'var(--vv-btn-gold-grad-short)' : 'var(--vv-btn-disabled-bg)',
                 border: 'none',
-                color: 'white',
+                color: totalPower >= nextRank.reqPower ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
                 padding: '14px',
                 borderRadius: '12px',
                 fontWeight: 'bold',
@@ -160,7 +162,7 @@ export default function ImperialRankModal() {
             </button>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '16px', color: '#2ecc71', fontWeight: 'bold', fontSize: '1.1rem' }}>
+          <div style={{ textAlign: 'center', padding: '16px', color: 'var(--vv-green)', fontWeight: 'bold', fontSize: '1.1rem' }}>
             👑 BẠN ĐÃ ĐẠT CẤP BẬC QUAN LẠI CAO NHẤT (THÁI SƯ TỂ TƯỚNG)!
           </div>
         )}

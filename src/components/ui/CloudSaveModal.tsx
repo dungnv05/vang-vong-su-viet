@@ -25,8 +25,8 @@ function SummaryRows({ summary }: { summary: SaveSummary }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.84rem' }}>
       {rows.map(([label, value]) => (
         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
-          <span style={{ color: '#94a3b8' }}>{label}:</span>
-          <strong style={{ color: '#e2e8f0' }}>{value}</strong>
+          <span style={{ color: 'var(--vv-muted)' }}>{label}:</span>
+          <strong style={{ color: 'var(--vv-text-2)' }}>{value}</strong>
         </div>
       ))}
     </div>
@@ -81,7 +81,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
     minWidth: '180px',
     background: gradient,
     border: 'none',
-    color: 'white',
+    color: 'var(--vv-on-solid)',
     borderRadius: '12px',
     padding: '10px 16px',
     fontWeight: 'bold',
@@ -95,9 +95,9 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
   })
 
   const secondaryBtnStyle = (disabled: boolean): React.CSSProperties => ({
-    background: 'rgba(148, 163, 184, 0.16)',
-    border: '1px solid rgba(148, 163, 184, 0.45)',
-    color: '#e2e8f0',
+    background: 'var(--vv-secondary-bg)',
+    border: '1px solid var(--vv-secondary-border)',
+    color: 'var(--vv-text-2)',
     borderRadius: '12px',
     padding: '10px 16px',
     fontWeight: 'bold',
@@ -110,9 +110,9 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
     <a
       href={wwwAuthUrl('signin')}
       style={{
-        background: 'linear-gradient(45deg, #f59e0b, #d97706)',
+        background: 'var(--vv-btn-gold-grad-short)',
         border: 'none',
-        color: 'white',
+        color: 'var(--vv-on-solid)',
         borderRadius: '12px',
         padding: '9px 16px',
         fontWeight: 'bold',
@@ -121,7 +121,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         display: 'inline-flex',
         alignItems: 'center',
         gap: '6px',
-        boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)'
+        boxShadow: 'var(--vv-btn-gold-shadow)'
       }}
     >
       <LogIn size={16} /> Đăng nhập YunDev
@@ -131,8 +131,8 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
   const renderLegacyImportBanner = () => (
     <div style={{
       marginTop: '12px',
-      background: 'rgba(56, 189, 248, 0.12)',
-      border: '1px solid rgba(56, 189, 248, 0.45)',
+      background: 'var(--vv-sky-tint)',
+      border: '1px solid var(--vv-sky-border)',
       borderRadius: '12px',
       padding: '12px 14px',
       display: 'flex',
@@ -141,13 +141,13 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       flexWrap: 'wrap',
       gap: '10px'
     }}>
-      <span style={{ fontSize: '0.88rem', color: '#bae6fd' }}>
+      <span style={{ fontSize: '0.88rem', color: 'var(--vv-sky-soft)' }}>
         Tìm thấy tiến trình cũ của tài khoản.
       </span>
       <button
         onClick={() => void runAction(() => ctrl.importLegacy())}
         disabled={busy}
-        style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy)}
+        style={primaryBtnStyle('var(--vv-menu-sky-grad)', busy)}
       >
         Nhập tiến trình cũ
       </button>
@@ -159,7 +159,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'signed_out':
         return (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-            <span style={{ fontSize: '0.9rem', color: '#fde68a' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--vv-gold-soft)' }}>
               Đăng nhập để lưu tiến trình lên cloud.
             </span>
             {loginLinkButton}
@@ -168,7 +168,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
       case 'syncing':
         return (
-          <div style={{ fontSize: '0.9rem', color: '#7dd3fc', fontWeight: 'bold' }}>
+          <div style={{ fontSize: '0.9rem', color: 'var(--vv-sky-text)', fontWeight: 'bold' }}>
             Đang đồng bộ…
           </div>
         )
@@ -177,7 +177,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'idle': {
         if (snap.notice === 'local_only') {
           return (
-            <div style={{ fontSize: '0.9rem', color: '#fde68a' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--vv-gold-soft)' }}>
               Đang giữ bản trên máy, không đồng bộ với tài khoản này.
             </div>
           )
@@ -186,14 +186,14 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         return (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-              <div style={{ fontSize: '0.9rem', color: '#86efac' }}>
+              <div style={{ fontSize: '0.9rem', color: 'var(--vv-green-soft)' }}>
                 Đã đồng bộ{syncedTime ? ` (${syncedTime})` : ''}
               </div>
               <button
                 onClick={() => void runAction(() => ctrl.syncNow())}
                 disabled={busy}
                 style={{
-                  ...primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy),
+                  ...primaryBtnStyle('var(--vv-menu-sky-grad)', busy),
                   flex: '0 0 auto',
                   minWidth: 'auto'
                 }}
@@ -208,7 +208,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
       case 'disabled':
         return (
-          <div style={{ fontSize: '0.9rem', color: '#fde68a' }}>
+          <div style={{ fontSize: '0.9rem', color: 'var(--vv-gold-soft)' }}>
             Lưu cloud chưa được bật. Tiến trình vẫn được lưu trên máy này.
           </div>
         )
@@ -217,7 +217,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'error':
         return (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#fca5a5' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--vv-red-soft)' }}>
               <AlertCircle size={18} />
               <span>Không kết nối được cloud. Sẽ thử lại tự động.</span>
             </div>
@@ -225,7 +225,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
               onClick={() => void runAction(() => ctrl.syncNow())}
               disabled={busy}
               style={{
-                ...primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy),
+                ...primaryBtnStyle('var(--vv-menu-sky-grad)', busy),
                 flex: '0 0 auto',
                 minWidth: 'auto'
               }}
@@ -238,7 +238,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'session_expired':
         return (
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-            <span style={{ fontSize: '0.9rem', color: '#fca5a5' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--vv-red-soft)' }}>
               Phiên đăng nhập đã hết hạn.
             </span>
             {loginLinkButton}
@@ -253,26 +253,26 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
         return (
           <div>
-            <div style={{ fontWeight: 'bold', color: '#fbbf24', fontSize: '1rem', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ fontWeight: 'bold', color: 'var(--vv-gold)', fontSize: '1rem', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <AlertCircle size={18} /> Có hai bản lưu khác nhau
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '14px' }}>
-              <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(148, 163, 184, 0.35)', borderRadius: '12px', padding: '12px' }}>
-                <div style={{ fontWeight: 'bold', color: '#7dd3fc', marginBottom: '8px', fontSize: '0.9rem' }}>
+              <div style={{ background: 'var(--vv-subcard-bg)', border: '1px solid var(--vv-secondary-border)', borderRadius: '12px', padding: '12px' }}>
+                <div style={{ fontWeight: 'bold', color: 'var(--vv-sky-text)', marginBottom: '8px', fontSize: '0.9rem' }}>
                   Trên máy này
                 </div>
                 {localSum ? <SummaryRows summary={localSum} /> : null}
               </div>
 
-              <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.45)', borderRadius: '12px', padding: '12px' }}>
-                <div style={{ fontWeight: 'bold', color: '#4ade80', marginBottom: '8px', fontSize: '0.9rem' }}>
+              <div style={{ background: 'var(--vv-subcard-bg)', border: '1px solid var(--vv-sky-border)', borderRadius: '12px', padding: '12px' }}>
+                <div style={{ fontWeight: 'bold', color: 'var(--vv-green-soft)', marginBottom: '8px', fontSize: '0.9rem' }}>
                   Trên cloud{serverTime ? ` (${serverTime})` : ''}
                 </div>
                 {serverSum ? (
                   <SummaryRows summary={serverSum} />
                 ) : (
-                  <div style={{ fontSize: '0.84rem', color: '#fca5a5' }}>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--vv-red-soft)' }}>
                     Không đọc được bản trên cloud
                   </div>
                 )}
@@ -283,26 +283,26 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
               <button
                 onClick={() => void runAction(() => ctrl.chooseCloud())}
                 disabled={busy}
-                style={primaryBtnStyle('linear-gradient(45deg, #059669, #10b981)', busy)}
+                style={primaryBtnStyle('var(--vv-menu-green-grad)', busy)}
               >
                 Dùng bản trên cloud
               </button>
               <button
                 onClick={() => void runAction(() => ctrl.chooseLocal())}
                 disabled={busy || !snap.canKeepLocal}
-                style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy || !snap.canKeepLocal)}
+                style={primaryBtnStyle('var(--vv-menu-sky-grad)', busy || !snap.canKeepLocal)}
               >
                 Dùng bản trên máy
               </button>
             </div>
 
             {!snap.canKeepLocal && (
-              <div style={{ fontSize: '0.82rem', color: '#fca5a5', marginBottom: '8px' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--vv-red-soft)', marginBottom: '8px' }}>
                 Bản trên cloud mới hơn phiên bản game này — hãy tải lại trang để cập nhật.
               </div>
             )}
 
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-muted)' }}>
               Bản bị thay thế sẽ được giữ lại 7 ngày để hoàn tác.
             </div>
           </div>
@@ -312,11 +312,11 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'offer_restore':
         return (
           <div>
-            <div style={{ fontSize: '0.9rem', color: '#7dd3fc', marginBottom: '10px', fontWeight: 'bold' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--vv-sky-text)', marginBottom: '10px', fontWeight: 'bold' }}>
               Tài khoản này đã có tiến trình trên cloud.
             </div>
             {snap.cloudSummary && (
-              <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(56, 189, 248, 0.35)', borderRadius: '12px', padding: '12px', marginBottom: '12px' }}>
+              <div style={{ background: 'var(--vv-subcard-bg)', border: '1px solid var(--vv-sky-border)', borderRadius: '12px', padding: '12px', marginBottom: '12px' }}>
                 <SummaryRows summary={snap.cloudSummary} />
               </div>
             )}
@@ -324,7 +324,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
               <button
                 onClick={() => void runAction(() => ctrl.chooseCloud())}
                 disabled={busy}
-                style={primaryBtnStyle('linear-gradient(45deg, #059669, #10b981)', busy)}
+                style={primaryBtnStyle('var(--vv-menu-green-grad)', busy)}
               >
                 Khôi phục từ cloud
               </button>
@@ -343,22 +343,22 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         return (
           <div style={{
             marginTop: '12px',
-            background: 'rgba(56, 189, 248, 0.12)',
-            border: '1px solid rgba(56, 189, 248, 0.45)',
+            background: 'var(--vv-sky-tint)',
+            border: '1px solid var(--vv-sky-border)',
             borderRadius: '12px',
             padding: '12px 14px',
             display: 'flex',
             flexDirection: 'column',
             gap: '10px'
           }}>
-            <span style={{ fontSize: '0.88rem', color: '#bae6fd' }}>
+            <span style={{ fontSize: '0.88rem', color: 'var(--vv-sky-soft)' }}>
               Tìm thấy tiến trình cũ của tài khoản. Chọn một bản để dùng trên cloud.
             </span>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               <button
                 onClick={() => void runAction(() => ctrl.importLegacy())}
                 disabled={busy}
-                style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy)}
+                style={primaryBtnStyle('var(--vv-menu-sky-grad)', busy)}
               >
                 Nhập tiến trình cũ
               </button>
@@ -380,7 +380,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       case 'account_mismatch':
         return (
           <div>
-            <div style={{ fontSize: '0.9rem', color: '#fbbf24', marginBottom: '12px', fontWeight: 'bold' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--vv-gold)', marginBottom: '12px', fontWeight: 'bold' }}>
               Tiến trình trên máy này thuộc một tài khoản khác.
             </div>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
@@ -388,7 +388,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 <button
                   onClick={() => void runAction(() => ctrl.chooseCloud())}
                   disabled={busy}
-                  style={primaryBtnStyle('linear-gradient(45deg, #059669, #10b981)', busy)}
+                  style={primaryBtnStyle('var(--vv-menu-green-grad)', busy)}
                 >
                   Dùng bản trên cloud của tài khoản này
                 </button>
@@ -396,7 +396,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
               <button
                 onClick={() => void runAction(() => ctrl.chooseLocal())}
                 disabled={busy}
-                style={primaryBtnStyle('linear-gradient(45deg, #0284c7, #38bdf8)', busy)}
+                style={primaryBtnStyle('var(--vv-menu-sky-grad)', busy)}
               >
                 Giữ bản trên máy, không đồng bộ
               </button>
@@ -413,7 +413,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
       case 'cloud_unsupported':
         return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: '#fca5a5' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--vv-red-soft)' }}>
             <AlertCircle size={18} />
             <span>Cần cập nhật: bản lưu trên cloud được tạo bởi phiên bản game mới hơn. Hãy tải lại trang.</span>
           </div>
@@ -428,7 +428,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       zIndex: 100,
       pointerEvents: 'auto',
       display: 'flex',
@@ -437,16 +437,16 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
       padding: '20px'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        border: '2px solid #38bdf8',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-sky)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '750px',
         maxHeight: '90vh',
         overflowY: 'auto',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(56, 189, 248, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-sky-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -458,24 +458,24 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <CloudCheck color="#38bdf8" /> Supabase Cloud Save & Đăng nhập YunDev
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-sky)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CloudCheck color="var(--vv-sky)" /> Supabase Cloud Save & Đăng nhập YunDev
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Đồng bộ tài khoản dùng chung qua <code>www.yundev.space</code>.
         </p>
 
         {/* Trạng Thái Tài Khoản YunDev */}
         <div style={{
-          background: currentUser ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-          border: currentUser ? '1px solid #22c55e' : '1px solid #f59e0b',
+          background: currentUser ? 'var(--vv-green-tint)' : 'var(--vv-gold-tint)',
+          border: currentUser ? '1px solid var(--vv-green)' : '1px solid var(--vv-gold-solid)',
           borderRadius: '14px',
           padding: '16px 20px',
           marginBottom: '20px',
@@ -486,11 +486,11 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           gap: '12px'
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: currentUser ? '#4ade80' : '#fbbf24' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: currentUser ? 'var(--vv-green-soft)' : 'var(--vv-gold)' }}>
               {currentUser ? <UserCheck size={20} /> : <Lock size={20} />}
               <span>{currentUser ? `Đã đăng nhập YunDev: ${currentUser.displayName}` : 'Tài khoản: Khách'}</span>
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-muted)', marginTop: '4px' }}>
               {currentUser
                 ? 'Tài khoản đang sử dụng phiên đăng nhập dùng chung từ YunDev.space.'
                 : 'Đăng nhập tài khoản YunDev để liên kết hồ sơ người chơi.'}
@@ -504,9 +504,9 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  background: 'rgba(56, 189, 248, 0.18)',
-                  border: '1px solid #38bdf8',
-                  color: '#7dd3fc',
+                  background: 'var(--vv-sky-tint)',
+                  border: '1px solid var(--vv-sky)',
+                  color: 'var(--vv-sky-text)',
                   borderRadius: '12px',
                   padding: '8px 14px',
                   fontWeight: 'bold',
@@ -523,9 +523,9 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
               <button
                 onClick={() => window.location.assign(wwwAuthUrl('signin'))}
                 style={{
-                  background: 'linear-gradient(45deg, #f59e0b, #d97706)',
+                  background: 'var(--vv-btn-gold-grad-short)',
                   border: 'none',
-                  color: 'white',
+                  color: 'var(--vv-on-solid)',
                   borderRadius: '12px',
                   padding: '8px 16px',
                   fontWeight: 'bold',
@@ -534,7 +534,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)'
+                  boxShadow: 'var(--vv-btn-gold-shadow)'
                 }}
               >
                 <LogIn size={16} /> Đăng nhập YunDev
@@ -545,18 +545,18 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
         {/* Trạng Thái Đồng Bộ Cloud */}
         <div style={{
-          background: 'rgba(56, 189, 248, 0.1)',
-          border: '1px solid #38bdf8',
+          background: 'var(--vv-sky-tint)',
+          border: '1px solid var(--vv-sky)',
           borderRadius: '16px',
           padding: '20px',
           marginBottom: '24px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#7dd3fc', fontSize: '1.05rem', marginBottom: '12px' }}>
-            <Database size={20} /> Tài Khoản Cloud: <span style={{ color: '#fef08a' }}>{cloudService.getPlayerName()}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: 'var(--vv-sky-text)', fontSize: '1.05rem', marginBottom: '12px' }}>
+            <Database size={20} /> Tài Khoản Cloud: <span style={{ color: 'var(--vv-gold-soft)' }}>{cloudService.getPlayerName()}</span>
           </div>
 
           {snap.notice === 'import_exists' && (
-            <div style={{ fontSize: '0.88rem', color: '#fbbf24', marginBottom: '10px', fontWeight: 'bold' }}>
+            <div style={{ fontSize: '0.88rem', color: 'var(--vv-gold)', marginBottom: '10px', fontWeight: 'bold' }}>
               Đã có bản lưu cloud; không thể nhập bản cũ.
             </div>
           )}
@@ -564,7 +564,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           {renderSyncContent()}
 
           {snap.backupAvailable && (
-            <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid rgba(148, 163, 184, 0.2)' }}>
+            <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--vv-divider)' }}>
               <button
                 onClick={() => {
                   if (window.confirm('Hoàn tác và khôi phục bản đã được giữ lại?')) {
@@ -586,16 +586,16 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
         {/* Bảng Xếp Hạng Top Cao Thủ Cloud */}
         <div>
-          <h3 style={{ margin: '0 0 14px 0', fontSize: '1.1rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Trophy color="#f1c40f" size={20} /> Bảng Xếp Hạng Cao Thủ Toàn Máy Chủ (Supabase Cloud)
+          <h3 style={{ margin: '0 0 14px 0', fontSize: '1.1rem', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Trophy color="var(--vv-gold)" size={20} /> Bảng Xếp Hạng Cao Thủ Toàn Máy Chủ (Supabase Cloud)
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {leaderboard.length > 0 ? (
               leaderboard.map((player, idx) => (
                 <div key={player.rank} style={{
-                  background: idx === 0 ? 'rgba(212, 175, 55, 0.15)' : 'rgba(30, 41, 59, 0.6)',
-                  border: idx === 0 ? '1.5px solid #f1c40f' : '1px solid rgba(255,255,255,0.1)',
+                  background: idx === 0 ? 'var(--vv-gold-tint)' : 'var(--vv-surface-2-alpha)',
+                  border: idx === 0 ? '1.5px solid var(--vv-gold-solid)' : '1px solid var(--vv-border-subtle)',
                   borderRadius: '12px',
                   padding: '12px 16px',
                   display: 'flex',
@@ -605,23 +605,23 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '1.4rem' }}>{idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
                     <div>
-                      <div style={{ fontWeight: 'bold', color: idx === 0 ? '#fef08a' : '#e2e8f0' }}>{player.display_name || 'Cao Thủ Sử Việt'}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Màn chơi: Ải {Number(player.max_unlocked_stage || 0) + 1}</div>
+                      <div style={{ fontWeight: 'bold', color: idx === 0 ? 'var(--vv-gold-soft)' : 'var(--vv-text-2)' }}>{player.display_name || 'Cao Thủ Sử Việt'}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--vv-muted)' }}>Màn chơi: Ải {Number(player.max_unlocked_stage || 0) + 1}</div>
                     </div>
                   </div>
-                  <div style={{ fontWeight: 'bold', color: idx === 0 ? '#f1c40f' : '#38bdf8', fontSize: '1.05rem' }}>
+                  <div style={{ fontWeight: 'bold', color: idx === 0 ? 'var(--vv-gold)' : 'var(--vv-sky)', fontSize: '1.05rem' }}>
                     ⚔️ {player.pvp_score || 1250} Điểm PvP
                   </div>
                 </div>
               ))
             ) : (
               <div style={{
-                background: 'rgba(30, 41, 59, 0.6)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'var(--vv-surface-2-alpha)',
+                border: '1px solid var(--vv-border-subtle)',
                 borderRadius: '12px',
                 padding: '16px',
                 textAlign: 'center',
-                color: '#94a3b8',
+                color: 'var(--vv-muted)',
                 fontSize: '0.9rem'
               }}>
                 Chưa có dữ liệu bảng xếp hạng từ Supabase Cloud.

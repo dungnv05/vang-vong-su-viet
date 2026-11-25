@@ -59,7 +59,7 @@ export default function SquadModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -69,14 +69,14 @@ export default function SquadModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        border: '2px solid #38bdf8',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-sky)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '850px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(56, 189, 248, 0.25)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-sky-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -88,24 +88,24 @@ export default function SquadModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Users color="#38bdf8" /> Quản Lý Đội Hình Xuất Trận ({activeHeroes.length}/6)
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-sky)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Users color="var(--vv-sky)" /> Quản Lý Đội Hình Xuất Trận ({activeHeroes.length}/6)
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Sắp xếp vị trí 6 ô lưới bàn cờ và chọn các vị tướng có Lực Chiến cao nhất vào đội hình.
         </p>
 
         {/* Thanh Duyên Phận / Synergy Status */}
         <div style={{
-          background: isLamSonActive ? 'rgba(241, 196, 15, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-          border: isLamSonActive ? '1px solid #f1c40f' : '1px solid rgba(255,255,255,0.08)',
+          background: isLamSonActive ? 'var(--vv-gold-tint)' : 'var(--vv-surface-2-alpha)',
+          border: isLamSonActive ? '1px solid var(--vv-gold-border-strong)' : '1px solid var(--vv-border-subtle)',
           borderRadius: '14px',
           padding: '12px 18px',
           marginBottom: '24px',
@@ -113,12 +113,12 @@ export default function SquadModal() {
           alignItems: 'center',
           gap: '12px'
         }}>
-          <Zap color={isLamSonActive ? "#f1c40f" : "#64748b"} />
+          <Zap color={isLamSonActive ? "var(--vv-gold-border-strong)" : "var(--vv-subtle)"} />
           <div>
-            <div style={{ fontWeight: 'bold', color: isLamSonActive ? '#fef08a' : '#94a3b8', fontSize: '0.95rem' }}>
+            <div style={{ fontWeight: 'bold', color: isLamSonActive ? 'var(--vv-gold-soft)' : 'var(--vv-muted)', fontSize: '0.95rem' }}>
               Duyên Phận Hợp Kích: Lam Sơn Nghĩa Khí (Lê Lợi + Nguyễn Trãi)
             </div>
-            <div style={{ fontSize: '0.8rem', color: isLamSonActive ? '#2ecc71' : '#64748b', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.8rem', color: isLamSonActive ? 'var(--vv-green)' : 'var(--vv-subtle)', marginTop: '2px' }}>
               {isLamSonActive ? '✅ ĐÃ KÍCH HOẠT: Mở khóa chiêu Hợp Kích lật kèo 3D toàn bản đồ!' : '❌ Chưa đủ tướng: Cần cả Lê Lợi & Nguyễn Trãi cùng ra trận.'}
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function SquadModal() {
 
         {/* Đội Hình Chiến Đấu 6 Ô Lưới */}
         <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: '#fef08a' }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: 'var(--vv-gold-soft)' }}>
             ⚔️ Vị Trí Ô Lưới Trên Bàn Cờ 3D (Hàng Trước & Hàng Sau)
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '10px' }}>
@@ -137,8 +137,8 @@ export default function SquadModal() {
                 <div 
                   key={`squad-slot-${slotIdx}`}
                   style={{
-                    background: heroInSlot ? 'rgba(15, 23, 42, 0.9)' : 'rgba(30, 41, 59, 0.4)',
-                    border: heroInSlot ? `2px solid ${heroInSlot.color}` : '1.5px dashed #475569',
+                    background: heroInSlot ? 'var(--vv-card-bg)' : 'var(--vv-slot-empty-bg)',
+                    border: heroInSlot ? `2px solid ${heroInSlot.color}` : '1.5px dashed var(--vv-border-strong)',
                     borderRadius: '14px',
                     padding: '12px 6px',
                     textAlign: 'center',
@@ -149,7 +149,7 @@ export default function SquadModal() {
                     alignItems: 'center'
                   }}
                 >
-                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 'bold' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--vv-muted)', fontWeight: 'bold' }}>
                     Ô {slotIdx + 1} {slotIdx < 3 ? '(Tiền)' : '(Hậu)'}
                   </div>
 
@@ -171,19 +171,19 @@ export default function SquadModal() {
                       ) : (
                         <div style={{ fontSize: '1.6rem' }}>🏛️</div>
                       )}
-                      <div style={{ fontWeight: 'bold', fontSize: '0.82rem', color: heroInSlot.color }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.82rem', color: heroInSlot.color, background: 'var(--vv-hero-chip-bg)', padding: '1px 6px', borderRadius: '6px' }}>
                         {heroInSlot.name}
                       </div>
-                      <div style={{ fontSize: '0.7rem', color: '#f1c40f', fontWeight: 'bold', marginTop: '2px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--vv-gold)', fontWeight: 'bold', marginTop: '2px' }}>
                         ⚔️ {getPowerScore(heroInSlot).toLocaleString()}
                       </div>
                       <button
                         onClick={() => benchHero(heroInSlot.id)}
                         style={{
                           marginTop: '6px',
-                          background: 'rgba(231, 76, 60, 0.2)',
-                          border: '1px solid #e74c3c',
-                          color: '#ff4d4d',
+                          background: 'var(--vv-red-tint)',
+                          border: '1px solid var(--vv-red-solid)',
+                          color: 'var(--vv-red)',
                           borderRadius: '8px',
                           padding: '2px 8px',
                           fontSize: '0.7rem',
@@ -194,7 +194,7 @@ export default function SquadModal() {
                       </button>
                     </div>
                   ) : (
-                    <div style={{ fontSize: '0.8rem', color: '#64748b', margin: 'auto' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--vv-subtle)', margin: 'auto' }}>
                       (Trống)
                     </div>
                   )}
@@ -207,31 +207,31 @@ export default function SquadModal() {
         {/* Kho Tướng Dự Bị (Phân loại theo Màu Phẩm Chất Rarity & Lực Chiến) */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-            <h3 style={{ margin: 0, fontSize: '1rem', color: '#cbd5e1' }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', color: 'var(--vv-text-2)' }}>
               📦 Kho Tướng Dự Bị ({reserveHeroes.length} Tướng)
             </h3>
 
             {/* Thanh Bộ Lọc Màu Phẩm Chất (Rarity Filter Bar) */}
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
               {[
-                { key: 'ALL', label: 'Tất Cả', color: '#94a3b8' },
-                { key: 'UR', label: '🔴 UR (Thượng Cổ)', color: '#ef4444' },
-                { key: 'SSR', label: '🟡 SSR (Tuyệt Phẩm)', color: '#f59e0b' },
-                { key: 'SR', label: '🟣 SR (Danh Tướng)', color: '#a855f7' }
+                { key: 'ALL', label: 'Tất Cả', color: 'var(--vv-muted)' },
+                { key: 'UR', label: '🔴 UR (Thượng Cổ)', color: 'var(--vv-red)' },
+                { key: 'SSR', label: '🟡 SSR (Tuyệt Phẩm)', color: 'var(--vv-gold-solid)' },
+                { key: 'SR', label: '🟣 SR (Danh Tướng)', color: 'var(--vv-purple)' }
               ].map(f => (
                 <button
                   key={f.key}
                   onClick={() => setRarityFilter(f.key as any)}
                   style={{
-                    background: rarityFilter === f.key ? f.color : 'rgba(30, 41, 59, 0.6)',
-                    color: rarityFilter === f.key ? '#ffffff' : '#cbd5e1',
-                    border: `1px solid ${rarityFilter === f.key ? f.color : 'rgba(255,255,255,0.15)'}`,
+                    background: rarityFilter === f.key ? f.color : 'var(--vv-surface-2-alpha)',
+                    color: rarityFilter === f.key ? 'var(--vv-on-solid)' : 'var(--vv-text-2)',
+                    border: `1px solid ${rarityFilter === f.key ? f.color : 'var(--vv-border-subtle)'}`,
                     borderRadius: '8px',
                     padding: '4px 10px',
                     fontSize: '0.72rem',
                     fontWeight: 'bold',
                     cursor: 'pointer',
-                    boxShadow: rarityFilter === f.key ? `0 0 10px ${f.color}66` : 'none',
+                    boxShadow: rarityFilter === f.key ? '0 2px 8px var(--vv-shadow)' : 'none',
                     transition: 'all 0.2s ease'
                   }}
                 >
@@ -242,7 +242,7 @@ export default function SquadModal() {
           </div>
 
           {reserveHeroes.length === 0 ? (
-            <div style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic', textAlign: 'center', padding: '16px' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--vv-subtle)', fontStyle: 'italic', textAlign: 'center', padding: '16px' }}>
               Không có tướng thuộc phẩm chất này trong kho dự bị!
             </div>
           ) : (
@@ -287,12 +287,12 @@ export default function SquadModal() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <span style={{
                             background: theme.badgeBg,
-                            color: 'white',
+                            color: 'var(--vv-on-solid)',
                             fontSize: '0.65rem',
                             fontWeight: '900',
                             padding: '1px 5px',
                             borderRadius: '6px',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.4)'
+                            boxShadow: '0 1px 3px var(--vv-shadow)'
                           }}>
                             {hero.rarity || 'SR'}
                           </span>
@@ -300,8 +300,8 @@ export default function SquadModal() {
                             {hero.name}
                           </span>
                         </div>
-                        <div style={{ fontSize: '0.72rem', color: '#fef08a', marginTop: '2px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Swords size={12} color="#f1c40f" /> {power.toLocaleString()}
+                        <div style={{ fontSize: '0.72rem', color: 'var(--vv-dark-card-gold)', marginTop: '2px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Swords size={12} color="var(--vv-dark-card-gold)" /> {power.toLocaleString()}
                         </div>
                       </div>
                     </div>
@@ -317,9 +317,9 @@ export default function SquadModal() {
                         }
                       }}
                       style={{
-                        background: 'linear-gradient(45deg, #059669, #10b981)',
+                        background: 'var(--vv-menu-green-grad)',
                         border: 'none',
-                        color: 'white',
+                        color: 'var(--vv-on-solid)',
                         borderRadius: '8px',
                         padding: '4px 10px',
                         fontSize: '0.75rem',

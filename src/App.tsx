@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Arena2D from './components/2d/Arena2D'
 import HUD from './components/ui/HUD'
 import LandingPage from './components/ui/LandingPage'
+import ThemeToggle from './components/ui/ThemeToggle'
 import { cloudService, fetchWwwUser, type WwwUser } from './utils/supabaseClient'
 import { getSyncController } from './cloud/runtime'
 
@@ -67,45 +68,56 @@ export default function App() {
     }
   }, [])
 
-  // If still checking initial auth session
-  if (loadingAuth) {
+  const renderScreen = () => {
+    // If still checking initial auth session
+    if (loadingAuth) {
+      return (
+        <div style={{
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'var(--vv-bg)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'var(--vv-gold)',
+          fontSize: '1.2rem',
+          fontWeight: 'bold'
+        }}>
+          ⏳ ĐANG XÁC THỰC TÀI KHOẢN GAME...
+        </div>
+      )
+    }
+
+    // Khách chưa đăng nhập và chưa chọn chế độ khách -> Hiển thị Landing Page
+    if (!user && !guest) {
+      return (
+        <LandingPage
+          onPlayAsGuest={() => {
+            localStorage.setItem('vv_guest_mode', '1')
+            setGuest(true)
+          }}
+        />
+      )
+    }
+
+    // Đã đăng nhập hoặc chơi chế độ khách -> Bắt đầu chơi Game
     return (
-      <div style={{
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#020617',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#f59e0b',
-        fontSize: '1.2rem',
-        fontWeight: 'bold'
-      }}>
-        ⏳ ĐANG XÁC THỰC TÀI KHOẢN GAME...
+      <div style={{ width: '100vw', height: '100vh', backgroundColor: 'var(--vv-canvas-bg)', position: 'relative' }}>
+        {/* Lớp chiến trường 2D thuần túy */}
+        <Arena2D />
+
+        {/* Lớp hiển thị UI 2D đè lên trên (HUD/Gacha/Codex) */}
+        <HUD />
       </div>
     )
   }
 
-  // Khách chưa đăng nhập và chưa chọn chế độ khách -> Hiển thị Landing Page
-  if (!user && !guest) {
-    return (
-      <LandingPage
-        onPlayAsGuest={() => {
-          localStorage.setItem('vv_guest_mode', '1')
-          setGuest(true)
-        }}
-      />
-    )
-  }
+  const showFloatingToggle = loadingAuth || (!user && !guest)
 
-  // Đã đăng nhập hoặc chơi chế độ khách -> Bắt đầu chơi Game
   return (
-    <div style={{ width: '100vw', height: '100vh', backgroundColor: '#111', position: 'relative' }}>
-      {/* Lớp chiến trường 2D thuần túy */}
-      <Arena2D />
-
-      {/* Lớp hiển thị UI 2D đè lên trên (HUD/Gacha/Codex) */}
-      <HUD />
-    </div>
+    <>
+      {showFloatingToggle && <ThemeToggle variant="floating" />}
+      {renderScreen()}
+    </>
   )
 }

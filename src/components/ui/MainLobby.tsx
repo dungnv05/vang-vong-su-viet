@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import { Swords, Sparkles, ShieldCheck, Users, Building2, Flame, BookOpen, Star, Zap, Trophy, Crown, Coins, Volume2, VolumeX } from 'lucide-react'
 import { getPowerScore } from './SquadModal'
 import { MOUNT_BEASTS, type BeastData } from '../../data/beasts'
 import { cloudService, type WwwUser } from '../../utils/supabaseClient'
 import { getRarityTheme } from '../../utils/rarityColors'
+import ThemeToggle from './ThemeToggle'
 
 export default function MainLobby() {
   const currentScreen = useGameStore(state => state.currentScreen)
@@ -52,7 +53,7 @@ export default function MainLobby() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      background: 'radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0f172a 70%, #020617 100%)',
+      background: 'var(--vv-lobby-bg)',
       zIndex: 50,
       pointerEvents: 'auto',
       display: 'flex',
@@ -60,7 +61,7 @@ export default function MainLobby() {
       justifyContent: 'space-between',
       padding: '36px',
       boxSizing: 'border-box',
-      color: 'white',
+      color: 'var(--vv-text)',
       overflow: 'hidden'
     }}>
       {/* Background Decorative Vietnamese Motifs */}
@@ -71,7 +72,7 @@ export default function MainLobby() {
         transform: 'translate(-50%, -50%)',
         width: '700px',
         height: '700px',
-        border: '2px solid rgba(212, 175, 55, 0.12)',
+        border: '2px solid var(--vv-motif-border)',
         borderRadius: '50%',
         pointerEvents: 'none'
       }} />
@@ -82,43 +83,45 @@ export default function MainLobby() {
           <div style={{
             fontSize: '2.4rem',
             fontWeight: 900,
-            background: 'linear-gradient(45deg, #fef08a, #f1c40f, #d97706)',
+            background: 'var(--vv-lobby-title-grad)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             letterSpacing: '3px',
-            textShadow: '0 0 30px rgba(241, 196, 15, 0.4)'
+            textShadow: 'var(--vv-title-shadow)'
           }}>
             VANG VỌNG SỬ VIỆT 3D
           </div>
-          <div style={{ fontSize: '0.95rem', color: '#94a3b8', marginTop: '2px' }}>
+          <div style={{ fontSize: '0.95rem', color: 'var(--vv-muted)', marginTop: '2px' }}>
             Sảnh Chính Hoàng Gia • Idle Gacha Danh Nhân Lịch Sử
           </div>
         </div>
 
         {/* Tổng Lực Chiến, Linh Vật, User Badge & Rương Treo Máy AFK */}
         <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <ThemeToggle variant="inline" />
+
           {/* Nút Bật / Tắt Âm Thanh */}
           <button
             onClick={toggleMute}
             title={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
             style={{
               background: isMuted
-                ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.15) 100%)'
-                : 'linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(29, 78, 216, 0.15) 100%)',
-              border: isMuted ? '2px solid #ef4444' : '2px solid #3b82f6',
+                ? 'var(--vv-btn-red-tint)'
+                : 'var(--vv-btn-blue-tint)',
+              border: isMuted ? '2px solid var(--vv-red)' : '2px solid var(--vv-blue)',
               borderRadius: '16px',
               padding: '10px 16px',
-              boxShadow: isMuted ? '0 0 20px rgba(239, 68, 68, 0.35)' : '0 0 20px rgba(59, 130, 246, 0.35)',
+              boxShadow: isMuted ? 'var(--vv-glow-red)' : 'var(--vv-glow-blue)',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               cursor: 'pointer',
-              color: 'white',
+              color: 'var(--vv-text)',
               transition: 'all 0.2s ease'
             }}
           >
-            {isMuted ? <VolumeX size={22} color="#fca5a5" /> : <Volume2 size={22} color="#93c5fd" />}
-            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: isMuted ? '#fca5a5' : '#93c5fd' }}>
+            {isMuted ? <VolumeX size={22} color="var(--vv-red-soft)" /> : <Volume2 size={22} color="var(--vv-blue-soft)" />}
+            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: isMuted ? 'var(--vv-red-soft)' : 'var(--vv-blue-soft)' }}>
               {isMuted ? 'TẮT ÂM' : 'BẬT ÂM'}
             </span>
           </button>
@@ -127,16 +130,16 @@ export default function MainLobby() {
           <button
             onClick={() => setShowCloudModal(true)}
             style={{
-              background: currentUser ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%)' : 'linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%)',
-              border: currentUser ? '2px solid #22c55e' : '2px solid #f59e0b',
+              background: currentUser ? 'var(--vv-btn-green-tint)' : 'var(--vv-btn-gold-tint)',
+              border: currentUser ? '2px solid var(--vv-green)' : '2px solid var(--vv-gold-solid)',
               borderRadius: '16px',
               padding: '10px 16px',
-              boxShadow: currentUser ? '0 0 20px rgba(34, 197, 94, 0.35)' : '0 0 20px rgba(245, 158, 11, 0.35)',
+              boxShadow: currentUser ? 'var(--vv-glow-green)' : 'var(--vv-glow-gold)',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
               cursor: 'pointer',
-              color: 'white',
+              color: 'var(--vv-text)',
               transition: 'all 0.2s ease'
             }}
           >
@@ -144,22 +147,22 @@ export default function MainLobby() {
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              background: currentUser ? 'linear-gradient(45deg, #22c55e, #10b981)' : 'linear-gradient(45deg, #f59e0b, #d97706)',
+              background: currentUser ? 'var(--vv-badge-green-grad)' : 'var(--vv-badge-gold-grad)',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               fontWeight: 'bold',
               fontSize: '1rem',
-              color: '#0f172a',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+              color: 'var(--vv-on-gold)',
+              boxShadow: '0 2px 8px var(--vv-shadow)'
             }}>
               {currentUser ? (currentUser.displayName ? currentUser.displayName[0].toUpperCase() : '👤') : '👤'}
             </div>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.7rem', color: currentUser ? '#86efac' : '#fef08a', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ fontSize: '0.7rem', color: currentUser ? 'var(--vv-green-soft)' : 'var(--vv-gold-soft)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {currentUser ? '🟢 YUNDEV' : '🟡 CHẾ ĐỘ KHÁCH'}
               </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#ffffff', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ fontSize: '0.9rem', fontWeight: 900, color: 'var(--vv-text)', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {cloudService.getPlayerName()}
               </div>
             </div>
@@ -167,19 +170,19 @@ export default function MainLobby() {
 
           {/* Số Vàng Hiện Có */}
           <div style={{
-            background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(161, 98, 7, 0.1) 100%)',
-            border: '2px solid #f1c40f',
+            background: 'var(--vv-btn-gold-tint)',
+            border: '2px solid var(--vv-gold-border-strong)',
             borderRadius: '16px',
             padding: '10px 18px',
-            boxShadow: '0 0 20px rgba(241, 196, 15, 0.35)',
+            boxShadow: 'var(--vv-glow-gold)',
             display: 'flex',
             alignItems: 'center',
             gap: '10px'
           }}>
-            <Coins size={26} color="#fef08a" />
+            <Coins size={26} color="var(--vv-gold-soft)" />
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.72rem', color: '#fef08a', textTransform: 'uppercase', fontWeight: 'bold' }}>VÀNG SỞ HỮU</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#ffffff' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--vv-gold-soft)', textTransform: 'uppercase', fontWeight: 'bold' }}>VÀNG SỞ HỮU</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--vv-text)' }}>
                 {gold.toLocaleString()} 🪙
               </div>
             </div>
@@ -189,47 +192,47 @@ export default function MainLobby() {
           <button
             onClick={() => setShowIdleModal(true)}
             style={{
-              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%)',
-              border: '2px solid #f59e0b',
+              background: 'var(--vv-btn-gold-tint)',
+              border: '2px solid var(--vv-gold-solid)',
               borderRadius: '16px',
               padding: '10px 18px',
-              boxShadow: '0 0 20px rgba(245, 158, 11, 0.35)',
+              boxShadow: 'var(--vv-glow-gold)',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
               cursor: 'pointer',
-              color: 'white',
+              color: 'var(--vv-text)',
               transition: 'all 0.2s ease'
             }}
           >
             <span style={{ fontSize: '1.6rem' }}>🎁</span>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '0.72rem', color: '#fef08a', fontWeight: 'bold' }}>RƯƠNG TREO MÁY</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ffffff' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--vv-gold-soft)', fontWeight: 'bold' }}>RƯƠNG TREO MÁY</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 900, color: 'var(--vv-text)' }}>
                 +{idleRewards.gold.toLocaleString()} 🪙
               </div>
             </div>
           </button>
 
           <div style={{
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '2px solid #f1c40f',
+            background: 'var(--vv-card-bg)',
+            border: '2px solid var(--vv-gold-border-strong)',
             borderRadius: '16px',
             padding: '12px 24px',
-            boxShadow: '0 0 25px rgba(241, 196, 15, 0.3)',
+            boxShadow: 'var(--vv-glow-gold)',
             display: 'flex',
             alignItems: 'center',
             gap: '12px'
           }}>
-            <Zap size={24} color="#f1c40f" />
+            <Zap size={24} color="var(--vv-gold-solid)" />
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1', textTransform: 'uppercase', fontWeight: 'bold' }}>TỔNG LỰC CHIẾN ĐỘI HÌNH</div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#fef08a' }}>{totalPower.toLocaleString()}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--vv-text-2)', textTransform: 'uppercase', fontWeight: 'bold' }}>TỔNG LỰC CHIẾN ĐỘI HÌNH</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--vv-gold-soft)' }}>{totalPower.toLocaleString()}</div>
             </div>
           </div>
 
           <div style={{
-            background: 'rgba(15, 23, 42, 0.85)',
+            background: 'var(--vv-card-bg)',
             border: '1.5px solid ' + activeBeast.color,
             borderRadius: '16px',
             padding: '12px 20px',
@@ -239,8 +242,8 @@ export default function MainLobby() {
           }}>
             <span style={{ fontSize: '1.6rem' }}>{activeBeast.icon}</span>
             <div>
-              <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>LINH VẬT HỘ QUỐC</div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: activeBeast.color }}>{activeBeast.name}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--vv-text-2)' }}>LINH VẬT HỘ QUỐC</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 'bold', color: `color-mix(in srgb, ${activeBeast.color} var(--vv-rarity-mix), var(--vv-text))` }}>{activeBeast.name}</div>
             </div>
           </div>
         </div>
@@ -248,7 +251,7 @@ export default function MainLobby() {
 
       {/* Center - Showcase 6 Tướng Xuất Trận Trực Quan */}
       <div style={{ margin: 'auto 0', textAlign: 'center' }}>
-        <h3 style={{ margin: '0 0 20px 0', fontSize: '1.1rem', color: '#cbd5e1', letterSpacing: '1px' }}>
+        <h3 style={{ margin: '0 0 20px 0', fontSize: '1.1rem', color: 'var(--vv-text-2)', letterSpacing: '1px' }}>
           🏛️ ĐỘI HÌNH ANH HÙNG XUẤT TRẬN ({activeHeroes.length}/6 TƯỚNG)
         </h3>
 
@@ -260,7 +263,8 @@ export default function MainLobby() {
                 key={hero.id}
                 onClick={() => setSelectedHeroId(hero.id)}
                 style={{
-                  background: theme.background,
+                  '--vv-card-accent': theme.hex,
+                  background: 'var(--vv-card-grad)',
                   border: `2px solid ${theme.borderHex}`,
                   borderRadius: '24px',
                   width: '135px',
@@ -270,7 +274,7 @@ export default function MainLobby() {
                   boxShadow: theme.glowBoxShadow,
                   transition: 'all 0.3s ease',
                   position: 'relative'
-                }}
+                } as CSSProperties}
                 onMouseEnter={e => {
                   e.currentTarget.style.transform = 'translateY(-10px) scale(1.05)'
                   e.currentTarget.style.boxShadow = `0 15px 40px ${theme.hex}88`
@@ -285,13 +289,13 @@ export default function MainLobby() {
                   top: '8px',
                   right: '8px',
                   background: theme.badgeBg,
-                  color: 'white',
+                  color: 'var(--vv-on-solid)',
                   fontSize: '0.68rem',
                   fontWeight: '900',
                   padding: '2px 6px',
                   borderRadius: '8px',
                   zIndex: 2,
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                  boxShadow: '0 2px 4px var(--vv-shadow)'
                 }}>
                   {theme.rarity}
                 </span>
@@ -316,16 +320,16 @@ export default function MainLobby() {
                   )}
                 </div>
 
-                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: theme.hex }}>{hero.name}</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>Lv.{hero.level}</div>
+                <div style={{ fontWeight: 'bold', fontSize: '0.95rem', color: `color-mix(in srgb, ${theme.hex} var(--vv-rarity-mix), var(--vv-text))` }}>{hero.name}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--vv-muted)', marginTop: '2px' }}>Lv.{hero.level}</div>
 
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '6px' }}>
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       size={12}
-                      color={i < hero.stars ? "#f1c40f" : "#475569"}
-                      fill={i < hero.stars ? "#f1c40f" : "none"}
+                      color={i < hero.stars ? "var(--vv-gold-solid)" : "var(--vv-border-strong)"}
+                      fill={i < hero.stars ? "var(--vv-gold-solid)" : "none"}
                     />
                   ))}
                 </div>
@@ -342,9 +346,9 @@ export default function MainLobby() {
           <button
             onClick={() => setShowSquadModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #0284c7, #38bdf8)',
-              border: '1px solid #bae6fd',
-              color: 'white',
+              background: 'var(--vv-menu-sky-grad)',
+              border: '1px solid var(--vv-menu-sky-border)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -353,7 +357,7 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(56, 189, 248, 0.4)'
+              boxShadow: 'var(--vv-menu-sky-shadow)'
             }}
           >
             <Users size={16} />
@@ -363,9 +367,9 @@ export default function MainLobby() {
           <button
             onClick={() => setShowGachaModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #d97706, #f59e0b)',
-              border: '1px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-menu-gold-grad)',
+              border: '1px solid var(--vv-gold-border-soft)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -374,7 +378,7 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)'
+              boxShadow: 'var(--vv-menu-gold-shadow)'
             }}
           >
             <Sparkles size={16} />
@@ -384,9 +388,9 @@ export default function MainLobby() {
           <button
             onClick={() => setShowTowerModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #7c3aed, #c084fc)',
-              border: '1px solid #e9d5ff',
-              color: 'white',
+              background: 'var(--vv-menu-purple-grad)',
+              border: '1px solid var(--vv-menu-purple-border)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -395,7 +399,7 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4)'
+              boxShadow: 'var(--vv-menu-purple-shadow)'
             }}
           >
             <Building2 size={16} />
@@ -405,9 +409,9 @@ export default function MainLobby() {
           <button
             onClick={() => setShowWorldBossModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #9333ea, #c084fc)',
-              border: '1px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-menu-boss-grad)',
+              border: '1px solid var(--vv-gold-border-soft)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -416,19 +420,19 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(147, 51, 234, 0.5)'
+              boxShadow: 'var(--vv-menu-boss-shadow)'
             }}
           >
-            <Flame size={16} color="#fef08a" />
+            <Flame size={16} color="var(--vv-gold-border-soft)" />
             <span>TRÙM THẾ GIỚI</span>
           </button>
 
           <button
             onClick={() => setShowRankModal && setShowRankModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #eab308, #fef08a)',
-              border: '1px solid #fef08a',
-              color: '#422006',
+              background: 'var(--vv-menu-yellow-grad)',
+              border: '1px solid var(--vv-gold-border-soft)',
+              color: 'var(--vv-on-yellow)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -437,19 +441,19 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(234, 179, 8, 0.5)'
+              boxShadow: 'var(--vv-menu-yellow-shadow)'
             }}
           >
-            <Crown size={16} color="#422006" />
+            <Crown size={16} color="var(--vv-on-yellow)" />
             <span>QUAN LẠI</span>
           </button>
 
           <button
             onClick={() => setShowPvPModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #dc2626, #ef4444)',
-              border: '1px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-menu-red-grad)',
+              border: '1px solid var(--vv-gold-border-soft)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -458,19 +462,19 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(239, 68, 68, 0.5)'
+              boxShadow: 'var(--vv-menu-red-shadow)'
             }}
           >
-            <Trophy size={16} color="#fef08a" />
+            <Trophy size={16} color="var(--vv-gold-border-soft)" />
             <span>ĐẤU TRƯỜNG</span>
           </button>
 
           <button
             onClick={() => setShowCodexModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #b45309, #f1c40f)',
-              border: '1px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-menu-codex-grad)',
+              border: '1px solid var(--vv-gold-border-soft)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -479,7 +483,7 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(241, 196, 15, 0.5)'
+              boxShadow: 'var(--vv-menu-codex-shadow)'
             }}
           >
             <BookOpen size={16} />
@@ -489,9 +493,9 @@ export default function MainLobby() {
           <button
             onClick={() => setShowBeastModal(true)}
             style={{
-              background: 'linear-gradient(45deg, #059669, #10b981)',
-              border: '1px solid #a7f3d0',
-              color: 'white',
+              background: 'var(--vv-menu-green-grad)',
+              border: '1px solid var(--vv-menu-green-border)',
+              color: 'var(--vv-on-solid)',
               padding: '12px 16px',
               borderRadius: '16px',
               fontWeight: 'bold',
@@ -500,7 +504,7 @@ export default function MainLobby() {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 4px 20px rgba(16, 185, 129, 0.4)'
+              boxShadow: 'var(--vv-menu-green-shadow)'
             }}
           >
             <ShieldCheck size={16} />
@@ -512,15 +516,15 @@ export default function MainLobby() {
         <button
           onClick={() => setCurrentScreen('BATTLE')}
           style={{
-            background: 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-            border: '3px solid #fef08a',
-            color: 'white',
+            background: 'var(--vv-cta-grad)',
+            border: '3px solid var(--vv-gold-border-soft)',
+            color: 'var(--vv-on-solid)',
             padding: '18px 56px',
             borderRadius: '40px',
             fontSize: '1.4rem',
             fontWeight: 900,
             cursor: 'pointer',
-            boxShadow: '0 10px 40px rgba(245, 158, 11, 0.7)',
+            boxShadow: 'var(--vv-cta-shadow)',
             display: 'flex',
             alignItems: 'center',
             gap: '14px',
