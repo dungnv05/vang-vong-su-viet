@@ -2,54 +2,48 @@ import { useState, useEffect } from 'react'
 import Arena2D from './components/2d/Arena2D'
 import HUD from './components/ui/HUD'
 import LandingPage from './components/ui/LandingPage'
-import { cloudService, supabase, syncSharedSSOSession } from './utils/supabaseClient'
-import { useGameStore } from './store/gameStore'
-import type { User } from '@supabase/supabase-js'
+import { cloudService, fetchWwwUser, type WwwUser } from './utils/supabaseClient'
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(cloudService.getCurrentUser())
+  const [user, setUser] = useState<WwwUser | null>(() => cloudService.getCurrentUser())
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true)
+  const [guest, setGuest] = useState<boolean>(() => localStorage.getItem('vv_guest_mode') === '1')
 
   useEffect(() => {
-    // Initial SSO sync & session restore
-    syncSharedSSOSession().then(currentUser => {
-      setUser(currentUser)
+    let mounted = true
+    let lastCheck = Date.now()
+
+    fetchWwwUser().then(u => {
+      if (!mounted) return
+      cloudService.setCurrentUser(u)
+      setUser(u)
       setLoadingAuth(false)
     })
 
-    // Listen to window focus & visibility change for real-time SSO sync from yundev.space
-    const handleFocusSync = () => {
-      syncSharedSSOSession().then(currentUser => {
-        setUser(currentUser)
+    const recheckAuth = () => {
+      const now = Date.now()
+      if (now - lastCheck < 30_000) return
+      lastCheck = now
+      fetchWwwUser().then(u => {
+        if (!mounted) return
+        cloudService.setCurrentUser(u)
+        setUser(u)
       })
     }
 
-    window.addEventListener('focus', handleFocusSync)
-    document.addEventListener('visibilitychange', handleFocusSync)
-    window.addEventListener('storage', handleFocusSync)
-
-    // Listen to real-time auth changes (Login / Logout / SignUp)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      const currentUser = session?.user || null
-      setUser(currentUser)
-      setLoadingAuth(false)
-      
-      if (currentUser) {
-        useGameStore.getState().setShowCloudModal(false)
-        // Tự động khôi phục dữ liệu tiến trình từ Supabase Cloud khi vừa đăng nhập thành công
-        cloudService.fetchCloudProfile().then(cloudProfile => {
-          if (cloudProfile && cloudProfile.fullStateJson) {
-            useGameStore.getState().importGameState(cloudProfile.fullStateJson)
-          }
-        }).catch(err => console.warn('Cloud restore on auth change fallback:', err))
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        recheckAuth()
       }
-    })
+    }
+
+    window.addEventListener('focus', recheckAuth)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      subscription.unsubscribe()
-      window.removeEventListener('focus', handleFocusSync)
-      document.removeEventListener('visibilitychange', handleFocusSync)
-      window.removeEventListener('storage', handleFocusSync)
+      mounted = false
+      window.removeEventListener('focus', recheckAuth)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [])
 
@@ -72,12 +66,19 @@ export default function App() {
     )
   }
 
-  // Khách chưa đăng nhập -> Chỉ hiển thị Landing Page Đăng nhập / Đăng ký
-  if (!user) {
-    return <LandingPage onAuthenticated={() => setLoadingAuth(false)} />
+  // Khách chưa đăng nhập và chưa chọn chế độ khách -> Hiển thị Landing Page
+  if (!user && !guest) {
+    return (
+      <LandingPage
+        onPlayAsGuest={() => {
+          localStorage.setItem('vv_guest_mode', '1')
+          setGuest(true)
+        }}
+      />
+    )
   }
 
-  // Đã đăng nhập -> Bắt đầu chơi Game
+  // Đã đăng nhập hoặc chơi chế độ khách -> Bắt đầu chơi Game
   return (
     <div style={{ width: '100vw', height: '100vh', backgroundColor: '#111', position: 'relative' }}>
       {/* Lớp chiến trường 2D thuần túy */}

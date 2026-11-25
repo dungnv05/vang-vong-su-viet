@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
-import { supabase, signInWithEmail, signUpWithEmail } from '../../utils/supabaseClient'
-import { Swords, ShieldCheck, Sparkles, Lock, Mail, ArrowRight, Flame, CheckCircle2, AlertCircle } from 'lucide-react'
+import { wwwAuthUrl } from '../../utils/supabaseClient'
+import { Swords, ShieldCheck, ArrowRight, Flame, LogIn, UserPlus } from 'lucide-react'
 
 // Import Hero Avatars for Landing Showcase
 import tranHungDaoAvatar from '../../assets/heroes/avatars/tran_hung_dao.png'
@@ -9,75 +8,10 @@ import quangTrungAvatar from '../../assets/heroes/avatars/quang_trung.png'
 import haiBaTrungAvatar from '../../assets/heroes/avatars/hai_ba_trung.png'
 
 interface LandingPageProps {
-  onAuthenticated?: () => void
+  onPlayAsGuest: () => void
 }
 
-export default function LandingPage({ onAuthenticated }: LandingPageProps) {
-  const [isSignUp, setIsSignUp] = useState<boolean>(false)
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [confirmPassword, setConfirmPassword] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
-
-  // Listen to Supabase auth state change
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        if (onAuthenticated) onAuthenticated()
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [onAuthenticated])
-
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMsg(null)
-    setSuccessMsg(null)
-
-    if (!email || !password) {
-      setErrorMsg('Vui lòng nhập đầy đủ Email và Mật khẩu!')
-      return
-    }
-
-    if (isSignUp && password !== confirmPassword) {
-      setErrorMsg('Mật khẩu xác nhận không trùng khớp!')
-      return
-    }
-
-    if (password.length < 6) {
-      setErrorMsg('Mật khẩu phải có ít nhất 6 ký tự!')
-      return
-    }
-
-    setLoading(true)
-    try {
-      if (isSignUp) {
-        const res = await signUpWithEmail(email, password)
-        if (res.error) {
-          setErrorMsg(res.error.message)
-        } else {
-          setSuccessMsg('Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.')
-          setIsSignUp(false)
-        }
-      } else {
-        const res = await signInWithEmail(email, password)
-        if (res.error) {
-          setErrorMsg(res.error.message)
-        } else if (res.data?.session) {
-          setSuccessMsg('Đăng nhập thành công! Đang vào game...')
-          if (onAuthenticated) onAuthenticated()
-        }
-      }
-    } catch (err: any) {
-      setErrorMsg(err?.message || 'Đã xảy ra lỗi kết nối!')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-
+export default function LandingPage({ onPlayAsGuest }: LandingPageProps) {
   return (
     <div style={{
       width: '100vw',
@@ -196,7 +130,7 @@ export default function LandingPage({ onAuthenticated }: LandingPageProps) {
           </p>
         </div>
 
-        {/* Auth Form Glassmorphic Card */}
+        {/* Auth Actions Glassmorphic Card */}
         <div style={{
           width: '100%',
           background: 'rgba(15, 23, 42, 0.85)',
@@ -204,196 +138,78 @@ export default function LandingPage({ onAuthenticated }: LandingPageProps) {
           border: '2px solid rgba(245, 158, 11, 0.4)',
           borderRadius: '24px',
           padding: '28px',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.2)'
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '14px'
         }}>
-          {/* Tab Switcher: Sign In / Sign Up */}
-          <div style={{
-            display: 'flex',
-            background: 'rgba(30, 41, 59, 0.7)',
-            borderRadius: '14px',
-            padding: '4px',
-            marginBottom: '20px'
-          }}>
-            <button
-              onClick={() => { setIsSignUp(false); setErrorMsg(null); setSuccessMsg(null); }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                border: 'none',
-                borderRadius: '10px',
-                background: !isSignUp ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'transparent',
-                color: !isSignUp ? '#ffffff' : '#94a3b8',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: !isSignUp ? '0 2px 10px rgba(245, 158, 11, 0.4)' : 'none'
-              }}
-            >
-              🔑 ĐĂNG NHẬP
-            </button>
-            <button
-              onClick={() => { setIsSignUp(true); setErrorMsg(null); setSuccessMsg(null); }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                border: 'none',
-                borderRadius: '10px',
-                background: isSignUp ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'transparent',
-                color: isSignUp ? '#ffffff' : '#94a3b8',
-                fontWeight: 'bold',
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: isSignUp ? '0 2px 10px rgba(245, 158, 11, 0.4)' : 'none'
-              }}
-            >
-              📝 ĐĂNG KÝ MỚI
-            </button>
-          </div>
-
-          {/* Feedback Messages */}
-          {errorMsg && (
-            <div style={{
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid #ef4444',
-              borderRadius: '12px',
-              padding: '10px 14px',
-              marginBottom: '16px',
-              fontSize: '0.82rem',
-              color: '#fca5a5',
+          {/* Primary: Sign In via YunDev */}
+          <button
+            type="button"
+            onClick={() => window.location.assign(wwwAuthUrl('signin'))}
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: 'linear-gradient(45deg, #f59e0b, #d97706, #b45309)',
+              border: '1px solid #fef08a',
+              borderRadius: '14px',
+              color: '#ffffff',
+              fontSize: '1rem',
+              fontWeight: 900,
+              cursor: 'pointer',
+              boxShadow: '0 6px 20px rgba(245, 158, 11, 0.5)',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
-            }}>
-              <AlertCircle size={18} color="#ef4444" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
+              justifyContent: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <LogIn size={20} />
+            <span>ĐĂNG NHẬP BẰNG TÀI KHOẢN YUNDEV</span>
+            <ArrowRight size={20} />
+          </button>
 
-          {successMsg && (
-            <div style={{
-              background: 'rgba(34, 197, 94, 0.15)',
-              border: '1px solid #22c55e',
-              borderRadius: '12px',
-              padding: '10px 14px',
-              marginBottom: '16px',
-              fontSize: '0.82rem',
-              color: '#86efac',
+          {/* Secondary: Sign Up via YunDev */}
+          <button
+            type="button"
+            onClick={() => window.location.assign(wwwAuthUrl('signup'))}
+            style={{
+              width: '100%',
+              padding: '13px',
+              background: 'rgba(56, 189, 248, 0.15)',
+              border: '1px solid rgba(56, 189, 248, 0.5)',
+              borderRadius: '14px',
+              color: '#7dd3fc',
+              fontSize: '0.95rem',
+              fontWeight: 800,
+              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
-            }}>
-              <CheckCircle2 size={18} color="#22c55e" />
-              <span>{successMsg}</span>
-            </div>
-          )}
+              justifyContent: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <UserPlus size={18} />
+            <span>TẠO TÀI KHOẢN YUNDEV</span>
+          </button>
 
-          {/* Form Fields */}
-          <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            {/* Email Field */}
-            <div>
-              <label style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 'bold', marginBottom: '6px', display: 'block' }}>
-                EMAIL TÀI KHOẢN
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Mail size={18} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="nhap_email@yundev.space"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 12px 12px 40px',
-                    background: 'rgba(30, 41, 59, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '12px',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 'bold', marginBottom: '6px', display: 'block' }}>
-                MẬT KHẨU
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Lock size={18} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 12px 12px 40px',
-                    background: 'rgba(30, 41, 59, 0.8)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: '12px',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Confirm Password Field (Sign Up Only) */}
-            {isSignUp && (
-              <div>
-                <label style={{ fontSize: '0.78rem', color: '#cbd5e1', fontWeight: 'bold', marginBottom: '6px', display: 'block' }}>
-                  XÁC NHẬN MẬT KHẨU
-                </label>
-                <div style={{ position: 'relative' }}>
-                  <Lock size={18} color="#94a3b8" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '12px 12px 12px 40px',
-                      background: 'rgba(30, 41, 59, 0.8)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '12px',
-                      color: '#ffffff',
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Submit Button */}
+          {/* Tertiary / Outline: Guest Mode */}
+          <div style={{ marginTop: '4px', textAlign: 'center' }}>
             <button
-              type="submit"
-              disabled={loading}
+              type="button"
+              onClick={onPlayAsGuest}
               style={{
-                marginTop: '8px',
                 width: '100%',
-                padding: '14px',
-                background: 'linear-gradient(45deg, #f59e0b, #d97706, #b45309)',
-                border: '1px solid #fef08a',
+                padding: '12px',
+                background: 'transparent',
+                border: '1px solid rgba(148, 163, 184, 0.4)',
                 borderRadius: '14px',
-                color: '#ffffff',
-                fontSize: '1rem',
-                fontWeight: 900,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                boxShadow: '0 6px 20px rgba(245, 158, 11, 0.5)',
+                color: '#cbd5e1',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -401,22 +217,17 @@ export default function LandingPage({ onAuthenticated }: LandingPageProps) {
                 transition: 'all 0.2s ease'
               }}
             >
-              {loading ? (
-                <span>ĐANG XỬ LÝ...</span>
-              ) : (
-                <>
-                  <span>{isSignUp ? 'TẠO TÀI KHOẢN & VÀO GAME' : 'ĐĂNG NHẬP VÀO GAME'}</span>
-                  <ArrowRight size={20} />
-                </>
-              )}
+              <span>CHƠI NGAY (CHẾ ĐỘ KHÁCH)</span>
             </button>
-          </form>
-
+            <div style={{ marginTop: '8px', fontSize: '0.78rem', color: '#94a3b8' }}>
+              Tiến trình lưu trên trình duyệt này.
+            </div>
+          </div>
         </div>
 
         {/* Footer info */}
         <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.75rem', color: '#64748b' }}>
-          Đồng bộ đăng nhập SSO dùng chung hệ thống <span style={{ color: '#38bdf8' }}>*.yundev.space</span>
+          Đăng nhập dùng chung với <span style={{ color: '#38bdf8' }}>YunDev.space</span>
         </div>
       </div>
     </div>

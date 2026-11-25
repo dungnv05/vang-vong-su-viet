@@ -1,50 +1,54 @@
-import { createClient, type User } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 
-/**
- * Utility for Wildcard Cookie Management & Supabase Client Config across *.yundev.space
- */
-const COOKIE_DOMAIN = typeof window !== 'undefined' && window.location.hostname.includes('yundev.space') ? '.yundev.space' : ''
+export const WWW_ORIGIN = 'https://www.yundev.space'
+export const WWW_ACCOUNT_URL = 'https://www.yundev.space/'
 
-export function setSharedCookie(name: string, value: string, days = 30) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString()
-  const domainAttr = COOKIE_DOMAIN ? `; Domain=${COOKIE_DOMAIN}` : ''
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/${domainAttr}; SameSite=Lax; Secure`
+export interface WwwUser {
+  id: string
+  email: string | null
+  displayName: string
 }
 
-export function getSharedCookie(name: string) {
-  if (typeof document === 'undefined') return ''
-  return document.cookie.split('; ').reduce((r, v) => {
-    const parts = v.split('=')
-    return parts[0].trim() === name ? decodeURIComponent(parts[1]) : r
-  }, '')
-}
-
-export function removeSharedCookie(name: string) {
-  const domainAttr = COOKIE_DOMAIN ? `; Domain=${COOKIE_DOMAIN}` : ''
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttr}`
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
-}
-
-// Hybrid Shared Cookie Storage Adapter for Wildcard SSO (*.yundev.space)
-const cookieStorage = {
-  getItem: (key: string): string | null => {
-    if (typeof document === 'undefined') return null
-    const cookieVal = getSharedCookie(key)
-    if (cookieVal) return cookieVal
-    return typeof window !== 'undefined' ? localStorage.getItem(key) : null
-  },
-  setItem: (key: string, value: string): void => {
-    setSharedCookie(key, value)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, value)
+export async function fetchWwwUser(): Promise<WwwUser | null> {
+  try {
+    const res = await fetch(`${WWW_ORIGIN}/api/auth/me`, {
+      credentials: 'include',
+      headers: { Accept: 'application/json' }
+    })
+    if (!res.ok) return null
+    const data: unknown = await res.json()
+    if (!data || typeof data !== 'object') return null
+    const record = data as { ok?: unknown; user?: unknown }
+    if (record.ok !== true || !record.user || typeof record.user !== 'object') return null
+    const u = record.user as {
+      id?: unknown
+      email?: unknown
+      user_metadata?: { full_name?: unknown; name?: unknown } | null
     }
-  },
-  removeItem: (key: string): void => {
-    removeSharedCookie(key)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(key)
+    if (typeof u.id !== 'string' || u.id.trim().length === 0) return null
+    const email = typeof u.email === 'string' && u.email.trim().length > 0 ? u.email.trim() : null
+    const meta = u.user_metadata && typeof u.user_metadata === 'object' ? u.user_metadata : null
+    const fullName = meta && typeof meta.full_name === 'string' && meta.full_name.trim().length > 0
+      ? meta.full_name.trim()
+      : ''
+    const metaName = meta && typeof meta.name === 'string' && meta.name.trim().length > 0
+      ? meta.name.trim()
+      : ''
+    const emailLocal = email ? email.split('@')[0]?.trim() || '' : ''
+    const displayName = fullName || metaName || emailLocal || 'Anh Hùng'
+    return {
+      id: u.id,
+      email,
+      displayName
     }
+  } catch {
+    return null
   }
+}
+
+export function wwwAuthUrl(mode: 'signin' | 'signup'): string {
+  const nextUrl = typeof window !== 'undefined' ? window.location.href : ''
+  return `${WWW_ORIGIN}/?auth=${mode}&next=${encodeURIComponent(nextUrl)}`
 }
 
 // Read Supabase environment variables from Vite env (supports VITE_PUBLIC_SUPABASE_URL & VITE_PUBLIC_SUPABASE_ANON_KEY)
@@ -89,48 +93,18 @@ if (typeof window !== 'undefined') {
   }
 }
 
-// Initialize Supabase Client with Wildcard SSO token storage across *.yundev.space
+// Initialize anon-only Supabase Client (public leaderboard view read)
 export const supabase = createClient(
   SUPABASE_CONFIG.url,
   SUPABASE_CONFIG.anonKey,
   {
     auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storageKey: 'yundev_supabase_auth_token',
-      storage: cookieStorage
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
     }
   }
 )
-
-// Auth Helpers
-export async function signUpWithEmail(email: string, password: string) {
-  return await supabase.auth.signUp({ email, password })
-}
-
-export async function signInWithEmail(email: string, password: string) {
-  const res = await supabase.auth.signInWithPassword({ email, password })
-  if (res.data?.session) {
-    setSharedCookie('yundev_session', res.data.session.access_token)
-    setSharedCookie('yundev_supabase_auth_token', JSON.stringify(res.data.session))
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('yundev_session', res.data.session.access_token)
-      localStorage.setItem('yundev_supabase_auth_token', JSON.stringify(res.data.session))
-    }
-  }
-  return res
-}
-
-export async function signOutUser() {
-  removeSharedCookie('yundev_session')
-  removeSharedCookie('yundev_supabase_auth_token')
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('yundev_session')
-    localStorage.removeItem('yundev_supabase_auth_token')
-  }
-  return await supabase.auth.signOut()
-}
 
 export interface CloudPlayerProfile {
   id: string
@@ -147,45 +121,6 @@ export interface CloudPlayerProfile {
   lastSyncedAt?: string
 }
 
-// Export helper function to synchronize wildcard session across yundev.space
-export async function syncSharedSSOSession(): Promise<User | null> {
-  if (typeof window === 'undefined') return null
-
-  const sharedSessionCookie = getSharedCookie('yundev_supabase_auth_token')
-  const sharedAccessToken = getSharedCookie('yundev_session')
-  const { data: { session: currentSession } } = await supabase.auth.getSession()
-
-  // 1. If yundev.space has NO shared session cookie, but game currently has an active session -> User logged out on yundev.space!
-  if (!sharedSessionCookie && !sharedAccessToken && currentSession) {
-    console.log('[SSO Sync] Detected logout on yundev.space. Logging out of game...')
-    await signOutUser()
-    return null
-  }
-
-  // 2. If yundev.space HAS a shared session cookie, but game currently has no active session or session token differs -> User logged in on yundev.space!
-  if (sharedSessionCookie) {
-    try {
-      const parsedSession = JSON.parse(sharedSessionCookie)
-      if (parsedSession && parsedSession.access_token) {
-        if (!currentSession || currentSession.access_token !== parsedSession.access_token) {
-          console.log('[SSO Sync] Detected new login on yundev.space. Synchronizing session into game...')
-          const { data, error } = await supabase.auth.setSession({
-            access_token: parsedSession.access_token,
-            refresh_token: parsedSession.refresh_token || ''
-          })
-          if (!error && data.session) {
-            return data.session.user
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('[SSO Sync Parsing Error]:', err)
-    }
-  }
-
-  return currentSession?.user || null
-}
-
 export interface LeaderboardEntry {
   rank: number
   display_name: string
@@ -193,78 +128,23 @@ export interface LeaderboardEntry {
   pvp_score: number
 }
 
-// Cloud Database & SSO Synchronized Player Profile Service
+// Cloud Database & YunDev Shared Login Player Profile Service
 class CloudDatabaseService {
   private isConnected: boolean = true
-  private currentUser: User | null = null
-  private guestId: string = localStorage.getItem('yundev_guest_id') || ('player_' + Math.floor(Math.random() * 100000))
+  private currentUser: WwwUser | null = null
+  private guestId: string = (typeof window !== 'undefined' && localStorage.getItem('yundev_guest_id')) || ('player_' + Math.floor(Math.random() * 100000))
 
   constructor() {
     if (typeof window !== 'undefined' && !localStorage.getItem('yundev_guest_id')) {
       localStorage.setItem('yundev_guest_id', this.guestId)
     }
-    this.initAuthListener()
   }
 
-  private initAuthListener() {
-    if (typeof window !== 'undefined') {
-      // Sync immediately on startup
-      syncSharedSSOSession().then(user => {
-        this.currentUser = user
-      })
-
-      // Sync when tab regains focus or visibility changes
-      window.addEventListener('focus', () => {
-        syncSharedSSOSession().then(user => { this.currentUser = user })
-      })
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          syncSharedSSOSession().then(user => { this.currentUser = user })
-        }
-      })
-
-      // Sync when storage event fires (cross-tab)
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'yundev_session' || e.key === 'yundev_supabase_auth_token') {
-          syncSharedSSOSession().then(user => { this.currentUser = user })
-        }
-      })
-
-      // Periodic check every 2.5 seconds
-      setInterval(() => {
-        syncSharedSSOSession().then(user => { this.currentUser = user })
-      }, 2500)
-    }
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      this.currentUser = session?.user || null
-      if (session) {
-        setSharedCookie('yundev_session', session.access_token)
-        setSharedCookie('yundev_supabase_auth_token', JSON.stringify(session))
-      }
-    })
-
-    supabase.auth.onAuthStateChange((event, session) => {
-      this.currentUser = session?.user || null
-      if (session) {
-        setSharedCookie('yundev_session', session.access_token)
-        setSharedCookie('yundev_supabase_auth_token', JSON.stringify(session))
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('yundev_session', session.access_token)
-          localStorage.setItem('yundev_supabase_auth_token', JSON.stringify(session))
-        }
-      } else if (event === 'SIGNED_OUT' || !session) {
-        removeSharedCookie('yundev_session')
-        removeSharedCookie('yundev_supabase_auth_token')
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('yundev_session')
-          localStorage.removeItem('yundev_supabase_auth_token')
-        }
-      }
-    })
+  public setCurrentUser(u: WwwUser | null): void {
+    this.currentUser = u
   }
 
-  public getCurrentUser(): User | null {
+  public getCurrentUser(): WwwUser | null {
     return this.currentUser
   }
 
@@ -274,7 +154,7 @@ class CloudDatabaseService {
 
   public getPlayerName(): string {
     if (this.currentUser) {
-      return this.currentUser.email || ('Anh Hùng #' + this.currentUser.id.slice(-4))
+      return this.currentUser.displayName || ('Anh Hùng #' + this.currentUser.id.slice(-4))
     }
     return 'Anh Hùng Sử Việt #' + this.guestId.slice(-4)
   }
@@ -292,9 +172,14 @@ class CloudDatabaseService {
     return this.isConnected
   }
 
+  // Cloud save needs a server endpoint that uses the www session; the browser has no Supabase session after the move to www shared login.
+  public isCloudSaveAvailable(): boolean {
+    return false
+  }
+
   // Tải dữ liệu tiến trình từ Supabase Cloud
   public async fetchCloudProfile(): Promise<CloudPlayerProfile | null> {
-    if (!isSupabaseConfigured) return null
+    if (!this.isCloudSaveAvailable() || !isSupabaseConfigured) return null
     try {
       const playerId = this.getPlayerId()
       const { data, error } = await supabase
@@ -325,7 +210,7 @@ class CloudDatabaseService {
 
   // Lưu tiến trình đầy đủ lên Supabase Cloud
   public async saveCloudProfile(fullGameState: any): Promise<boolean> {
-    if (!isSupabaseConfigured) return false
+    if (!this.isCloudSaveAvailable() || !isSupabaseConfigured) return false
     try {
       const playerId = this.getPlayerId()
       const playerName = this.getPublicPlayerName()

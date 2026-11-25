@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react'
 import { useGameStore } from '../../store/gameStore'
 import {
   cloudService,
-  signInWithEmail,
-  signUpWithEmail,
-  signOutUser,
-  supabase,
-  isSupabaseConfigured
+  isSupabaseConfigured,
+  wwwAuthUrl,
+  WWW_ACCOUNT_URL,
+  type LeaderboardEntry,
+  type WwwUser
 } from '../../utils/supabaseClient'
-import type { LeaderboardEntry } from '../../utils/supabaseClient'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
-import { X, CloudCheck, Database, Trophy, LogIn, LogOut, UserCheck, Lock, UserPlus, UploadCloud, DownloadCloud, AlertCircle } from 'lucide-react'
+import { X, CloudCheck, Database, Trophy, LogIn, UserCheck, Lock, UploadCloud, DownloadCloud, AlertCircle, ExternalLink } from 'lucide-react'
 
 export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const importGameState = useGameStore(state => state.importGameState)
@@ -19,27 +17,9 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
   const [syncStatusMsg, setSyncStatusMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null)
+  const [currentUser, setCurrentUser] = useState<WwwUser | null>(() => cloudService.getCurrentUser())
 
-  // Auth State
-  const [currentUser, setCurrentUser] = useState<SupabaseUser | null>(null)
-  const [showAuthForm, setShowAuthForm] = useState<boolean>(false)
-  const [isSignUp, setIsSignUp] = useState<boolean>(false)
-  const [authEmail, setAuthEmail] = useState<string>('')
-  const [authPassword, setAuthPassword] = useState<string>('')
-  const [authLoading, setAuthLoading] = useState<boolean>(false)
-  const [authMessage, setAuthMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUser(session?.user || null)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user || null)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
+  const cloudSaveAvailable = cloudService.isCloudSaveAvailable()
 
   const loadLeaderboard = async () => {
     const data = await cloudService.fetchLeaderboard()
@@ -51,7 +31,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
   const handleSaveToCloud = async () => {
     setIsSyncing(true)
     setSyncStatusMsg({ type: 'info', text: 'Đang tải toàn bộ dữ liệu lên Supabase Cloud...' })
-    
+
     const fullState = useGameStore.getState()
     const success = await cloudService.saveCloudProfile(fullState)
 
@@ -94,41 +74,10 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
   useEffect(() => {
     if (isOpen) {
+      setCurrentUser(cloudService.getCurrentUser())
       loadLeaderboard()
     }
   }, [isOpen])
-
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setAuthLoading(true)
-    setAuthMessage(null)
-
-    try {
-      if (isSignUp) {
-        const { error } = await signUpWithEmail(authEmail, authPassword)
-        if (error) throw error
-        setAuthMessage({ type: 'success', text: 'Đăng ký thành công! Bạn có thể sử dụng tài khoản này trên yundev.space.' })
-      } else {
-        const { data, error } = await signInWithEmail(authEmail, authPassword)
-        if (error) throw error
-        setCurrentUser(data.user)
-        setShowAuthForm(false)
-        setAuthMessage({ type: 'success', text: 'Đăng nhập thành công!' })
-        handleSaveToCloud()
-        onClose()
-      }
-    } catch (err: any) {
-      setAuthMessage({ type: 'error', text: err.message || 'Thao tác thất bại. Vui lòng thử lại.' })
-    } finally {
-      setAuthLoading(false)
-    }
-  }
-
-  const handleLogout = async () => {
-    await signOutUser()
-    setCurrentUser(null)
-    setAuthMessage({ type: 'success', text: 'Đã đăng xuất tài khoản YunDev.' })
-  }
 
   if (!isOpen) return null
 
@@ -161,7 +110,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
-        <button 
+        <button
           onClick={onClose}
           style={{
             position: 'absolute',
@@ -177,13 +126,13 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
         </button>
 
         <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <CloudCheck color="#38bdf8" /> Supabase Cloud Save & Synchronized SSO Auth
+          <CloudCheck color="#38bdf8" /> Supabase Cloud Save & Đăng nhập YunDev
         </h2>
         <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
-          Đồng bộ tài khoản & dữ liệu game trực tiếp qua Supabase PostgreSQL trên hệ sinh thái <code>*.yundev.space</code>.
+          Đồng bộ tài khoản dùng chung qua <code>www.yundev.space</code>.
         </p>
 
-        {/* Trạng Thái Tài Khoản Supabase SSO */}
+        {/* Trạng Thái Tài Khoản YunDev */}
         <div style={{
           background: currentUser ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)',
           border: currentUser ? '1px solid #22c55e' : '1px solid #f59e0b',
@@ -199,38 +148,40 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: currentUser ? '#4ade80' : '#fbbf24' }}>
               {currentUser ? <UserCheck size={20} /> : <Lock size={20} />}
-              <span>{currentUser ? `Đã đăng nhập: ${currentUser.email}` : 'Tài khoản: Khách (Chưa đăng nhập)'}</span>
+              <span>{currentUser ? `Đã đăng nhập YunDev: ${currentUser.displayName}` : 'Tài khoản: Khách'}</span>
             </div>
             <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '4px' }}>
               {currentUser
-                ? 'Tiến trình game được đồng bộ tự động với tài khoản YunDev Ecosystem.'
-                : 'Đăng nhập tài khoản YunDev để đồng bộ tiến trình game với website yundev.space.'}
+                ? 'Tài khoản đang sử dụng phiên đăng nhập dùng chung từ YunDev.space.'
+                : 'Đăng nhập tài khoản YunDev để liên kết hồ sơ người chơi.'}
             </div>
           </div>
 
           <div>
             {currentUser ? (
-              <button
-                onClick={handleLogout}
+              <a
+                href={WWW_ACCOUNT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  border: '1px solid #ef4444',
-                  color: '#fca5a5',
+                  background: 'rgba(56, 189, 248, 0.18)',
+                  border: '1px solid #38bdf8',
+                  color: '#7dd3fc',
                   borderRadius: '12px',
                   padding: '8px 14px',
                   fontWeight: 'bold',
                   fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  display: 'flex',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px'
                 }}
               >
-                <LogOut size={16} /> Đăng xuất
-              </button>
+                <ExternalLink size={16} /> Quản lý tài khoản / Đăng xuất tại YunDev.space
+              </a>
             ) : (
               <button
-                onClick={() => setShowAuthForm(!showAuthForm)}
+                onClick={() => window.location.assign(wwwAuthUrl('signin'))}
                 style={{
                   background: 'linear-gradient(45deg, #f59e0b, #d97706)',
                   border: 'none',
@@ -246,108 +197,11 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                   boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)'
                 }}
               >
-                <LogIn size={16} /> {showAuthForm ? 'Ẩn Form Đăng Nhập' : 'Đăng Nhập / Đăng Ký'}
+                <LogIn size={16} /> Đăng nhập YunDev
               </button>
             )}
           </div>
         </div>
-
-        {/* Auth Form Form Modal inside CloudSaveModal */}
-        {showAuthForm && !currentUser && (
-          <div style={{
-            background: 'rgba(15, 23, 42, 0.9)',
-            border: '1px solid #38bdf8',
-            borderRadius: '16px',
-            padding: '20px',
-            marginBottom: '24px'
-          }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.1rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {isSignUp ? <UserPlus size={18} /> : <Lock size={18} />} {isSignUp ? 'Tạo Tài Khoản YunDev' : 'Đăng Nhập YunDev SSO'}
-            </h3>
-
-            {authMessage && (
-              <div style={{
-                background: authMessage.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(34, 197, 94, 0.2)',
-                border: authMessage.type === 'error' ? '1px solid #ef4444' : '1px solid #22c55e',
-                color: authMessage.type === 'error' ? '#fca5a5' : '#86efac',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                fontSize: '0.85rem',
-                marginBottom: '12px'
-              }}>
-                {authMessage.text}
-              </div>
-            )}
-
-            <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Email</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="name@yundev.space"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: '#020617',
-                    border: '1px solid #334155',
-                    color: 'white',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Mật khẩu</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px 14px',
-                    borderRadius: '8px',
-                    background: '#020617',
-                    border: '1px solid #334155',
-                    color: 'white',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.82rem', cursor: 'pointer', textDecoration: 'underline' }}
-                >
-                  {isSignUp ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký ngay'}
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={authLoading}
-                  style={{
-                    background: 'linear-gradient(45deg, #0284c7, #38bdf8)',
-                    border: 'none',
-                    color: 'white',
-                    borderRadius: '8px',
-                    padding: '8px 20px',
-                    fontWeight: 'bold',
-                    cursor: authLoading ? 'wait' : 'pointer'
-                  }}
-                >
-                  {authLoading ? 'Đang xử lý...' : (isSignUp ? 'Đăng Ký' : 'Đăng Nhập')}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* Trạng Thái & Nút Thao Tác Đồng Bộ Cloud */}
         {syncStatusMsg && (
@@ -375,7 +229,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
           padding: '20px',
           marginBottom: '24px'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', color: '#7dd3fc', fontSize: '1.05rem' }}>
                 <Database size={20} /> Tài Khoản Cloud: <span style={{ color: '#fef08a' }}>{cloudService.getPlayerName()}</span>
@@ -386,10 +240,24 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
             </div>
           </div>
 
+          {!cloudSaveAvailable && (
+            <div style={{
+              background: 'rgba(245, 158, 11, 0.12)',
+              border: '1px solid rgba(245, 158, 11, 0.45)',
+              color: '#fde68a',
+              borderRadius: '10px',
+              padding: '10px 14px',
+              fontSize: '0.84rem',
+              marginBottom: '14px'
+            }}>
+              Lưu đám mây đang tạm dừng trong lúc chuyển sang đăng nhập YunDev dùng chung. Tiến trình vẫn được lưu trên trình duyệt.
+            </div>
+          )}
+
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button
               onClick={handleSaveToCloud}
-              disabled={isSyncing}
+              disabled={isSyncing || !cloudSaveAvailable}
               style={{
                 flex: 1,
                 minWidth: '200px',
@@ -400,7 +268,8 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 padding: '12px 18px',
                 fontWeight: 'bold',
                 fontSize: '0.9rem',
-                cursor: isSyncing ? 'not-allowed' : 'pointer',
+                cursor: (isSyncing || !cloudSaveAvailable) ? 'not-allowed' : 'pointer',
+                opacity: (isSyncing || !cloudSaveAvailable) ? 0.5 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -414,7 +283,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
 
             <button
               onClick={handleLoadFromCloud}
-              disabled={isSyncing}
+              disabled={isSyncing || !cloudSaveAvailable}
               style={{
                 flex: 1,
                 minWidth: '200px',
@@ -425,7 +294,8 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 padding: '12px 18px',
                 fontWeight: 'bold',
                 fontSize: '0.9rem',
-                cursor: isSyncing ? 'not-allowed' : 'pointer',
+                cursor: (isSyncing || !cloudSaveAvailable) ? 'not-allowed' : 'pointer',
+                opacity: (isSyncing || !cloudSaveAvailable) ? 0.5 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -479,7 +349,7 @@ export default function CloudSaveModal({ isOpen, onClose }: { isOpen: boolean; o
                 color: '#94a3b8',
                 fontSize: '0.9rem'
               }}>
-                Chưa có dữ liệu bảng xếp hạng từ Supabase Cloud. Bấm "⬆️ Tải Tiến Trình Lên Cloud" để ghi danh đầu tiên!
+                Chưa có dữ liệu bảng xếp hạng từ Supabase Cloud.
               </div>
             )}
           </div>
