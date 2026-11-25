@@ -1,3 +1,222 @@
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --vv-bg: #020617;
+  --vv-canvas-bg: #111111;
+  --vv-surface: #0f172a;
+  --vv-surface-2: #1e293b;
+  --vv-surface-3: #334155;
+  --vv-surface-glass: rgba(30, 41, 59, 0.8);
+  --vv-surface-2-alpha: rgba(30, 41, 59, 0.6);
+  --vv-card-bg: rgba(15, 23, 42, 0.85);
+  --vv-subcard-bg: rgba(15, 23, 42, 0.7);
+  --vv-overlay: rgba(2, 6, 23, 0.85);
+  --vv-border: #334155;
+  --vv-border-strong: #475569;
+  --vv-border-subtle: rgba(255, 255, 255, 0.1);
+  --vv-divider: rgba(148, 163, 184, 0.2);
+
+  --vv-text: #f1f5f9;
+  --vv-text-2: #e2e8f0;
+  --vv-muted: #94a3b8;
+  --vv-subtle: #64748b;
+
+  --vv-gold: #f59e0b;
+  --vv-gold-soft: #fde68a;
+  --vv-gold-solid: #f59e0b;
+  --vv-gold-border: rgba(245, 158, 11, 0.4);
+  --vv-gold-border-strong: #f1c40f;
+  --vv-gold-border-soft: #fef08a;
+  --vv-gold-tint: rgba(245, 158, 11, 0.12);
+  --vv-on-gold: #0f172a;
+  --vv-on-solid: #ffffff;
+  --vv-on-yellow: #422006;
+
+  --vv-sky: #38bdf8;
+  --vv-sky-text: #7dd3fc;
+  --vv-sky-soft: #bae6fd;
+  --vv-sky-tint: rgba(56, 189, 248, 0.12);
+  --vv-sky-border: rgba(56, 189, 248, 0.45);
+
+  --vv-blue: #3b82f6;
+  --vv-blue-soft: #93c5fd;
+  --vv-green: #22c55e;
+  --vv-green-soft: #86efac;
+  --vv-green-tint: rgba(34, 197, 94, 0.12);
+  --vv-red: #ef4444;
+  --vv-red-soft: #fca5a5;
+  --vv-purple: #a855f7;
+
+  --vv-shadow: rgba(0, 0, 0, 0.5);
+  --vv-card-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.2);
+  --vv-modal-sky-shadow: 0 10px 50px rgba(56, 189, 248, 0.3);
+  --vv-glow-red: 0 0 30px rgba(239, 68, 68, 0.4);
+  --vv-glow-gold: 0 0 25px rgba(245, 158, 11, 0.35);
+  --vv-glow-blue: 0 0 20px rgba(59, 130, 246, 0.35);
+  --vv-glow-green: 0 0 20px rgba(34, 197, 94, 0.35);
+
+  --vv-panel-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --vv-landing-bg: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+  --vv-landing-glow: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(239, 68, 68, 0.15) 50%, transparent 80%);
+  --vv-lobby-bg: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0f172a 70%, #020617 100%);
+  --vv-motif-border: rgba(212, 175, 55, 0.12);
+
+  --vv-title-grad: linear-gradient(45deg, #fef08a, #f59e0b, #ef4444);
+  --vv-lobby-title-grad: linear-gradient(45deg, #fef08a, #f1c40f, #d97706);
+  --vv-title-shadow: 0 0 40px rgba(245, 158, 11, 0.5);
+
+  --vv-btn-gold-grad: linear-gradient(45deg, #f59e0b, #d97706, #b45309);
+  --vv-btn-gold-grad-short: linear-gradient(45deg, #f59e0b, #d97706);
+  --vv-btn-gold-border: #fef08a;
+  --vv-btn-gold-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+  --vv-btn-red-tint: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.15) 100%);
+  --vv-btn-blue-tint: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(29, 78, 216, 0.15) 100%);
+  --vv-btn-green-tint: linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%);
+  --vv-btn-gold-tint: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
+  --vv-badge-green-grad: linear-gradient(45deg, #22c55e, #10b981);
+  --vv-badge-gold-grad: linear-gradient(45deg, #f59e0b, #d97706);
+
+  --vv-secondary-bg: rgba(148, 163, 184, 0.16);
+  --vv-secondary-border: rgba(148, 163, 184, 0.45);
+
+  --vv-menu-sky-grad: linear-gradient(45deg, #0284c7, #38bdf8);
+  --vv-menu-sky-border: #bae6fd;
+  --vv-menu-sky-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+  --vv-menu-gold-grad: linear-gradient(45deg, #d97706, #f59e0b);
+  --vv-menu-gold-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+  --vv-menu-purple-grad: linear-gradient(45deg, #7c3aed, #c084fc);
+  --vv-menu-purple-border: #e9d5ff;
+  --vv-menu-purple-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+  --vv-menu-boss-grad: linear-gradient(45deg, #9333ea, #c084fc);
+  --vv-menu-boss-shadow: 0 4px 20px rgba(147, 51, 234, 0.5);
+  --vv-menu-yellow-grad: linear-gradient(45deg, #eab308, #fef08a);
+  --vv-menu-yellow-shadow: 0 4px 20px rgba(234, 179, 8, 0.5);
+  --vv-menu-red-grad: linear-gradient(45deg, #dc2626, #ef4444);
+  --vv-menu-red-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+  --vv-menu-codex-grad: linear-gradient(45deg, #b45309, #f1c40f);
+  --vv-menu-codex-shadow: 0 4px 20px rgba(241, 196, 15, 0.5);
+  --vv-menu-green-grad: linear-gradient(45deg, #059669, #10b981);
+  --vv-menu-green-border: #a7f3d0;
+  --vv-menu-green-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  --vv-cta-grad: linear-gradient(45deg, #b45309, #f59e0b, #d97706);
+  --vv-cta-shadow: 0 10px 40px rgba(245, 158, 11, 0.7);
+
+  --vv-focus: #7dd3fc;
+  --vv-toggle-bg: rgba(15, 23, 42, 0.72);
+  --vv-toggle-border: rgba(255, 255, 255, 0.14);
+  --vv-toggle-hover-bg: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+
+  --vv-bg: #f1f5f9;
+  --vv-canvas-bg: #111111;
+  --vv-surface: #ffffff;
+  --vv-surface-2: #f8fafc;
+  --vv-surface-3: #e2e8f0;
+  --vv-surface-glass: rgba(255, 255, 255, 0.9);
+  --vv-surface-2-alpha: #f8fafc;
+  --vv-card-bg: rgba(255, 255, 255, 0.92);
+  --vv-subcard-bg: #f8fafc;
+  --vv-overlay: rgba(15, 23, 42, 0.45);
+  --vv-border: #cbd5e1;
+  --vv-border-strong: #94a3b8;
+  --vv-border-subtle: #cbd5e1;
+  --vv-divider: #cbd5e1;
+
+  --vv-text: #0f172a;
+  --vv-text-2: #1e293b;
+  --vv-muted: #475569;
+  --vv-subtle: #64748b;
+
+  --vv-gold: #b45309;
+  --vv-gold-soft: #92400e;
+  --vv-gold-solid: #d97706;
+  --vv-gold-border: rgba(180, 83, 9, 0.35);
+  --vv-gold-border-strong: #d97706;
+  --vv-gold-border-soft: #fbbf24;
+  --vv-gold-tint: rgba(217, 119, 6, 0.1);
+  --vv-on-gold: #ffffff;
+  --vv-on-solid: #ffffff;
+  --vv-on-yellow: #422006;
+
+  --vv-sky: #0369a1;
+  --vv-sky-text: #0369a1;
+  --vv-sky-soft: #075985;
+  --vv-sky-tint: rgba(3, 105, 161, 0.08);
+  --vv-sky-border: rgba(3, 105, 161, 0.35);
+
+  --vv-blue: #1d4ed8;
+  --vv-blue-soft: #1d4ed8;
+  --vv-green: #15803d;
+  --vv-green-soft: #15803d;
+  --vv-green-tint: rgba(21, 128, 61, 0.1);
+  --vv-red: #b91c1c;
+  --vv-red-soft: #991b1b;
+  --vv-purple: #7e22ce;
+
+  --vv-shadow: rgba(15, 23, 42, 0.15);
+  --vv-card-shadow: 0 20px 50px rgba(15, 23, 42, 0.12), 0 0 24px rgba(217, 119, 6, 0.12);
+  --vv-modal-sky-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+  --vv-glow-red: 0 8px 24px rgba(185, 28, 28, 0.15);
+  --vv-glow-gold: 0 8px 24px rgba(180, 83, 9, 0.15);
+  --vv-glow-blue: 0 8px 24px rgba(29, 78, 216, 0.15);
+  --vv-glow-green: 0 8px 24px rgba(21, 128, 61, 0.15);
+
+  --vv-panel-grad: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  --vv-landing-bg: radial-gradient(circle at center, #fef3c7 0%, #f8fafc 55%, #e2e8f0 100%);
+  --vv-landing-glow: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(239, 68, 68, 0.08) 50%, transparent 80%);
+  --vv-lobby-bg: radial-gradient(circle at 50% 30%, #fef3c7 0%, #f8fafc 65%, #e2e8f0 100%);
+  --vv-motif-border: rgba(180, 83, 9, 0.14);
+
+  --vv-title-grad: linear-gradient(45deg, #b45309, #d97706, #b91c1c);
+  --vv-lobby-title-grad: linear-gradient(45deg, #b45309, #d97706, #92400e);
+  --vv-title-shadow: 0 2px 18px rgba(180, 83, 9, 0.18);
+
+  --vv-btn-gold-grad: linear-gradient(45deg, #d97706, #b45309, #92400e);
+  --vv-btn-gold-grad-short: linear-gradient(45deg, #d97706, #b45309);
+  --vv-btn-gold-border: #fbbf24;
+  --vv-btn-gold-shadow: 0 6px 18px rgba(180, 83, 9, 0.28);
+  --vv-btn-red-tint: linear-gradient(135deg, rgba(185, 28, 28, 0.12) 0%, rgba(185, 28, 28, 0.06) 100%);
+  --vv-btn-blue-tint: linear-gradient(135deg, rgba(29, 78, 216, 0.12) 0%, rgba(29, 78, 216, 0.06) 100%);
+  --vv-btn-green-tint: linear-gradient(135deg, rgba(21, 128, 61, 0.12) 0%, rgba(21, 128, 61, 0.06) 100%);
+  --vv-btn-gold-tint: linear-gradient(135deg, rgba(180, 83, 9, 0.12) 0%, rgba(180, 83, 9, 0.06) 100%);
+  --vv-badge-green-grad: linear-gradient(45deg, #15803d, #059669);
+  --vv-badge-gold-grad: linear-gradient(45deg, #d97706, #b45309);
+
+  --vv-secondary-bg: rgba(15, 23, 42, 0.06);
+  --vv-secondary-border: #cbd5e1;
+
+  --vv-menu-sky-grad: linear-gradient(45deg, #0369a1, #0284c7);
+  --vv-menu-sky-border: #7dd3fc;
+  --vv-menu-sky-shadow: 0 4px 14px rgba(3, 105, 161, 0.25);
+  --vv-menu-gold-grad: linear-gradient(45deg, #b45309, #d97706);
+  --vv-menu-gold-shadow: 0 4px 14px rgba(180, 83, 9, 0.25);
+  --vv-menu-purple-grad: linear-gradient(45deg, #6d28d9, #7c3aed);
+  --vv-menu-purple-border: #ddd6fe;
+  --vv-menu-purple-shadow: 0 4px 14px rgba(109, 40, 217, 0.25);
+  --vv-menu-boss-grad: linear-gradient(45deg, #7e22ce, #9333ea);
+  --vv-menu-boss-shadow: 0 4px 14px rgba(126, 34, 206, 0.25);
+  --vv-menu-yellow-grad: linear-gradient(45deg, #eab308, #fde047);
+  --vv-menu-yellow-shadow: 0 4px 14px rgba(202, 138, 4, 0.25);
+  --vv-menu-red-grad: linear-gradient(45deg, #b91c1c, #dc2626);
+  --vv-menu-red-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+  --vv-menu-codex-grad: linear-gradient(45deg, #92400e, #b45309);
+  --vv-menu-codex-shadow: 0 4px 14px rgba(146, 64, 14, 0.25);
+  --vv-menu-green-grad: linear-gradient(45deg, #15803d, #059669);
+  --vv-menu-green-border: #86efac;
+  --vv-menu-green-shadow: 0 4px 14px rgba(21, 128, 61, 0.25);
+  --vv-cta-grad: linear-gradient(45deg, #92400e, #d97706, #b45309);
+  --vv-cta-shadow: 0 10px 28px rgba(180, 83, 9, 0.35);
+
+  --vv-focus: #0369a1;
+  --vv-toggle-bg: rgba(255, 255, 255, 0.85);
+  --vv-toggle-border: #cbd5e1;
+  --vv-toggle-hover-bg: #e2e8f0;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,6 +227,37 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #111;
+  background-color: var(--vv-bg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.vv-theme-toggle {
+  position: fixed;
+  left: max(8px, env(safe-area-inset-left));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--vv-toggle-border);
+  background: var(--vv-toggle-bg);
+  backdrop-filter: blur(8px);
+  color: var(--vv-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.vv-theme-toggle:hover {
+  background: var(--vv-toggle-hover-bg);
+  color: var(--vv-text);
+}
+
+.vv-theme-toggle:focus-visible {
+  outline: 2px solid var(--vv-focus);
+  outline-offset: 2px;
 }
