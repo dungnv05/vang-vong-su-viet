@@ -1,11 +1,13 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import {
+  DENYLISTED_EMAIL_SHA256,
   findCredentialLiterals,
   credentialLiteralGuard,
   scanDirectory
@@ -139,6 +141,40 @@ describe('credential-literal-guard', () => {
       )
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true })
+    }
+  })
+
+  it('detects call-boundary, newline-split, and object-shaped pairs', () => {
+    const callBoundary = findCredentialLiterals(`a("${FAKE_EMAIL}"),b("${FAKE_PASS}")`)
+    assert.deepEqual(callBoundary, [{ name: 'email_password_pair', count: 1 }])
+
+    const newlineSplit = findCredentialLiterals(`fn(\n  "${FAKE_EMAIL}",\n  "${FAKE_PASS}"\n)`)
+    assert.deepEqual(newlineSplit, [{ name: 'email_password_pair', count: 1 }])
+
+    const objectShape = findCredentialLiterals(`{email:"${FAKE_EMAIL}",password:"${FAKE_PASS}"}`)
+    assert.deepEqual(objectShape, [
+      { name: 'email_password_pair', count: 1 },
+      { name: 'password_literal', count: 1 }
+    ])
+  })
+
+  it('detects denylisted email hashes without leaking the email address', () => {
+    const leakedEmail = 'leaked@example.test'
+    const leakedHash = createHash('sha256').update(leakedEmail).digest('hex')
+    const findings = findCredentialLiterals(`const u = "${leakedEmail}";`, { denylist: [leakedHash] })
+    assert.deepEqual(findings, [{ name: 'denylisted_email', count: 1 }])
+    assert.equal(JSON.stringify(findings).includes(leakedEmail), false)
+  })
+
+  it('still ignores placeholder email paired with non-literal value', () => {
+    const findings = findCredentialLiterals('placeholder:"name@example.test",value:e')
+    assert.deepEqual(findings, [])
+  })
+
+  it('exports a non-empty default denylist of 64-char sha256 hex strings', () => {
+    assert.ok(Array.isArray(DENYLISTED_EMAIL_SHA256) && DENYLISTED_EMAIL_SHA256.length > 0)
+    for (const digest of DENYLISTED_EMAIL_SHA256) {
+      assert.match(digest, /^[0-9a-f]{64}$/)
     }
   })
 })

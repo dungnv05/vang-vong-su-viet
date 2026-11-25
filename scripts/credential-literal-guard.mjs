@@ -1,10 +1,17 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 
-const EMAIL_PASSWORD_PAIR_RE = /(["'`])[^\s"'`@]+@[^\s"'`@]+\.[^\s"'`@]+\1\s{0,1}[,:]\s{0,2}(["'`])(?:(?!\2)\S){4,128}\2/g
+const EMAIL_SRC = `[^\\s"'\`@]{1,64}@[^\\s"'\`@]{1,255}\\.[A-Za-z]{2,24}`
+const PAIR_SEP_SRC = `\\s*(?:[,:]|,\\s*["']?(?:pass|pwd|pw|secret)[\\w$]{0,28}["']?\\s*:|\\)\\s*[,;]?\\s*[\\w$.]{1,48}\\s*\\(|\\)\\s*[,;]?\\s*[\\w$.]{1,48}\\s*=)\\s*`
+const EMAIL_PASSWORD_PAIR_RE = new RegExp('(["\'`])' + EMAIL_SRC + '\\1' + PAIR_SEP_SRC + '(["\'`])(?:(?!\\2)[^\\s"\'`]){4,128}\\2', 'g')
+const EMAIL_TOKEN_RE = new RegExp(EMAIL_SRC, 'g')
 const PASSWORD_LITERAL_RE = /(?:(["'`])password\1|\bpassword)\s*[:=]\s*(["'`])((?:(?!\2)[^\r\n]){4,128})\2/gi
 const SET_PASSWORD_LITERAL_RE = /\bsetPassword\(\s*(["'`])(?:(?!\1)[^\r\n])+\1/g
+
+// sha256 of emails that must never ship (leaked demo account, VANGVONG-DEMO-CRED). Hash only, never the address.
+export const DENYLISTED_EMAIL_SHA256 = ['938f790f299f70433583f119cb17ef8ace373de6e2711a6011dc2a98a905f202']
 
 const SCAN_EXTENSIONS = new Set(['.js', '.html', '.css', '.map', '.json'])
 
@@ -12,9 +19,10 @@ const SCAN_EXTENSIONS = new Set(['.js', '.html', '.css', '.map', '.json'])
  * Scan source/bundle text for hardcoded credential-like literals.
  * Returns only pattern names and counts, never the matched text.
  * @param {string} code
+ * @param {{ denylist?: string[] }} [options]
  * @returns {Array<{ name: string, count: number }>}
  */
-export function findCredentialLiterals(code) {
+export function findCredentialLiterals(code, options = {}) {
   const text = typeof code === 'string' ? code : String(code ?? '')
   const results = []
 
@@ -39,6 +47,24 @@ export function findCredentialLiterals(code) {
   const setPasswordMatches = text.match(SET_PASSWORD_LITERAL_RE)
   if (setPasswordMatches && setPasswordMatches.length > 0) {
     results.push({ name: 'set_password_literal', count: setPasswordMatches.length })
+  }
+
+  const denylist = Array.isArray(options?.denylist) ? options.denylist : DENYLISTED_EMAIL_SHA256
+  if (denylist.length > 0) {
+    const denyset = new Set(denylist)
+    const emailMatches = text.match(EMAIL_TOKEN_RE)
+    if (emailMatches && emailMatches.length > 0) {
+      let denylistedCount = 0
+      for (const match of emailMatches) {
+        const digest = createHash('sha256').update(match).digest('hex')
+        if (denyset.has(digest)) {
+          denylistedCount++
+        }
+      }
+      if (denylistedCount > 0) {
+        results.push({ name: 'denylisted_email', count: denylistedCount })
+      }
+    }
   }
 
   return results

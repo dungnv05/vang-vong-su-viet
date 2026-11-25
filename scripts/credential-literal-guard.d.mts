@@ -5,7 +5,8 @@ export interface CredentialFinding {
   count: number
 }
 
-export function findCredentialLiterals(code: string): CredentialFinding[]
+export const DENYLISTED_EMAIL_SHA256: string[]
+export function findCredentialLiterals(code: string, options?: { denylist?: string[] }): CredentialFinding[]
 export function credentialLiteralGuard(): Plugin
 export function scanDirectory(dirPath: string): {
   filesScanned: number
