@@ -72,9 +72,6 @@ const triggerAutoCloudSave = () => {
   if (typeof window !== 'undefined') {
     const state = useGameStore.getState()
     saveLocalGameState(state)
-    setTimeout(() => {
-      notifyCloud()
-    }, 300)
   }
 }
 
@@ -1104,16 +1101,45 @@ export const useGameStore = create<GameState>((set, get) => ({
   }
 }))
 
+const persistedFingerprint = (state: GameState): string =>
+  JSON.stringify({
+    gold: state.gold,
+    currentStageIndex: state.currentStageIndex,
+    maxUnlockedStage: state.maxUnlockedStage,
+    towerFloor: state.towerFloor,
+    maxTowerFloor: state.maxTowerFloor,
+    worldBossTotalDamage: state.worldBossTotalDamage,
+    pvpRank: state.pvpRank,
+    pvpScore: state.pvpScore,
+    rankLevel: state.rankLevel,
+    activeBeastId: state.activeBeastId,
+    battleSpeed: state.battleSpeed,
+    isMuted: state.isMuted,
+    shards: state.shards,
+    heroes: state.heroes
+      .filter((h) => h.isEnemy !== true)
+      .map((h) => ({
+        id: h.id,
+        name: h.name,
+        level: h.level,
+        stars: h.stars,
+        slotIndex: h.slotIndex,
+        equippedItemIds: h.equippedItemIds,
+      })),
+  })
+
 if (typeof window !== 'undefined') {
   bindStore(
     () => useGameStore.getState() as unknown as LocalStateLike,
     (s) => useGameStore.getState().importGameState(s as unknown as Partial<GameState>),
   )
+  let lastFingerprint = persistedFingerprint(useGameStore.getState())
   useGameStore.subscribe((state) => {
     saveLocalGameState(state)
-    notifyCloud()
-
-
-
+    const fp = persistedFingerprint(state)
+    if (fp !== lastFingerprint) {
+      lastFingerprint = fp
+      notifyCloud()
+    }
   })
 }
