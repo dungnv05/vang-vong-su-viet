@@ -45,7 +45,7 @@ export default function VictoryModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -55,14 +55,14 @@ export default function VictoryModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
-        border: '3px solid #f1c40f',
+        background: 'var(--vv-panel-grad)',
+        border: '3px solid var(--vv-gold-border-strong)',
         borderRadius: '28px',
         width: '100%',
         maxWidth: '520px',
         padding: '36px',
-        boxShadow: '0 10px 60px rgba(241, 196, 15, 0.4)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         textAlign: 'center',
         position: 'relative'
       }}>
@@ -72,7 +72,7 @@ export default function VictoryModal() {
           margin: 0,
           fontSize: '2.4rem',
           fontWeight: 900,
-          background: 'linear-gradient(45deg, #fef08a, #f1c40f, #d97706)',
+          background: 'var(--vv-lobby-title-grad)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           letterSpacing: '2px'
@@ -80,7 +80,7 @@ export default function VictoryModal() {
           ĐẠI THẮNG KHẢI HOÀN!
         </h1>
 
-        <p style={{ margin: '6px 0 24px 0', fontSize: '0.95rem', color: '#cbd5e1' }}>
+        <p style={{ margin: '6px 0 24px 0', fontSize: '0.95rem', color: 'var(--vv-text-2)' }}>
           {gameMode === 'WORLD_BOSS' 
             ? `Đã hoàn thành Phó Bản Trùm! Tổng Sát Thương: ${worldBossTotalDamage.toLocaleString()}` 
             : gameMode === 'TOWER' 
@@ -90,8 +90,8 @@ export default function VictoryModal() {
 
         {/* Khung Phần Thưởng Rớt Trang Bị & Vàng */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.7)',
-          border: '1.5px solid rgba(241, 196, 15, 0.5)',
+          background: 'var(--vv-subcard-bg)',
+          border: '1.5px solid var(--vv-gold-border)',
           borderRadius: '20px',
           padding: '20px',
           marginBottom: '24px',
@@ -99,20 +99,20 @@ export default function VictoryModal() {
           flexDirection: 'column',
           gap: '14px'
         }}>
-          <div style={{ fontSize: '0.85rem', color: '#fef08a', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px' }}>
+          <div style={{ fontSize: '0.85rem', color: 'var(--vv-gold-soft)', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px' }}>
             🎁 CHIẾN LỢI PHẨM RỚT RA TỪ ẢI
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Coins size={24} color="#f1c40f" />
-              <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#fef08a' }}>+{victoryRewardGold.toLocaleString()} Vàng</span>
+              <Coins size={24} color="var(--vv-gold)" />
+              <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--vv-gold-soft)' }}>+{victoryRewardGold.toLocaleString()} Vàng</span>
             </div>
 
             {droppedItem && (
               <div style={{
-                background: 'rgba(241, 196, 15, 0.15)',
-                border: '1px solid #f1c40f',
+                background: 'var(--vv-gold-tint)',
+                border: '1px solid var(--vv-gold-border-strong)',
                 borderRadius: '12px',
                 padding: '8px 14px',
                 display: 'flex',
@@ -121,8 +121,8 @@ export default function VictoryModal() {
               }}>
                 <span style={{ fontSize: '1.4rem' }}>{droppedItem.icon}</span>
                 <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#fef08a' }}>{droppedItem.name}</div>
-                  <div style={{ fontSize: '0.7rem', color: '#2ecc71' }}>Rớt Thần Khí!</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--vv-gold-soft)' }}>{droppedItem.name}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--vv-green)' }}>Rớt Thần Khí!</div>
                 </div>
               </div>
             )}
@@ -135,15 +135,15 @@ export default function VictoryModal() {
             onClick={nextStage}
             style={{
               width: '100%',
-              background: 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)',
-              border: '2px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-cta-grad)',
+              border: '2px solid var(--vv-btn-gold-border)',
+              color: 'var(--vv-on-solid)',
               padding: '14px',
               borderRadius: '30px',
               fontSize: '1.1rem',
               fontWeight: 900,
               cursor: 'pointer',
-              boxShadow: '0 6px 25px rgba(245, 158, 11, 0.6)',
+              boxShadow: 'var(--vv-btn-gold-shadow)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -158,9 +158,9 @@ export default function VictoryModal() {
             onClick={handleReturnLobby}
             style={{
               width: '100%',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              color: '#cbd5e1',
+              background: 'var(--vv-secondary-bg)',
+              border: '1px solid var(--vv-secondary-border)',
+              color: 'var(--vv-text-2)',
               padding: '14px',
               borderRadius: '30px',
               fontSize: '1rem',

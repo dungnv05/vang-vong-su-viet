@@ -25,7 +25,7 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 110,
       pointerEvents: 'auto',
@@ -35,14 +35,14 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
       padding: '20px'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        border: '2px solid #38bdf8',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-sky)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '650px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(56, 189, 248, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-sky-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         <button 
@@ -53,17 +53,17 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.5rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Flame color="#38bdf8" /> Khai Thông Kinh Mạch & Linh Khí: {hero.name}
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.5rem', color: 'var(--vv-sky-text)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Flame color="var(--vv-sky)" /> Khai Thông Kinh Mạch & Linh Khí: {hero.name}
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.88rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.88rem', color: 'var(--vv-muted)' }}>
           Khai thông 4 Đường Kinh Mạch huyền thoại để bứt phá chỉ số Bạo Kích, ATK và Sinh Lực tối thượng!
         </p>
 
@@ -76,8 +76,8 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
               <div
                 key={node.id}
                 style={{
-                  background: isUnlocked ? 'rgba(56, 189, 248, 0.15)' : 'rgba(30, 41, 59, 0.6)',
-                  border: isUnlocked ? '1.5px solid #38bdf8' : '1px solid rgba(255,255,255,0.1)',
+                  background: isUnlocked ? 'var(--vv-sky-tint)' : 'var(--vv-surface-2-alpha)',
+                  border: isUnlocked ? '1.5px solid var(--vv-sky)' : '1px solid var(--vv-border-subtle)',
                   borderRadius: '16px',
                   padding: '16px 20px',
                   display: 'flex',
@@ -88,10 +88,10 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ fontSize: '2rem' }}>{node.icon}</div>
                   <div>
-                    <div style={{ fontWeight: 'bold', fontSize: '1.05rem', color: isUnlocked ? '#7dd3fc' : 'white', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      {node.name} {isUnlocked && <CheckCircle2 size={16} color="#2ecc71" />}
+                    <div style={{ fontWeight: 'bold', fontSize: '1.05rem', color: isUnlocked ? 'var(--vv-sky-text)' : 'var(--vv-text)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {node.name} {isUnlocked && <CheckCircle2 size={16} color="var(--vv-green)" />}
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: '#fef08a', marginTop: '2px', fontWeight: 'bold' }}>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--vv-gold-soft)', marginTop: '2px', fontWeight: 'bold' }}>
                       ✨ {node.statBonusText}
                     </div>
                   </div>
@@ -102,9 +102,9 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
                     onClick={() => handleUnlockNode(node)}
                     disabled={gold < node.costGold}
                     style={{
-                      background: gold >= node.costGold ? 'linear-gradient(45deg, #0284c7, #38bdf8)' : '#475569',
+                      background: gold >= node.costGold ? 'var(--vv-menu-sky-grad)' : 'var(--vv-btn-disabled-bg)',
                       border: 'none',
-                      color: 'white',
+                      color: gold >= node.costGold ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
                       padding: '10px 18px',
                       borderRadius: '12px',
                       fontWeight: 'bold',
@@ -118,7 +118,7 @@ export default function MeridiansModal({ heroId, onClose }: { heroId: string | n
                     <Sparkles size={16} /> Khai Thông ({node.costGold.toLocaleString()} Vàng)
                   </button>
                 ) : (
-                  <span style={{ color: '#2ecc71', fontWeight: 'bold', fontSize: '0.88rem' }}>ĐÃ KHAI THÔNG</span>
+                  <span style={{ color: 'var(--vv-green)', fontWeight: 'bold', fontSize: '0.88rem' }}>ĐÃ KHAI THÔNG</span>
                 )}
               </div>
             )

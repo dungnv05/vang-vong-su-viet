@@ -16,7 +16,7 @@ export default function WorldBossModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -26,14 +26,14 @@ export default function WorldBossModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
-        border: '2px solid #9333ea',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-purple)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '750px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(147, 51, 234, 0.35)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-purple-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -45,24 +45,24 @@ export default function WorldBossModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Flame color="#a855f7" /> Phó Bản Trùm Thế Giới: Hắc Long Ma Tướng
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-purple-text)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Flame color="var(--vv-purple)" /> Phó Bản Trùm Thế Giới: Hắc Long Ma Tướng
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Gây tổng sát thương lớn nhất trong 10 lượt để nhận vô vàn Vàng & Rương Thần Khí Hoàng Gia!
         </p>
 
         {/* Trùm Thế Giới Banner */}
         <div style={{
-          background: 'rgba(147, 51, 234, 0.15)',
-          border: '1.5px solid #9333ea',
+          background: 'var(--vv-purple-tint)',
+          border: '1.5px solid var(--vv-purple)',
           borderRadius: '16px',
           padding: '20px',
           marginBottom: '24px',
@@ -72,27 +72,27 @@ export default function WorldBossModal() {
         }}>
           <div style={{
             fontSize: '4rem',
-            background: 'rgba(147, 51, 234, 0.25)',
+            background: 'var(--vv-purple-tint)',
             width: '90px',
             height: '90px',
             borderRadius: '20px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            border: '2px solid #c084fc',
-            boxShadow: '0 0 30px rgba(147, 51, 234, 0.5)'
+            border: '2px solid var(--vv-purple)',
+            boxShadow: 'var(--vv-menu-boss-shadow)'
           }}>
             🐉
           </div>
 
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 'bold', fontSize: '1.3rem', color: '#c084fc' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '1.3rem', color: 'var(--vv-purple-text)' }}>
               {WORLD_BOSS_DATA.name}
             </div>
-            <div style={{ fontSize: '0.85rem', color: '#fef08a', marginTop: '2px', fontWeight: 'bold' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--vv-gold-soft)', marginTop: '2px', fontWeight: 'bold' }}>
               {WORLD_BOSS_DATA.title} • Máu: Vô Hạn (100.000.000 HP)
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '6px', fontStyle: 'italic' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', marginTop: '6px', fontStyle: 'italic' }}>
               "{WORLD_BOSS_DATA.description}"
             </div>
           </div>
@@ -100,8 +100,8 @@ export default function WorldBossModal() {
 
         {/* Mốc Thưởng Sát Thương */}
         <div style={{ marginBottom: '24px' }}>
-          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: '#fef08a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Gift size={18} color="#fef08a" /> Mốc Thưởng Theo Sát Thương Gây Ra
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: 'var(--vv-gold-soft)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Gift size={18} color="var(--vv-gold-soft)" /> Mốc Thưởng Theo Sát Thương Gây Ra
           </h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
@@ -109,20 +109,20 @@ export default function WorldBossModal() {
               <div 
                 key={`tier-${idx}`}
                 style={{
-                  background: 'rgba(30, 41, 59, 0.6)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'var(--vv-surface-2-alpha)',
+                  border: '1px solid var(--vv-border-subtle)',
                   borderRadius: '12px',
                   padding: '14px',
                   textAlign: 'center'
                 }}
               >
-                <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#38bdf8' }}>
+                <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--vv-sky-text)' }}>
                   {tier.minDamage.toLocaleString()} Sát Thương
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#f1c40f', fontWeight: 'bold', margin: '6px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                <div style={{ fontSize: '0.9rem', color: 'var(--vv-gold)', fontWeight: 'bold', margin: '6px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                   <Coins size={16} /> +{tier.gold.toLocaleString()} Vàng
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#a855f7', fontWeight: 'bold' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--vv-purple-text)', fontWeight: 'bold' }}>
                   {tier.rewardName}
                 </div>
               </div>
@@ -135,15 +135,15 @@ export default function WorldBossModal() {
           <button
             onClick={startWorldBossRaid}
             style={{
-              background: 'linear-gradient(45deg, #7c3aed, #9333ea, #c084fc)',
-              border: '2px solid #fef08a',
-              color: 'white',
+              background: 'var(--vv-menu-boss-grad)',
+              border: '2px solid var(--vv-btn-gold-border)',
+              color: 'var(--vv-on-solid)',
               padding: '16px 48px',
               borderRadius: '30px',
               fontWeight: 900,
               fontSize: '1.2rem',
               cursor: 'pointer',
-              boxShadow: '0 6px 30px rgba(147, 51, 234, 0.6)',
+              boxShadow: 'var(--vv-menu-boss-shadow)',
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
