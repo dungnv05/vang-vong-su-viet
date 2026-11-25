@@ -32,6 +32,8 @@ export default function CodexModal() {
     : MOCK_ITEMS.filter(item => item.type === itemTypeFilter)
   
   const selectedItem = MOCK_ITEMS.find(item => item.id === selectedItemId) || MOCK_ITEMS[0]
+  const selectedRarityBorder = selectedItem.rarity === 'UR' ? 'var(--vv-red-solid)' : 'var(--vv-gold-border-strong)'
+  const selectedRarityText = selectedItem.rarity === 'UR' ? 'var(--vv-red)' : 'var(--vv-gold)'
 
   return (
     <div onClick={() => setShowCodexModal(false)} style={{
@@ -40,7 +42,7 @@ export default function CodexModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -50,15 +52,15 @@ export default function CodexModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        border: '2px solid #f1c40f',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-gold-border-strong)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '1000px',
         height: '88vh',
         padding: '24px 28px',
-        boxShadow: '0 10px 50px rgba(241, 196, 15, 0.25)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column'
@@ -70,11 +72,11 @@ export default function CodexModal() {
             position: 'absolute',
             top: '20px',
             right: '20px',
-            background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.15)',
+            background: 'var(--vv-close-bg)',
+            border: '1px solid var(--vv-close-border)',
             borderRadius: '50%',
             padding: '6px',
-            color: '#cbd5e1',
+            color: 'var(--vv-close-color)',
             cursor: 'pointer',
             zIndex: 10,
             display: 'flex',
@@ -88,21 +90,21 @@ export default function CodexModal() {
         {/* Header & Tabs */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.6rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <BookOpen color="#f1c40f" /> Bách Khoa Đồ Giám Lịch Sử Việt
+            <h2 style={{ margin: 0, fontSize: '1.6rem', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <BookOpen color="var(--vv-gold)" /> Bách Khoa Đồ Giám Lịch Sử Việt
             </h2>
-            <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--vv-muted)' }}>
               Tra cứu Đồ Giám Võ Tướng, Tuyệt Kỹ Binh Pháp & Thần Khí Lịch Sử Dân Tộc.
             </p>
           </div>
 
           {/* Top Switcher Tabs */}
-          <div style={{ display: 'flex', background: 'rgba(15, 23, 42, 0.8)', padding: '4px', borderRadius: '16px', border: '1px solid rgba(241, 196, 15, 0.3)' }}>
+          <div style={{ display: 'flex', background: 'var(--vv-subcard-bg)', padding: '4px', borderRadius: '16px', border: '1px solid var(--vv-gold-border)' }}>
             <button
               onClick={() => setActiveTab('HEROES')}
               style={{
-                background: activeTab === 'HEROES' ? 'linear-gradient(45deg, #d97706, #f59e0b)' : 'transparent',
-                color: activeTab === 'HEROES' ? 'white' : '#94a3b8',
+                background: activeTab === 'HEROES' ? 'var(--vv-menu-gold-grad)' : 'transparent',
+                color: activeTab === 'HEROES' ? 'var(--vv-on-solid)' : 'var(--vv-muted)',
                 border: 'none',
                 padding: '8px 20px',
                 borderRadius: '12px',
@@ -121,8 +123,8 @@ export default function CodexModal() {
             <button
               onClick={() => setActiveTab('EQUIPMENT')}
               style={{
-                background: activeTab === 'EQUIPMENT' ? 'linear-gradient(45deg, #2563eb, #3b82f6)' : 'transparent',
-                color: activeTab === 'EQUIPMENT' ? 'white' : '#94a3b8',
+                background: activeTab === 'EQUIPMENT' ? 'var(--vv-btn-blue-grad)' : 'transparent',
+                color: activeTab === 'EQUIPMENT' ? 'var(--vv-on-solid)' : 'var(--vv-muted)',
                 border: 'none',
                 padding: '8px 20px',
                 borderRadius: '12px',
@@ -155,8 +157,8 @@ export default function CodexModal() {
                     key={item.id}
                     onClick={() => setSelectedCodexId(item.id)}
                     style={{
-                      background: isSelected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(30, 41, 59, 0.5)',
-                      border: isSelected ? '1.5px solid #f1c40f' : '1px solid rgba(255,255,255,0.08)',
+                      background: isSelected ? 'var(--vv-gold-tint-strong)' : 'var(--vv-surface-2-alpha)',
+                      border: isSelected ? '1.5px solid var(--vv-gold-border-strong)' : '1px solid var(--vv-border-subtle)',
                       borderRadius: '14px',
                       padding: '10px 12px',
                       cursor: 'pointer',
@@ -183,16 +185,16 @@ export default function CodexModal() {
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: isSelected ? '#fef08a' : 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: isSelected ? 'var(--vv-gold-soft)' : 'var(--vv-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {item.name}
                         </div>
                         {gHero && (
-                          <span style={{ fontSize: '0.65rem', background: gHero.color, color: 'white', padding: '1px 5px', borderRadius: '6px', fontWeight: 'bold' }}>
+                          <span style={{ fontSize: '0.65rem', background: gHero.color, color: 'var(--vv-on-solid)', padding: '1px 5px', borderRadius: '6px', fontWeight: 'bold' }}>
                             {gHero.rarity || 'SSR'}
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '2px' }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--vv-muted)', marginTop: '2px' }}>
                         {rInfo ? rInfo.short : item.era}
                       </div>
                     </div>
@@ -204,9 +206,9 @@ export default function CodexModal() {
             {/* Cột Phải: Chi Tiết Võ Tướng */}
             <div style={{
               backgroundImage: codexHero.backgroundUrl 
-                ? `linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.92) 40%, rgba(15, 23, 42, 0.98) 100%), url(${codexHero.backgroundUrl})` 
+                ? `var(--vv-codex-hero-scrim), url(${codexHero.backgroundUrl})` 
                 : 'none',
-              backgroundColor: 'rgba(15, 23, 42, 0.85)',
+              backgroundColor: 'var(--vv-card-bg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center top',
               backgroundRepeat: 'no-repeat',
@@ -220,16 +222,16 @@ export default function CodexModal() {
               boxShadow: `0 8px 30px ${codexHero.color}33`
             }}>
               {/* Header Tướng */}
-              <div>
+              <div style={{ background: 'var(--vv-hero-header-bg)', padding: '10px 14px', borderRadius: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.9rem', color: codexHero.color, textShadow: '0 2px 10px rgba(0,0,0,0.9)', fontWeight: 900 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.9rem', color: codexHero.color, textShadow: 'var(--vv-text-shadow-media)', fontWeight: 900 }}>
                     {codexHero.name}
                   </h3>
-                  <span style={{ background: 'rgba(212, 175, 55, 0.35)', border: '1px solid #f1c40f', color: '#fef08a', fontSize: '0.78rem', fontWeight: 'bold', padding: '3px 10px', borderRadius: '10px' }}>
+                  <span style={{ background: 'var(--vv-gold-tint-banner)', border: '1px solid var(--vv-gold-border-strong)', color: 'var(--vv-dark-card-gold)', fontSize: '0.78rem', fontWeight: 'bold', padding: '3px 10px', borderRadius: '10px' }}>
                     {codexHero.era} ({codexHero.periodYear})
                   </span>
                 </div>
-                <div style={{ fontSize: '1rem', color: '#fef08a', marginTop: '4px', fontWeight: 'bold', textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
+                <div style={{ fontSize: '1rem', color: 'var(--vv-dark-card-gold)', marginTop: '4px', fontWeight: 'bold', textShadow: 'var(--vv-text-shadow-media)' }}>
                   {codexHero.title}
                 </div>
               </div>
@@ -237,7 +239,7 @@ export default function CodexModal() {
               {/* KHUNG THÔNG TIN IN-GAME (Stats, Role & Skill) */}
               {matchingGameHero && (
                 <div style={{
-                  background: 'rgba(15, 23, 42, 0.85)',
+                  background: 'var(--vv-card-bg)',
                   border: `1.5px solid ${codexHero.color}88`,
                   borderRadius: '16px',
                   padding: '14px 16px',
@@ -250,7 +252,7 @@ export default function CodexModal() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <span style={{
                         background: getRarityTheme(matchingGameHero.rarity).badgeBg,
-                        color: 'white',
+                        color: 'var(--vv-on-solid)',
                         fontSize: '0.8rem',
                         fontWeight: 900,
                         padding: '3px 10px',
@@ -260,7 +262,7 @@ export default function CodexModal() {
                         {matchingGameHero.rarity || 'SSR'} • {getRarityTheme(matchingGameHero.rarity).title}
                       </span>
                       {roleInfo && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', fontWeight: 'bold', color: roleInfo.color }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.88rem', fontWeight: 'bold', color: roleInfo.color, background: 'var(--vv-hero-chip-bg)', padding: '2px 8px', borderRadius: '8px' }}>
                           <span>{roleInfo.icon}</span>
                           <span>{roleInfo.name}</span>
                         </div>
@@ -268,19 +270,19 @@ export default function CodexModal() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem' }}>
-                      <span style={{ color: '#ef4444', fontWeight: 'bold' }}>⚔️ ATK: {matchingGameHero.atk.toLocaleString()}</span>
-                      <span style={{ color: '#10b981', fontWeight: 'bold' }}>❤️ HP: {matchingGameHero.maxHp.toLocaleString()}</span>
+                      <span style={{ color: 'var(--vv-red)', fontWeight: 'bold' }}>⚔️ ATK: {matchingGameHero.atk.toLocaleString()}</span>
+                      <span style={{ color: 'var(--vv-green)', fontWeight: 'bold' }}>❤️ HP: {matchingGameHero.maxHp.toLocaleString()}</span>
                     </div>
                   </div>
 
                   {/* Row 2: Skill & Synergy */}
                   <div style={{ display: 'grid', gridTemplateColumns: matchingGameHero.synergy ? '1fr 1fr' : '1fr', gap: '10px' }}>
                     {/* Tuyệt Kỹ */}
-                    <div style={{ background: 'rgba(30, 41, 59, 0.7)', padding: '10px 12px', borderRadius: '12px', borderLeft: `3px solid ${matchingGameHero.color}` }}>
-                      <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#ffffff' }}>
+                    <div style={{ background: 'var(--vv-surface-2-alpha)', padding: '10px 12px', borderRadius: '12px', borderLeft: `3px solid ${matchingGameHero.color}` }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--vv-text)' }}>
                         👑 [TUYỆT KỸ] {matchingGameHero.skill?.name || 'Vung Vũ Khí'}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: '#cbd5e1', marginTop: '3px' }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--vv-text-2)', marginTop: '3px' }}>
                         Gây {Math.round((matchingGameHero.skill?.damageMultiplier || 2.0) * 100)}% sát thương ATK.
                         {matchingGameHero.skill?.rageRecovery ? ` Hồi ${matchingGameHero.skill.rageRecovery} Nộ.` : ''}
                       </div>
@@ -288,11 +290,11 @@ export default function CodexModal() {
 
                     {/* Hợp Kỹ */}
                     {matchingGameHero.synergy && (
-                      <div style={{ background: 'rgba(234, 179, 8, 0.15)', padding: '10px 12px', borderRadius: '12px', borderLeft: '3px solid #f1c40f' }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#fef08a' }}>
+                      <div style={{ background: 'var(--vv-gold-tint)', padding: '10px 12px', borderRadius: '12px', borderLeft: '3px solid var(--vv-gold-border-strong)' }}>
+                        <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: 'var(--vv-gold-soft)' }}>
                           💥 [HỢP KỸ] {matchingGameHero.synergy.skillName}
                         </div>
-                        <div style={{ fontSize: '0.78rem', color: '#e2e8f0', marginTop: '3px' }}>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--vv-text-2)', marginTop: '3px' }}>
                           Cùng {partnerHero ? partnerHero.name : 'Đồng Đội'} ra trận bồi 150% Sát Thương!
                         </div>
                       </div>
@@ -303,30 +305,30 @@ export default function CodexModal() {
 
               {/* Trích Dẫn Nổi Tiếng */}
               <div style={{
-                background: 'rgba(15, 23, 42, 0.75)',
-                borderLeft: '4px solid #f1c40f',
-                border: '1px solid rgba(241, 196, 15, 0.4)',
+                background: 'var(--vv-subcard-bg)',
+                borderLeft: '4px solid var(--vv-gold-border-strong)',
+                border: '1px solid var(--vv-gold-border)',
                 borderRadius: '12px',
                 padding: '12px 16px',
                 fontStyle: 'italic',
-                color: '#fef08a',
+                color: 'var(--vv-gold-soft)',
                 fontSize: '0.92rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px'
               }}>
-                <Quote size={22} color="#f1c40f" style={{ flexShrink: 0 }} />
+                <Quote size={22} color="var(--vv-gold-border-strong)" style={{ flexShrink: 0 }} />
                 <span>"{codexHero.quote}"</span>
               </div>
 
               {/* Trận Đánh Hiển Hách */}
-              <div style={{ background: 'rgba(15, 23, 42, 0.75)', padding: '14px 16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.95rem', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ background: 'var(--vv-subcard-bg)', padding: '14px 16px', borderRadius: '14px', border: '1px solid var(--vv-border-subtle)' }}>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '0.95rem', color: 'var(--vv-sky)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Swords size={16} /> các Trận Đánh Hiển Hách Trong Lịch Sử
                 </h4>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {codexHero.famousBattles.map((battle, bIdx) => (
-                    <span key={bIdx} style={{ background: 'rgba(56, 189, 248, 0.2)', border: '1px solid #38bdf8', color: '#7dd3fc', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                    <span key={bIdx} style={{ background: 'var(--vv-sky-tint)', border: '1px solid var(--vv-sky)', color: 'var(--vv-sky-text)', padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 'bold' }}>
                       ⚔️ {battle}
                     </span>
                   ))}
@@ -334,21 +336,21 @@ export default function CodexModal() {
               </div>
 
               {/* Tiểu Sử Lịch Sử */}
-              <div style={{ background: 'rgba(15, 23, 42, 0.75)', padding: '14px 16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.95rem', color: '#cbd5e1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ background: 'var(--vv-subcard-bg)', padding: '14px 16px', borderRadius: '14px', border: '1px solid var(--vv-border-subtle)' }}>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.95rem', color: 'var(--vv-text-2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Scroll size={16} /> Tiểu Sử Lịch Sử
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.88rem', color: '#cbd5e1', lineHeight: '1.6' }}>
+                <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--vv-text-2)', lineHeight: '1.6' }}>
                   {codexHero.biography}
                 </p>
               </div>
 
               {/* Di Sản Tôn Vinh */}
-              <div style={{ background: 'rgba(15, 23, 42, 0.75)', padding: '14px 16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.95rem', color: '#2ecc71', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Medal size={16} color="#2ecc71" /> Di Sản & Công Trạng Tôn Vinh
+              <div style={{ background: 'var(--vv-subcard-bg)', padding: '14px 16px', borderRadius: '14px', border: '1px solid var(--vv-border-subtle)' }}>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.95rem', color: 'var(--vv-green)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Medal size={16} color="var(--vv-green)" /> Di Sản & Công Trạng Tôn Vinh
                 </h4>
-                <p style={{ margin: 0, fontSize: '0.88rem', color: '#a7f3d0', lineHeight: '1.6' }}>
+                <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--vv-green-soft)', lineHeight: '1.6' }}>
                   {codexHero.legacy}
                 </p>
               </div>
@@ -371,9 +373,9 @@ export default function CodexModal() {
                   key={filter.key}
                   onClick={() => setItemTypeFilter(filter.key as any)}
                   style={{
-                    background: itemTypeFilter === filter.key ? 'rgba(59, 130, 246, 0.3)' : 'rgba(30, 41, 59, 0.6)',
-                    border: itemTypeFilter === filter.key ? '1.5px solid #3b82f6' : '1px solid rgba(255,255,255,0.1)',
-                    color: itemTypeFilter === filter.key ? '#60a5fa' : '#cbd5e1',
+                    background: itemTypeFilter === filter.key ? 'var(--vv-blue-tint)' : 'var(--vv-surface-2-alpha)',
+                    border: itemTypeFilter === filter.key ? '1.5px solid var(--vv-blue-border)' : '1px solid var(--vv-border-subtle)',
+                    color: itemTypeFilter === filter.key ? 'var(--vv-blue-soft)' : 'var(--vv-text-2)',
                     padding: '8px 16px',
                     borderRadius: '12px',
                     fontSize: '0.8rem',
@@ -401,15 +403,16 @@ export default function CodexModal() {
               }}>
                 {filteredItems.map(item => {
                   const isSelected = item.id === selectedItem.id
-                  const rarityColor = item.rarity === 'UR' ? '#e74c3c' : item.rarity === 'SSR' ? '#f1c40f' : '#9b59b6'
+                  const rarityColor = item.rarity === 'UR' ? 'var(--vv-red-solid)' : item.rarity === 'SSR' ? 'var(--vv-gold-border-strong)' : 'var(--vv-purple)'
+                  const rarityTint = item.rarity === 'UR' ? 'var(--vv-red-tint)' : item.rarity === 'SSR' ? 'var(--vv-gold-tint)' : 'var(--vv-purple-tint)'
 
                   return (
                     <div
                       key={item.id}
                       onClick={() => setSelectedItemId(item.id)}
                       style={{
-                        background: isSelected ? `${rarityColor}22` : 'rgba(30, 41, 59, 0.6)',
-                        border: isSelected ? `2px solid ${rarityColor}` : '1px solid rgba(255,255,255,0.1)',
+                        background: isSelected ? rarityTint : 'var(--vv-surface-2-alpha)',
+                        border: isSelected ? `2px solid ${rarityColor}` : '1px solid var(--vv-border-subtle)',
                         borderRadius: '16px',
                         padding: '14px 10px',
                         cursor: 'pointer',
@@ -420,7 +423,7 @@ export default function CodexModal() {
                         textAlign: 'center',
                         position: 'relative',
                         transition: 'all 0.2s ease',
-                        boxShadow: isSelected ? `0 4px 20px ${rarityColor}44` : 'none'
+                        boxShadow: isSelected ? '0 4px 20px var(--vv-shadow)' : 'none'
                       }}
                     >
                       {/* Rarity Badge */}
@@ -429,7 +432,7 @@ export default function CodexModal() {
                         top: '6px',
                         right: '6px',
                         background: rarityColor,
-                        color: 'white',
+                        color: item.rarity === 'SSR' ? 'var(--vv-on-yellow)' : 'var(--vv-on-solid)',
                         fontSize: '0.62rem',
                         fontWeight: 900,
                         padding: '1px 5px',
@@ -442,11 +445,11 @@ export default function CodexModal() {
                         {item.icon}
                       </div>
 
-                      <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: isSelected ? '#fef08a' : 'white', lineHeight: '1.2' }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: isSelected ? 'var(--vv-gold-soft)' : 'var(--vv-text)', lineHeight: '1.2' }}>
                         {item.name}
                       </div>
 
-                      <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '4px' }}>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--vv-muted)', marginTop: '4px' }}>
                         {item.type === 'Weapon' ? 'Vũ Khí' : item.type === 'Armor' ? 'Áo Giáp' : 'Báu Vật'}
                       </div>
                     </div>
@@ -456,8 +459,8 @@ export default function CodexModal() {
 
               {/* Selected Item Detail Panel */}
               <div style={{
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: `2px solid ${selectedItem.rarity === 'UR' ? '#e74c3c' : '#f1c40f'}`,
+                background: 'var(--vv-card-bg)',
+                border: `2px solid ${selectedRarityBorder}`,
                 borderRadius: '20px',
                 padding: '20px',
                 display: 'flex',
@@ -470,26 +473,26 @@ export default function CodexModal() {
                     width: '64px',
                     height: '64px',
                     borderRadius: '16px',
-                    background: 'rgba(30, 41, 59, 0.8)',
-                    border: `2px solid ${selectedItem.rarity === 'UR' ? '#e74c3c' : '#f1c40f'}`,
+                    background: 'var(--vv-surface-2-alpha)',
+                    border: `2px solid ${selectedRarityBorder}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '2.5rem',
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
+                    boxShadow: '0 4px 15px var(--vv-shadow)'
                   }}>
                     {selectedItem.icon}
                   </div>
 
                   <div>
-                    <h3 style={{ margin: 0, fontSize: '1.3rem', color: selectedItem.rarity === 'UR' ? '#ff4d4d' : '#f1c40f' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.3rem', color: selectedRarityText }}>
                       {selectedItem.name}
                     </h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <span style={{ background: selectedItem.rarity === 'UR' ? '#e74c3c' : '#f1c40f', color: 'white', fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '6px' }}>
+                      <span style={{ background: selectedRarityBorder, color: selectedItem.rarity === 'UR' ? 'var(--vv-on-solid)' : 'var(--vv-on-yellow)', fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '6px' }}>
                         PHẨM {selectedItem.rarity}
                       </span>
-                      <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)' }}>
                         {selectedItem.type === 'Weapon' ? 'Vũ Khí Lịch Sử' : selectedItem.type === 'Armor' ? 'Áo Giáp Phòng Thủ' : 'Báu Vật Thần Kỳ'}
                       </span>
                     </div>
@@ -497,18 +500,18 @@ export default function CodexModal() {
                 </div>
 
                 {/* Stat Bonus Box */}
-                <div style={{ background: 'rgba(30, 41, 59, 0.7)', borderRadius: '14px', padding: '12px 14px', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '6px' }}>
+                <div style={{ background: 'var(--vv-surface-2-alpha)', borderRadius: '14px', padding: '12px 14px', border: '1px solid var(--vv-border-subtle)' }}>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--vv-muted)', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '6px' }}>
                     CHỈ SỐ TRANG BỊ (STAT BONUS):
                   </div>
                   <div style={{ display: 'flex', gap: '16px' }}>
                     {selectedItem.statBonus.atk && (
-                      <div style={{ color: '#ef4444', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ color: 'var(--vv-red)', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Zap size={18} /> +{selectedItem.statBonus.atk} ATK
                       </div>
                     )}
                     {selectedItem.statBonus.hp && (
-                      <div style={{ color: '#10b981', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ color: 'var(--vv-green)', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Heart size={18} /> +{selectedItem.statBonus.hp.toLocaleString()} HP
                       </div>
                     )}
@@ -516,11 +519,11 @@ export default function CodexModal() {
                 </div>
 
                 {/* Description & History Lore */}
-                <div style={{ background: 'rgba(30, 41, 59, 0.7)', borderRadius: '14px', padding: '14px', border: '1px solid rgba(255,255,255,0.08)', flex: 1 }}>
-                  <div style={{ fontSize: '0.85rem', color: '#fef08a', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ background: 'var(--vv-surface-2-alpha)', borderRadius: '14px', padding: '14px', border: '1px solid var(--vv-border-subtle)', flex: 1 }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--vv-gold-soft)', fontWeight: 'bold', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Scroll size={16} /> NGUỒN GỐC & ĐÒN BẢO VẬT:
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.88rem', color: '#e2e8f0', lineHeight: '1.6' }}>
+                  <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--vv-text-2)', lineHeight: '1.6' }}>
                     {selectedItem.description}
                   </p>
                 </div>

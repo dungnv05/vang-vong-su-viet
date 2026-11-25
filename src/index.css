@@ -106,6 +106,40 @@ html[data-theme="dark"] {
   --vv-toggle-bg: rgba(15, 23, 42, 0.72);
   --vv-toggle-border: rgba(255, 255, 255, 0.14);
   --vv-toggle-hover-bg: rgba(255, 255, 255, 0.08);
+
+  --vv-close-bg: rgba(255, 255, 255, 0.08);
+  --vv-close-border: rgba(255, 255, 255, 0.15);
+  --vv-close-color: #cbd5e1;
+  --vv-modal-gold-shadow: 0 10px 50px rgba(241, 196, 15, 0.25);
+  --vv-modal-purple-shadow: 0 10px 50px rgba(168, 85, 247, 0.3);
+  --vv-purple-text: #c084fc;
+  --vv-purple-soft: #e9d5ff;
+  --vv-purple-tint: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.1) 100%);
+  --vv-tower-current-bg: linear-gradient(90deg, rgba(168, 85, 247, 0.35), rgba(30, 41, 59, 0.9));
+  --vv-tower-boss-bg: rgba(241, 196, 15, 0.12);
+  --vv-gold-tint-strong: rgba(212, 175, 55, 0.2);
+  --vv-gold-tint-banner: rgba(212, 175, 55, 0.35);
+  --vv-gacha-banner-bg: linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.2));
+  --vv-btn-disabled-bg: #475569;
+  --vv-btn-disabled-text: #ffffff;
+  --vv-btn-blue-grad: linear-gradient(45deg, #2563eb, #3b82f6);
+  --vv-btn-blue-border: #93c5fd;
+  --vv-blue-tint: rgba(59, 130, 246, 0.3);
+  --vv-blue-border: #3b82f6;
+  --vv-red-tint: rgba(231, 76, 60, 0.2);
+  --vv-red-solid: #e74c3c;
+  --vv-banner-bg: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+  --vv-media-scrim: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+  --vv-codex-hero-scrim: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.92) 40%, rgba(15, 23, 42, 0.98) 100%);
+  --vv-dark-card-text: #cbd5e1;
+  --vv-dark-card-gold: #fef08a;
+  --vv-hero-chip-bg: transparent;
+  --vv-hero-header-bg: transparent;
+  --vv-text-shadow-dark: 0 2px 8px rgba(0, 0, 0, 0.8);
+  --vv-text-shadow-media: 0 2px 4px rgba(0, 0, 0, 0.8);
+  --vv-drop-glow-gold: drop-shadow(0 0 20px rgba(245, 158, 11, 0.8));
+  --vv-star-glow: drop-shadow(0 0 4px rgba(241, 196, 15, 0.6));
+  --vv-slot-empty-bg: rgba(30, 41, 59, 0.4);
 }
 
 html[data-theme="light"] {
@@ -215,6 +249,40 @@ html[data-theme="light"] {
   --vv-toggle-bg: rgba(255, 255, 255, 0.85);
   --vv-toggle-border: #cbd5e1;
   --vv-toggle-hover-bg: #e2e8f0;
+
+  --vv-close-bg: rgba(15, 23, 42, 0.06);
+  --vv-close-border: #cbd5e1;
+  --vv-close-color: #475569;
+  --vv-modal-gold-shadow: 0 20px 50px rgba(15, 23, 42, 0.16), 0 0 24px rgba(217, 119, 6, 0.14);
+  --vv-modal-purple-shadow: 0 20px 50px rgba(15, 23, 42, 0.16), 0 0 24px rgba(126, 34, 206, 0.14);
+  --vv-purple-text: #7e22ce;
+  --vv-purple-soft: #6b21a8;
+  --vv-purple-tint: linear-gradient(135deg, rgba(126, 34, 206, 0.1) 0%, rgba(126, 34, 206, 0.05) 100%);
+  --vv-tower-current-bg: linear-gradient(90deg, rgba(126, 34, 206, 0.14), rgba(248, 250, 252, 0.95));
+  --vv-tower-boss-bg: rgba(217, 119, 6, 0.1);
+  --vv-gold-tint-strong: rgba(217, 119, 6, 0.14);
+  --vv-gold-tint-banner: rgba(217, 119, 6, 0.15);
+  --vv-gacha-banner-bg: linear-gradient(90deg, rgba(217, 119, 6, 0.12), rgba(126, 34, 206, 0.1));
+  --vv-btn-disabled-bg: #cbd5e1;
+  --vv-btn-disabled-text: #475569;
+  --vv-btn-blue-grad: linear-gradient(45deg, #1d4ed8, #2563eb);
+  --vv-btn-blue-border: #60a5fa;
+  --vv-blue-tint: rgba(29, 78, 216, 0.12);
+  --vv-blue-border: #1d4ed8;
+  --vv-red-tint: rgba(185, 28, 28, 0.1);
+  --vv-red-solid: #dc2626;
+  --vv-banner-bg: radial-gradient(circle at center, #e2e8f0 0%, #cbd5e1 100%);
+  --vv-media-scrim: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+  --vv-codex-hero-scrim: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(248, 250, 252, 0.92) 40%, rgba(248, 250, 252, 0.98) 100%);
+  --vv-dark-card-text: #e2e8f0;
+  --vv-dark-card-gold: #fef08a;
+  --vv-hero-chip-bg: rgba(15, 23, 42, 0.88);
+  --vv-hero-header-bg: rgba(15, 23, 42, 0.85);
+  --vv-text-shadow-dark: none;
+  --vv-text-shadow-media: 0 2px 4px rgba(0, 0, 0, 0.8);
+  --vv-drop-glow-gold: drop-shadow(0 4px 12px rgba(180, 83, 9, 0.35));
+  --vv-star-glow: drop-shadow(0 0 4px rgba(217, 119, 6, 0.6));
+  --vv-slot-empty-bg: rgba(226, 232, 240, 0.6);
 }
 
 * {

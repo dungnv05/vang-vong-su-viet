@@ -25,7 +25,7 @@ export default function TowerModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -35,14 +35,14 @@ export default function TowerModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        border: '2px solid #a855f7',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-purple)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '750px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(168, 85, 247, 0.3)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-purple-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Nút Đóng Modal */}
@@ -54,17 +54,17 @@ export default function TowerModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
           <X size={28} />
         </button>
 
-        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Building2 color="#c084fc" /> Tháp Cổ Việt Nam (Endless Trial Tower 100 Tầng)
+        <h2 style={{ margin: '0 0 6px 0', fontSize: '1.6rem', color: 'var(--vv-purple-text)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Building2 color="var(--vv-purple-text)" /> Tháp Cổ Việt Nam (Endless Trial Tower 100 Tầng)
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Tầng mở khóa mới nhất được ưu tiên hiển thị ở trên cùng để bạn khiêu chiến ngay!
         </p>
 
@@ -89,21 +89,21 @@ export default function TowerModal() {
                 onClick={() => isUnlocked && startTowerFloor(fl)}
                 style={{
                   background: isCurrent 
-                    ? 'linear-gradient(90deg, rgba(168, 85, 247, 0.35), rgba(30, 41, 59, 0.9))' 
+                    ? 'var(--vv-tower-current-bg)' 
                     : floorInfo.isBossFloor 
-                      ? 'rgba(241, 196, 15, 0.12)' 
+                      ? 'var(--vv-tower-boss-bg)' 
                       : isUnlocked 
-                        ? 'rgba(30, 41, 59, 0.7)' 
-                        : 'rgba(15, 23, 42, 0.4)',
+                        ? 'var(--vv-surface-2-alpha)' 
+                        : 'var(--vv-subcard-bg)',
                   border: isLatestUnlocked 
-                    ? '2px solid #f1c40f' 
+                    ? '2px solid var(--vv-gold-border-strong)' 
                     : isCurrent 
-                      ? '2px solid #c084fc' 
+                      ? '2px solid var(--vv-purple-text)' 
                       : floorInfo.isBossFloor 
-                        ? '1px solid #f1c40f' 
+                        ? '1px solid var(--vv-gold-border-strong)' 
                         : isUnlocked 
-                          ? '1px solid rgba(255,255,255,0.1)' 
-                          : '1px dashed #475569',
+                          ? '1px solid var(--vv-border-subtle)' 
+                          : '1px dashed var(--vv-border-strong)',
                   borderRadius: '14px',
                   padding: '14px 20px',
                   cursor: isUnlocked ? 'pointer' : 'not-allowed',
@@ -111,7 +111,7 @@ export default function TowerModal() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   opacity: isUnlocked ? 1 : 0.5,
-                  boxShadow: isLatestUnlocked ? '0 0 20px rgba(241, 196, 15, 0.3)' : 'none'
+                  boxShadow: isLatestUnlocked ? 'var(--vv-glow-gold)' : 'none'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -119,42 +119,42 @@ export default function TowerModal() {
                     width: '44px',
                     height: '44px',
                     borderRadius: '12px',
-                    backgroundColor: isLatestUnlocked ? '#f1c40f' : floorInfo.isBossFloor ? '#eab308' : isUnlocked ? '#a855f7' : '#334155',
-                    color: (isLatestUnlocked || floorInfo.isBossFloor) ? '#000' : 'white',
+                    backgroundColor: isLatestUnlocked ? 'var(--vv-gold-border-strong)' : floorInfo.isBossFloor ? 'var(--vv-gold-solid)' : isUnlocked ? 'var(--vv-purple)' : 'var(--vv-surface-3)',
+                    color: (isLatestUnlocked || floorInfo.isBossFloor) ? 'var(--vv-on-yellow)' : isUnlocked ? 'var(--vv-on-solid)' : 'var(--vv-muted)',
                     fontWeight: 'bold',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     fontSize: '1.05rem',
-                    boxShadow: isLatestUnlocked ? '0 0 15px #f1c40f' : 'none'
+                    boxShadow: isLatestUnlocked ? 'var(--vv-glow-gold)' : 'none'
                   }}>
                     {fl}
                   </div>
 
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontWeight: 'bold', color: isLatestUnlocked ? '#fef08a' : floorInfo.isBossFloor ? '#fef08a' : 'white', fontSize: '1rem' }}>
+                      <span style={{ fontWeight: 'bold', color: isLatestUnlocked ? 'var(--vv-gold)' : floorInfo.isBossFloor ? 'var(--vv-gold)' : 'var(--vv-text)', fontSize: '1rem' }}>
                         {floorInfo.name}
                       </span>
                       {isLatestUnlocked && (
-                        <span style={{ background: 'linear-gradient(45deg, #b45309, #f59e0b)', color: 'white', fontSize: '0.68rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                        <span style={{ background: 'var(--vv-menu-gold-grad)', color: 'var(--vv-on-solid)', fontSize: '0.68rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '3px' }}>
                           <Sparkles size={12} /> TẦNG MỚI NHẤT
                         </span>
                       )}
                       {floorInfo.isBossFloor && !isLatestUnlocked && (
-                        <span style={{ background: '#e74c3c', color: 'white', fontSize: '0.68rem', fontWeight: 'bold', padding: '1px 6px', borderRadius: '6px' }}>
+                        <span style={{ background: 'var(--vv-red-solid)', color: 'var(--vv-on-solid)', fontSize: '0.68rem', fontWeight: 'bold', padding: '1px 6px', borderRadius: '6px' }}>
                           👑 TRÙM THÁP
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '2px' }}>
-                      Địch: <strong style={{ color: '#ff4d4d' }}>{floorInfo.bossName}</strong> (HP: {floorInfo.enemies[0].hp.toLocaleString()} | ATK: {floorInfo.enemies[0].atk})
+                    <div style={{ fontSize: '0.78rem', color: 'var(--vv-muted)', marginTop: '2px' }}>
+                      Địch: <strong style={{ color: 'var(--vv-red)' }}>{floorInfo.bossName}</strong> (HP: {floorInfo.enemies[0].hp.toLocaleString()} | ATK: {floorInfo.enemies[0].atk})
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <div style={{ color: '#f1c40f', fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ color: 'var(--vv-gold)', fontWeight: 'bold', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Coins size={16} /> +{floorInfo.rewardGold.toLocaleString()} Vàng
                   </div>
 
@@ -166,10 +166,10 @@ export default function TowerModal() {
                       }}
                       style={{
                         background: isLatestUnlocked 
-                          ? 'linear-gradient(45deg, #d97706, #f59e0b)' 
-                          : 'linear-gradient(45deg, #7c3aed, #a855f7)',
-                        border: isLatestUnlocked ? '1px solid #fef08a' : 'none',
-                        color: 'white',
+                          ? 'var(--vv-btn-gold-grad-short)' 
+                          : 'var(--vv-menu-purple-grad)',
+                        border: isLatestUnlocked ? '1px solid var(--vv-btn-gold-border)' : 'none',
+                        color: 'var(--vv-on-solid)',
                         padding: '9px 18px',
                         borderRadius: '10px',
                         fontWeight: 'bold',
@@ -178,13 +178,13 @@ export default function TowerModal() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px',
-                        boxShadow: isLatestUnlocked ? '0 0 15px rgba(245, 158, 11, 0.6)' : 'none'
+                        boxShadow: isLatestUnlocked ? 'var(--vv-btn-gold-shadow)' : 'none'
                       }}
                     >
                       <Swords size={15} /> Khiêu Chiến
                     </button>
                   ) : (
-                    <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ color: 'var(--vv-subtle)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Lock size={16} /> Chưa Mở Khóa
                     </div>
                   )}

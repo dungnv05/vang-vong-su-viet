@@ -20,7 +20,7 @@ export default function GachaModal() {
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: 'rgba(5, 10, 20, 0.95)',
+      backgroundColor: 'var(--vv-overlay)',
       
       zIndex: 100,
       pointerEvents: 'auto',
@@ -30,14 +30,14 @@ export default function GachaModal() {
       padding: '20px'
     }}>
       <div onClick={(e) => e.stopPropagation()} style={{
-        background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
-        border: '2px solid #f1c40f',
+        background: 'var(--vv-panel-grad)',
+        border: '2px solid var(--vv-gold-border-strong)',
         borderRadius: '24px',
         width: '100%',
         maxWidth: '850px',
         padding: '28px',
-        boxShadow: '0 10px 50px rgba(241, 196, 15, 0.35)',
-        color: 'white',
+        boxShadow: 'var(--vv-modal-gold-shadow)',
+        color: 'var(--vv-text)',
         position: 'relative'
       }}>
         {/* Close Button */}
@@ -52,7 +52,7 @@ export default function GachaModal() {
             right: '20px',
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--vv-muted)',
             cursor: 'pointer'
           }}
         >
@@ -60,17 +60,17 @@ export default function GachaModal() {
         </button>
 
         {/* Modal Title */}
-        <h2 style={{ margin: '0 0 4px 0', fontSize: '1.6rem', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Sparkles color="#f1c40f" /> Đài Chiêu Mộ Anh Hùng Sử Việt
+        <h2 style={{ margin: '0 0 4px 0', fontSize: '1.6rem', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Sparkles color="var(--vv-gold)" /> Đài Chiêu Mộ Anh Hùng Sử Việt
         </h2>
-        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: '#94a3b8' }}>
+        <p style={{ margin: '0 0 20px 0', fontSize: '0.9rem', color: 'var(--vv-muted)' }}>
           Triệu hồi các Vị Tướng Lịch Sử (UR, SSR, SR) cùng xuất trận dẹp loạn ngoại xâm!
         </p>
 
         {/* Gacha Banner Graphic */}
         <div style={{
-          background: 'linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(147, 51, 234, 0.2))',
-          border: '1.5px solid rgba(241, 196, 15, 0.5)',
+          background: 'var(--vv-gacha-banner-bg)',
+          border: '1.5px solid var(--vv-gold-border)',
           borderRadius: '18px',
           padding: '20px',
           marginBottom: '24px',
@@ -79,16 +79,16 @@ export default function GachaModal() {
           alignItems: 'center'
         }}>
           <div>
-            <div style={{ fontWeight: 900, fontSize: '1.2rem', color: '#fef08a' }}>
+            <div style={{ fontWeight: 900, fontSize: '1.2rem', color: 'var(--vv-gold-soft)' }}>
               BỂ CHIÊU MỘ HOÀNG GIA - TỶ LỆ UR 10%
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--vv-text-2)', marginTop: '4px' }}>
               Tướng trùng lặp tự động quy đổi thành <strong>+30 Mảnh Tướng</strong> để Tăng Sao!
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.78rem', color: '#cbd5e1' }}>VÀNG HIỆN CÓ</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#f1c40f', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--vv-muted)' }}>VÀNG HIỆN CÓ</div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--vv-gold)', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
               <Coins size={18} /> {gold.toLocaleString()}
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function GachaModal() {
         {/* Gacha Results Display (Nút Quay Thẻ Animation & Avatar Image) */}
         {gachaResults ? (
           <div>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', color: '#2ecc71', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', color: 'var(--vv-green)', textAlign: 'center' }}>
               ✨ KẾT QUẢ CHIÊU MỘ ANH HÙNG ✨
             </h3>
 
@@ -130,13 +130,13 @@ export default function GachaModal() {
                       top: '6px',
                       right: '6px',
                       background: theme.badgeBg,
-                      color: 'white',
+                      color: 'var(--vv-on-solid)',
                       fontSize: '0.65rem',
                       fontWeight: '900',
                       padding: '2px 6px',
                       borderRadius: '6px',
                       zIndex: 2,
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                      boxShadow: '0 2px 4px var(--vv-shadow)'
                     }}>
                       {theme.rarity}
                     </span>
@@ -164,11 +164,11 @@ export default function GachaModal() {
                   <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: result.color }}>{result.name}</div>
                   
                   {result.isDuplicate ? (
-                    <div style={{ background: 'rgba(241, 196, 15, 0.2)', border: '1px solid #f1c40f', color: '#fef08a', fontSize: '0.68rem', fontWeight: 'bold', padding: '2px', borderRadius: '6px', marginTop: '6px' }}>
+                    <div style={{ background: 'var(--vv-gold-tint-strong)', border: '1px solid var(--vv-gold-border-strong)', color: 'var(--vv-dark-card-gold)', fontSize: '0.68rem', fontWeight: 'bold', padding: '2px', borderRadius: '6px', marginTop: '6px' }}>
                       +30 MẢNH
                     </div>
                   ) : (
-                    <div style={{ fontSize: '0.7rem', color: '#cbd5e1', marginTop: '4px', fontWeight: '500' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--vv-dark-card-text)', marginTop: '4px', fontWeight: '500' }}>
                       {getRoleVietnameseInfo(result.role).icon} {getRoleVietnameseInfo(result.role).short}
                     </div>
                   )}
@@ -181,9 +181,9 @@ export default function GachaModal() {
               <button
                 onClick={clearGachaResults}
                 style={{
-                  background: 'linear-gradient(45deg, #0284c7, #38bdf8)',
+                  background: 'var(--vv-menu-sky-grad)',
                   border: 'none',
-                  color: 'white',
+                  color: 'var(--vv-on-solid)',
                   padding: '12px 32px',
                   borderRadius: '24px',
                   fontWeight: 'bold',
@@ -204,15 +204,15 @@ export default function GachaModal() {
               style={{
                 flex: 1,
                 maxWidth: '240px',
-                background: gold >= 300 ? 'linear-gradient(45deg, #2563eb, #3b82f6)' : '#475569',
-                border: '1.5px solid #93c5fd',
-                color: 'white',
+                background: gold >= 300 ? 'var(--vv-btn-blue-grad)' : 'var(--vv-btn-disabled-bg)',
+                border: '1.5px solid var(--vv-btn-blue-border)',
+                color: gold >= 300 ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
                 padding: '16px',
                 borderRadius: '16px',
                 fontWeight: 'bold',
                 fontSize: '1rem',
                 cursor: gold >= 300 ? 'pointer' : 'not-allowed',
-                boxShadow: gold >= 300 ? '0 4px 20px rgba(59, 130, 246, 0.4)' : 'none',
+                boxShadow: gold >= 300 ? 'var(--vv-glow-blue)' : 'none',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -220,7 +220,7 @@ export default function GachaModal() {
               }}
             >
               <span>CHIÊU MỘ X1</span>
-              <span style={{ fontSize: '0.8rem', color: '#dbeafe', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ fontSize: '0.8rem', color: gold >= 300 ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Coins size={14} /> 300 Vàng
               </span>
             </button>
@@ -231,15 +231,15 @@ export default function GachaModal() {
               style={{
                 flex: 1,
                 maxWidth: '240px',
-                background: gold >= 2700 ? 'linear-gradient(45deg, #b45309, #f59e0b, #d97706)' : '#475569',
-                border: '2px solid #fef08a',
-                color: 'white',
+                background: gold >= 2700 ? 'var(--vv-cta-grad)' : 'var(--vv-btn-disabled-bg)',
+                border: '2px solid var(--vv-btn-gold-border)',
+                color: gold >= 2700 ? 'var(--vv-on-solid)' : 'var(--vv-btn-disabled-text)',
                 padding: '16px',
                 borderRadius: '16px',
                 fontWeight: 900,
                 fontSize: '1rem',
                 cursor: gold >= 2700 ? 'pointer' : 'not-allowed',
-                boxShadow: gold >= 2700 ? '0 6px 25px rgba(245, 158, 11, 0.6)' : 'none',
+                boxShadow: gold >= 2700 ? 'var(--vv-btn-gold-shadow)' : 'none',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -247,7 +247,7 @@ export default function GachaModal() {
               }}
             >
               <span>CHIÊU MỘ X10 (ƯU ĐÃI)</span>
-              <span style={{ fontSize: '0.8rem', color: '#fef08a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ fontSize: '0.8rem', color: gold >= 2700 ? 'var(--vv-dark-card-gold)' : 'var(--vv-btn-disabled-text)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Coins size={14} /> 2,700 Vàng
               </span>
             </button>
